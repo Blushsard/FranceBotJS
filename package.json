@@ -1,0 +1,29 @@
+{
+  "name": "francebot",
+  "version": "1.0.0",
+  "description": "The JS version of FranceBot from the discord server FranceMemes.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LeMecChelou/FranceBot.git"
+  },
+  "author": "Benjamin Guirlet",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LeMecChelou/FranceBot/issues"
+  },
+  "homepage": "https://github.com/LeMecChelou/FranceBot#readme",
+  "dependencies": {
+    "@discordjs/builders": "^0.5.0",
+    "@discordjs/rest": "^0.1.0-canary.0",
+    "discord-api-types": "^0.22.0",
+    "discord.js": "^13.1.0",
+    "mysql2": "^2.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0"
+  }
+}
