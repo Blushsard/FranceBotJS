@@ -21,20 +21,8 @@ const { Client, Message } = require( "discord.js" );
  */
 async function execute( message, client ) {
 	if ( LISTEN_CHANNEL.includes( message.channelId ) ) {
-		await sqlUtils.query(
-			"INSERT INTO Memes VALUES (?, ?, ?);",
-			[
-				message.id,
-				message.author.id,
-				message.channelId
-			]
-		);
+
 	}
-
-
-	// Adding the likes and repost buttons.
-	await message.react( LIKE_EMOJI );
-	await message.react( REPOST_EMOJI );
 }
 
 /* ----------------------------------------------- */

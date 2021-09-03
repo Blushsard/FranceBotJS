@@ -50,9 +50,21 @@ async function query( query, params = [] ) {
 }
 
 
+/**
+ * Register a meme in the table Memes.
+ * @param {array} meme_data An array with the meme's data.
+ */
+async function registerMeme( meme_data ) {
+	await query(
+		"INSERT INTO Memes VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
+		meme_data
+	)
+}
+
+
 /* ----------------------------------------------- */
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
 module.exports = {
-	query
+	registerMeme
 }
