@@ -95,5 +95,6 @@ async function addChannel( channelID, memes = false, repost = false ) {
 /* ----------------------------------------------- */
 module.exports = {
 	registerMeme,
-	getChannel
+	getChannel,
+	addChannel
 }
