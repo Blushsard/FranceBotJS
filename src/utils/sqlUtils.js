@@ -62,9 +62,38 @@ async function registerMeme( meme_data ) {
 }
 
 
+/**
+ * Retrieves from the table MRChannels a channel.
+ * @param {int} channelID The TextChannel discord ID.
+ * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the query's result.
+ */
+async function getChannel( channelID ) {
+	return await query(
+		"SELECT * FROM MRChannels WHERE channel_id=?;",
+		[channelID]
+	);
+}
+
+
+/**
+ * Add a channel to the MRChannels database.
+ * @param {string} channelID The TextChannel's discord ID.
+ * @param {boolean} memes TRUE if the channel is a memes channel.
+ * @param {boolean} repost TRUE if the channel includes repost management.
+ */
+async function addChannel( channelID, memes = false, repost = false ) {
+	await query(
+		"INSERT INTO MRChannel VALUES (?, ?, ?);",
+		[channelID, memes, repost]
+	);
+}
+
+
+
 /* ----------------------------------------------- */
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
 module.exports = {
-	registerMeme
+	registerMeme,
+	getChannel
 }
