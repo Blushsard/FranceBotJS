@@ -64,12 +64,12 @@ async function registerMeme( meme_data ) {
 
 /**
  * Retrieves from the table MRChannels a channel.
- * @param {int} channelID The TextChannel discord ID.
+ * @param {string} channelID The TextChannel discord ID.
  * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the query's result.
  */
 async function getChannel( channelID ) {
 	return await query(
-		"SELECT * FROM MRChannels WHERE channel_id=?;",
+		"SELECT * FROM Channels WHERE channel_id=?;",
 		[channelID]
 	);
 }
@@ -78,13 +78,25 @@ async function getChannel( channelID ) {
 /**
  * Add a channel to the MRChannels database.
  * @param {string} channelID The TextChannel's discord ID.
- * @param {boolean} memes TRUE if the channel is a memes channel.
- * @param {boolean} repost TRUE if the channel includes repost management.
  */
-async function addChannel( channelID, memes = false, repost = false ) {
+async function addChannel( channelID ) {
 	await query(
-		"INSERT INTO MRChannel VALUES (?, ?, ?);",
-		[channelID, memes, repost]
+		"INSERT INTO Channels VALUES (?, ?, ?, ?, ?, ?);",
+		[channelID, false, false, false, false, false]
+	);
+}
+
+
+/**
+ * Update a channel already present in the database.
+ * @param {string} channelID The channel discord ID.
+ * @param {string} columnName The name of the column to update.
+ * @param {boolean} value The new value of the column.
+ */
+async function updateChannel( channelID, columnName, value ) {
+	await query(
+		`UPDATE Channels SET ${columnName}=? WHERE channel_id=?;`,
+		[value, channelID]
 	);
 }
 
@@ -96,5 +108,6 @@ async function addChannel( channelID, memes = false, repost = false ) {
 module.exports = {
 	registerMeme,
 	getChannel,
-	addChannel
+	addChannel,
+	updateChannel
 }

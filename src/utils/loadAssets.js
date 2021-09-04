@@ -27,7 +27,6 @@ async function loadCommands( client ) {
 		for ( const file of commandFiles ) {
 			// Using another pathname because require works from the current file path and not the project path.
 			const command = require( `../commands/${sub_dir}/${file}` );
-
 			client.commands.set( command.data.name, command );
 		}
 	})
