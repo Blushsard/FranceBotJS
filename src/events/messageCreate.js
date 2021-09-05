@@ -1,6 +1,6 @@
 /**
  * @author Benjamin Guirlet
- * @file
+ * @description
  *		Handler of the 'messageCreate' event.
  */
 

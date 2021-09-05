@@ -1,6 +1,6 @@
 /**
  * @author Benjamin Guirlet
- * @file
+ * @description
  * 		The base file of the bot.
  */
 
@@ -33,5 +33,3 @@ client.commands = new Collection();
 /* ----------------------------------------------- */
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
-
-

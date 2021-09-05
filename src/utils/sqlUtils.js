@@ -1,6 +1,6 @@
 /**
  * @author Benjamin Guirlet
- * @file
+ * @description
  * 		This file contains all the database related functions.
  * 		The client use the module 'mysql' to work with the database.
  *
@@ -101,13 +101,27 @@ async function updateChannel( channelID, columnName, value ) {
 }
 
 
+/**
+ * Update a channel used by the client.
+ * @param {string} channelID The channel's discord ID.
+ * @param {string} columnName The name of the column in the database table.
+ * @param {boolean} value The new value of the column.
+ */
+async function updateChannelBot(channelID, columnName, value ) {
+	const channel = await getChannel( channelID );
+
+	// Checking the array's length to know is the channel is already in the database.
+	if ( !channel.length )
+		await addChannel( channelID );
+	await updateChannel( channelID, columnName, value );
+}
+
+
 
 /* ----------------------------------------------- */
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
 module.exports = {
-	registerMeme,
 	getChannel,
-	addChannel,
-	updateChannel
+	updateChannelBot
 }

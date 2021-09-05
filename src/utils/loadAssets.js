@@ -1,6 +1,6 @@
 /**
  * @author Benjamin Guirlet
- * @file
+ * @description
  * 		The file contains the functions to load the commands and events in the bot at startup.
  */
 

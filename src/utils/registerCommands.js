@@ -1,7 +1,8 @@
 /**
  * @author Benjamin Guirlet
- * @file This file is a script used when slash commands are added or modified so they can be updated on discord.
- * 		 It can update the commands on all the servers or on some specified servers.
+ * @description
+ * 		This file is a script used when slash commands are added or modified so they can be updated on discord.
+ * 		It can update the commands on all the servers or on some specified servers.
  */
 
 
