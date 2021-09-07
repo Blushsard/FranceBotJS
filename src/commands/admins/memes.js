@@ -1,32 +1,32 @@
 /**
  * @author Benjamin Guirlet
  * @description
- *      Contains the command 'salon_repost'.
- *      It allows the administrators to define in which channel the repost feature is enabled.
+ *      This file contains the 'salon_memes' command.
+ *      It allows the server administrators to define in which channels the 'memes' features is enabled.
  */
 
 
 const { SlashCommandBuilder } = require( "@discordjs/builders" );
 const { CommandInteraction } = require( "discord.js" );
 const sqlUtils = require( "../../utils/sqlUtils" );
-const {ADMINS} = require("../../files/guild_data.json");
+const { ADMINS } = require( "../../files/guild_data.json" );
 
 
 /* ----------------------------------------------- */
 /* COMMAND BUILD                                   */
 /* ----------------------------------------------- */
 const slashCommand = new SlashCommandBuilder()
-	.setName( "salon_feed" )
-	.setDescription( "Permet de d'ajouter ou enlever le salon courant comme le salon du feed pour le bot." )
+	.setName( "memes" )
+	.setDescription( "Permet de d'ajouter ou enlever le salon courant comme un salon de memes pour le bot." )
 	.addSubcommand( subCommand =>
 		subCommand
-			.setName( "add" )
-			.setDescription( "Ajoute le salon actuel comme le salon du feed." )
+			.setName( "set" )
+			.setDescription( "Défini le salon courant comme salon de memes." )
 	)
 	.addSubcommand( subCommand =>
 		subCommand
 			.setName( "remove" )
-			.setDescription( "Enlève le salon courant comme le salon du feed." )
+			.setDescription( "Enlève le salon courant comme salon de memes." )
 	);
 
 
@@ -46,16 +46,16 @@ async function execute( interaction ) {
 	}
 
 	switch ( interaction.options.getSubcommand() ) {
-		case 'add':
-			await sqlUtils.updateChannelBot( interaction.channelId, "repost", true );
+		case 'set':
+			await sqlUtils.updateChannel( interaction.channelId, "memes", true );
 			await interaction.reply(
-				{ content: "Ce salon est maintenant un salon de reposts!", ephemeral: true }
+				{ content: "Ce salon est maintenant un salon de memes!", ephemeral: true }
 			);
 			break;
 		case 'remove':
-			await sqlUtils.updateChannelBot( interaction.channelId, "repost", false );
+			await sqlUtils.updateChannel( interaction.channelId, "memes", false );
 			await interaction.reply(
-				{ content: "Ce salon n'est plus un salon de reposts!", ephemeral: true }
+				{ content: "Ce salon n'est plus un salon de memes!", ephemeral: true }
 			);
 			break;
 	}

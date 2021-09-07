@@ -76,6 +76,19 @@ async function getChannel( channelID ) {
 
 
 /**
+ * This function returns all the channels that correspond to the passed type.
+ * @param {string} type The type of the channel(s) we want (memes, repost, feed, logs, stats).
+ * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the request's results.
+ */
+async function getTypeChannel( type ) {
+	return await query(
+		`SELECT * FROM Channels WHERE ${type}=true;`
+	);
+}
+
+
+
+/**
  * Add a channel to the MRChannels database.
  * @param {string} channelID The TextChannel's discord ID.
  */
@@ -94,6 +107,10 @@ async function addChannel( channelID ) {
  * @param {boolean} value The new value of the column.
  */
 async function updateChannel( channelID, columnName, value ) {
+	// Checking the array's length to know is the channel is already in the database.
+	if ( !(await getChannel( channelID )).length )
+		await addChannel( channelID );
+
 	await query(
 		`UPDATE Channels SET ${columnName}=? WHERE channel_id=?;`,
 		[value, channelID]
@@ -101,27 +118,11 @@ async function updateChannel( channelID, columnName, value ) {
 }
 
 
-/**
- * Update a channel used by the client.
- * @param {string} channelID The channel's discord ID.
- * @param {string} columnName The name of the column in the database table.
- * @param {boolean} value The new value of the column.
- */
-async function updateChannelBot(channelID, columnName, value ) {
-	const channel = await getChannel( channelID );
-
-	// Checking the array's length to know is the channel is already in the database.
-	if ( !channel.length )
-		await addChannel( channelID );
-	await updateChannel( channelID, columnName, value );
-}
-
-
-
 /* ----------------------------------------------- */
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
 module.exports = {
 	getChannel,
-	updateChannelBot
+	updateChannel,
+	getTypeChannel
 }
