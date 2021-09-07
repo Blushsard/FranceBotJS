@@ -122,7 +122,7 @@ async function updateChannel( channelID, columnName, value ) {
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
 module.exports = {
-	getChannel,
+	query,
 	updateChannel,
 	getTypeChannel
 }
