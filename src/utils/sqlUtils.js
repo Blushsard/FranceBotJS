@@ -22,7 +22,7 @@ const { HOST, USER, PASSWORD, DATABASE } = require( "../files/config.json" )
  * @return {Promise<mysql.Connection>} A promise that is fulfilled with a mysql.Connection object.
  */
 async function getConnection() {
-	return (await mysql.createConnection({
+	return ( await mysql.createConnection({
 			host: HOST,
 			user: USER,
 			password: PASSWORD,
@@ -47,18 +47,6 @@ async function query( query, params = [] ) {
 	await cnx.end();
 
 	return rows ;
-}
-
-
-/**
- * Register a meme in the table Memes.
- * @param {array} meme_data An array with the meme's data.
- */
-async function registerMeme( meme_data ) {
-	await query(
-		"INSERT INTO Memes VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);",
-		meme_data
-	)
 }
 
 
