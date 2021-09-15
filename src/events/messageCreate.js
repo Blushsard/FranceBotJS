@@ -20,7 +20,17 @@ const { Client, Message } = require( "discord.js" );
  * @param {Client} client The client that emitted the event.
  */
 async function execute( message, client ) {
+	const channel = await sqlUtils.getChannel( message.channelId );
 
+	if ( !channel )
+		return;
+
+	if ( channel["memes"] ) {
+		let memesArray = await msgUtils.getMemesLinks( message );
+		message.attachments.forEach( ( value, key ) => {
+			memesArray.push( value );
+		});
+	}
 }
 
 

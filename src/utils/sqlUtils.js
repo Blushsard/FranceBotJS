@@ -15,7 +15,7 @@ const { HOST, USER, PASSWORD, DATABASE } = require( "../files/config.json" )
 
 
 /* ----------------------------------------------- */
-/* FUNCTIONS                                       */
+/* FUNCTIONS CHANNELS                              */
 /* ----------------------------------------------- */
 /**
  * Return a connection to the client's database.
@@ -53,13 +53,19 @@ async function query( query, params = [] ) {
 /**
  * Retrieves from the table MRChannels a channel.
  * @param {string} channelID The TextChannel discord ID.
- * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the query's result.
+ * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the query's result
+ * 							 if the channel is in the database, else it is fulfilled with 'null'.
  */
 async function getChannel( channelID ) {
-	return await query(
+	const channel = await query(
 		"SELECT * FROM Channels WHERE channel_id=?;",
 		[channelID]
 	);
+
+	if ( channel.length )
+		return channel[0];
+	else
+		return null;
 }
 
 
@@ -68,7 +74,7 @@ async function getChannel( channelID ) {
  * @param {string} type The type of the channel(s) we want (memes, repost, feed, logs, stats).
  * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the request's results.
  */
-async function getTypeChannel( type ) {
+async function getChannelsByType( type ) {
 	return await query(
 		`SELECT * FROM Channels WHERE ${type}=true;`
 	);
@@ -96,7 +102,7 @@ async function addChannel( channelID ) {
  */
 async function updateChannel( channelID, columnName, value ) {
 	// Checking the array's length to know is the channel is already in the database.
-	if ( !(await getChannel( channelID )).length )
+	if ( !(await getChannel( channelID )) )
 		await addChannel( channelID );
 
 	await query(
@@ -112,5 +118,6 @@ async function updateChannel( channelID, columnName, value ) {
 module.exports = {
 	query,
 	updateChannel,
-	getTypeChannel
+	getChannel,
+	getChannelsByType
 }
