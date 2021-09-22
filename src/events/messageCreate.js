@@ -30,6 +30,11 @@ async function execute( message, client ) {
 		message.attachments.forEach( ( value, key ) => {
 			memesArray.push( value );
 		});
+
+		await msgUtils.addMemeToDatabase( message, 0, 0, memesArray );
+
+		await message.react( LIKE_EMOJI );
+		await message.react( REPOST_EMOJI );
 	}
 }
 

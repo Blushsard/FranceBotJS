@@ -7,7 +7,7 @@
 
 const { Message, MessageAttachment } = require( "discord.js" );
 const { WEBSITES } = require( "../files/config.json" );
-const { query } = require( "sqlUtils" );
+const sqlUtils = require( "../utils/sqlUtils" );
 
 
 /* ----------------------------------------------- */
@@ -68,7 +68,7 @@ function getMonthFormatDate() {
  * @param {array[string|MessageAttachment]} attachmentsArray The array with the message's memes.
  */
 async function addMemeToDatabase( message, likes, reposts, attachmentsArray ) {
-	await query(
+	await sqlUtils.query(
 		"INSERT INTO Memes VALUES (?,?,?,?,?,?,?,?,?,?,?,?);",
 		[
 			message.id,
@@ -86,13 +86,30 @@ async function addMemeToDatabase( message, likes, reposts, attachmentsArray ) {
 		]
 	);
 
+	let queryParams;
+	for ( let cpt = 0; cpt < attachmentsArray.length; cpt++ ) {
+		let element = attachmentsArray[cpt];
 
-	for ( let attachment in attachmentsArray ) {
-		await query(
-			"INSERT INTO Attachments VALUES (?,?,?,?,?);",
-			[
+		if ( typeof element === "string" ) {
+			queryParams = [
 				message.id,
+				"lien",
+				element,
+				element
 			]
+		}
+		else {
+			queryParams = [
+				message.id,
+				element.contentType.split( "/" )[0],
+				element.name,
+				element.url
+			]
+		}
+
+		await sqlUtils.query(
+			"INSERT INTO Attachments (msg_id, type, filename, link) VALUES (?,?,?,?);",
+			queryParams
 		)
 	}
 }
@@ -102,5 +119,6 @@ async function addMemeToDatabase( message, likes, reposts, attachmentsArray ) {
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
 module.exports = {
-	getMemesLinks
+	getMemesLinks,
+	addMemeToDatabase
 }
