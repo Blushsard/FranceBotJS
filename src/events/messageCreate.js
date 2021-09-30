@@ -7,7 +7,7 @@
 
 const sqlUtils = require( "../utils/sqlUtils" );
 const msgUtils = require( "../utils/messageUtils" );
-const { LIKE_EMOJI, REPOST_EMOJI } = require( "../files/config.json" );
+const { LIKE_EMOJI_MENTION, REPOST_EMOJI_MENTION } = require( "../files/config.json" );
 const { Client, Message } = require( "discord.js" );
 
 
@@ -22,7 +22,7 @@ const { Client, Message } = require( "discord.js" );
  * @param {Client} client The client that emitted the event.
  */
 async function execute( message, client ) {
-	const channel = await sqlUtils.getChannel( message.channelId );
+	const channel = await sqlUtils.fetchChannel( message.channelId );
 
 	if ( !channel )
 		return;
@@ -31,8 +31,8 @@ async function execute( message, client ) {
 		if ( await msgUtils.hasMeme( message ) ) {
 			await msgUtils.addMemeToDatabase( message, 0, 0 );
 
-			await message.react( LIKE_EMOJI );
-			await message.react( REPOST_EMOJI );
+			await message.react( LIKE_EMOJI_MENTION );
+			await message.react( REPOST_EMOJI_MENTION );
 		}
 	}
 }

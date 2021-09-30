@@ -49,7 +49,7 @@ async function execute( interaction ) {
 	switch ( interaction.options.getSubcommand() ) {
 		case 'set':
 			// We're removing the precedent feed channel if there is one because there can be only one at the same time.
-			logsChannel = await sqlUtils.getChannelsByType( "stats" );
+			logsChannel = await sqlUtils.fetchChannelsByType( "stats" );
 			if ( logsChannel.length )
 				await sqlUtils.updateChannel( logsChannel[0].channel_id, "stats", false )
 
@@ -59,7 +59,7 @@ async function execute( interaction ) {
 			);
 			break;
 		case 'remove':
-			logsChannel = await sqlUtils.getChannelsByType( "stats" );
+			logsChannel = await sqlUtils.fetchChannelsByType( "stats" );
 
 			if ( logsChannel.length ) {
 				await sqlUtils.updateChannel( logsChannel[0].channel_id, "stats", false );

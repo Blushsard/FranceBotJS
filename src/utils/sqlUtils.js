@@ -58,7 +58,7 @@ async function query( query, params = [] ) {
  * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the query's result
  * 							 if the channel is in the database, else it is fulfilled with 'null'.
  */
-async function getChannel( channelID ) {
+async function fetchChannel( channelID ) {
 	const channel = await query(
 		"SELECT * FROM Channels WHERE channel_id=?;",
 		[channelID]
@@ -76,7 +76,7 @@ async function getChannel( channelID ) {
  * @param {string} type The type of the channel(s) we want (memes, repost, feed, logs, stats).
  * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the request's results.
  */
-async function getChannelsByType( type ) {
+async function fetchChannelsByType( type ) {
 	return await query(
 		`SELECT * FROM Channels WHERE ${type}=true;`
 	);
@@ -104,7 +104,7 @@ async function addChannel( channelID ) {
  */
 async function updateChannel( channelID, columnName, value ) {
 	// Checking the array's length to know is the channel is already in the database.
-	if ( !(await getChannel( channelID )) )
+	if ( !(await fetchChannel( channelID )) )
 		await addChannel( channelID );
 
 	await query(
@@ -177,11 +177,31 @@ async function sendMemeToDatabase( message, likes, reposts, attachmentsArray ) {
  * @param {string} messageId The message's discord ID.
  * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the query's result.
  */
-async function getMessage( messageId ) {
-	return await query(
+async function fetchMessage( messageId ) {
+	const row = await query(
 		"SELECT * FROM Memes WHERE msg_id=?;",
 		[ messageId ]
 	);
+
+	return row.length ? row : null;
+}
+
+
+/**
+ * Update a message row in the table Memes.
+ * @param {string} messageId The message's discord ID.
+ * @param {string} udpType Which column to update.
+ * @param {int} udpValue The new value to put in the data cell.
+ */
+async function updateMessage( messageId, udpType, udpValue ) {
+	switch ( udpType ) {
+		case 'likes':
+			await query(
+			`UPDATE Memes SET ${udpType}=? WHERE msg_id=?;`,
+			[ udpValue, messageId ]
+			);
+			break;
+	}
 }
 
 
@@ -191,8 +211,9 @@ async function getMessage( messageId ) {
 module.exports = {
 	query,
 	updateChannel,
-	getChannel,
-	getChannelsByType,
+	fetchChannel,
+	fetchChannelsByType,
 	sendMemeToDatabase,
-	getMessage
+	fetchMessage,
+	updateMessage
 }

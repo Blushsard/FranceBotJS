@@ -47,7 +47,7 @@ async function hasMeme( message ) {
 		}
 	}
 
-	return message.attachments.size !== 0;
+	return !!message.attachments.size;
 }
 
 
