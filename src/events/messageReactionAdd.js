@@ -1,39 +1,30 @@
 /**
  * @author Benjamin Guirlet
  * @description
- *		Handler of the 'messageCreate' event.
+ *      This event is used to track the likes and repost of the messages.
+ *      If a message with a meme is not in the database, then it will be added.
  */
 
 
 const sqlUtils = require( "../utils/sqlUtils" );
-const msgUtils = require( "../utils/messageUtils" );
-const { LIKE_EMOJI, REPOST_EMOJI } = require( "../files/config.json" );
-const { Client, Message } = require( "discord.js" );
+const { LIKE_EMOJI, REPOST_EMOJI } = require("../files/config.json");
+const { MessageReaction, Client, User } = require( "discord.js" );
 
 
 /* ----------------------------------------------- */
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
-
-
 /**
  * Function called when the event 'messageCreate' is emitted.
- * @param {Message} message The message created.
+ * @param {MessageReaction} messageReaction The reaction object.
+ * @param {User} user The user that applied the guild or reaction emoji.
  * @param {Client} client The client that emitted the event.
  */
-async function execute( message, client ) {
-	const channel = await sqlUtils.getChannel( message.channelId );
-
-	if ( !channel )
-		return;
+async function execute( messageReaction, user, client ) {
+	const channel = await sqlUtils.getChannel( messageReaction.message.channelId );
 
 	if ( channel["memes"] ) {
-		if ( await msgUtils.hasMeme( message ) ) {
-			await msgUtils.addMemeToDatabase( message, 0, 0 );
 
-			await message.react( LIKE_EMOJI );
-			await message.react( REPOST_EMOJI );
-		}
 	}
 }
 
@@ -42,6 +33,6 @@ async function execute( message, client ) {
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
 module.exports = {
-	name: "messageCreate",
+	name: "messageReactionAdd",
 	execute
 }

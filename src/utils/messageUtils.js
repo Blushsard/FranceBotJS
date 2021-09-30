@@ -5,9 +5,9 @@
  */
 
 
-const { Message, MessageAttachment } = require( "discord.js" );
+const { Message } = require( "discord.js" );
 const { WEBSITES } = require( "../files/config.json" );
-const sqlUtils = require( "../utils/sqlUtils" );
+const sqlUtils = require( "./sqlUtils" );
 
 
 /* ----------------------------------------------- */
@@ -17,7 +17,7 @@ const sqlUtils = require( "../utils/sqlUtils" );
  * Returns an array with all the links that are from memes' websites.
  * @param {Message} message A discord.Message object.
  * @returns {Promise<array[string]>} A Promise fulfilled with an array containing the memes' links.
- * 							 If there isn't any links, then the array is empty.
+ * 									 If there isn't any links, then the array is empty.
  */
 async function getMemesLinks( message ) {
 	let linksArray = [];
@@ -28,7 +28,6 @@ async function getMemesLinks( message ) {
 			for ( let match of matches )
 				linksArray.push( match );
 		}
-
 	}
 
 	return linksArray;
@@ -36,82 +35,37 @@ async function getMemesLinks( message ) {
 
 
 /**
- * Returns the current date in an int with the following format :
- * 		year_number * 365 + month_number * 12 + day_number
- * @returns {int} The day format date.
+ * Returns true if the message has at least a meme.
+ * @param {Message} message The message to check.
+ * @returns {Promise<boolean>} Returns true if the message has at least a meme.
  */
-function getDayFormatDate() {
-	const date = new Date();
-	return date.getFullYear() * 365 +
-			( date.getMonth() + 1 ) * 12 +
-			date.getDate();
-}
-
-
-/**
- * Returns the current date in an int with the following format :
- * 		year_number * 12 + month_number
- * @returns {int} The month format date.
- */
-function getMonthFormatDate() {
-	const date = new Date();
-	return date.getFullYear() * 12 +
-		( date.getMonth() + 1 );
-}
-
-
-/**
- * Add the message with its memes in the database.
- * @param {Message} message The discord.Message object of the message.
- * @param {int} likes The likes of the message. Can be more than 0 in some cases.
- * @param {int} reposts The reposts of the message. Can be more than 0 in some cases.
- * @param {array[string|MessageAttachment]} attachmentsArray The array with the message's memes.
- */
-async function addMemeToDatabase( message, likes, reposts, attachmentsArray ) {
-	await sqlUtils.query(
-		"INSERT INTO Memes VALUES (?,?,?,?,?,?,?,?,?,?,?,?);",
-		[
-			message.id,
-			message.author.id,
-			message.channelId,
-			message.channel.parent.name,
-			likes,
-			reposts,
-			message.content,
-			getDayFormatDate(),
-			getMonthFormatDate(),
-			false,
-			false,
-			false
-		]
-	);
-
-	let queryParams;
-	for ( let cpt = 0; cpt < attachmentsArray.length; cpt++ ) {
-		let element = attachmentsArray[cpt];
-
-		if ( typeof element === "string" ) {
-			queryParams = [
-				message.id,
-				"lien",
-				element,
-				element
-			]
+async function hasMeme( message ) {
+	for ( let wb of WEBSITES ) {
+		let matches = message.content.match( wb );
+		if ( matches ) {
+			return true;
 		}
-		else {
-			queryParams = [
-				message.id,
-				element.contentType.split( "/" )[0],
-				element.name,
-				element.url
-			]
-		}
-
-		await sqlUtils.query(
-			"INSERT INTO Attachments (msg_id, type, filename, link) VALUES (?,?,?,?);",
-			queryParams
-		)
 	}
+
+	return message.attachments.size !== 0;
+}
+
+
+/**
+ * Add the message and its attachments to the database.
+ * This function only do the treatments of the attachments, it call the sqlUtils.addMemeToDatabase() function
+ * to add the message to the database.
+ * @param {Message} message The message that will be added to the database.
+ * @param {int} likes The number of likes on the message.
+ * @param {int} reposts The number of reposts on the message.
+ */
+async function addMemeToDatabase( message, likes, reposts ) {
+	let memesArray = await getMemesLinks( message );
+	message.attachments.forEach( value => {
+		memesArray.push( value );
+	});
+
+	await sqlUtils.sendMemeToDatabase( message, 0, 0, memesArray );
 }
 
 
@@ -119,6 +73,6 @@ async function addMemeToDatabase( message, likes, reposts, attachmentsArray ) {
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
 module.exports = {
-	getMemesLinks,
-	addMemeToDatabase
+	addMemeToDatabase,
+	hasMeme
 }

@@ -12,7 +12,12 @@ const { loadCommandsToGuild } = require( "./utils/registerCommands" );
 
 
 const client = new Client({
-	intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES ]
+	intents: [
+		Intents.FLAGS.GUILDS,
+		Intents.FLAGS.GUILD_MESSAGES,
+		Intents.FLAGS.DIRECT_MESSAGES,
+		Intents.FLAGS.GUILD_MESSAGE_REACTIONS
+	]
 });
 
 
@@ -23,6 +28,11 @@ client.commands = new Collection();
 	await client.login( TOKEN );
 	await loadCommandsToGuild( client.user.id, DEV_GUILD_ID, TOKEN );
 })();
+
+
+module.exports = {
+	client: client
+}
 
 /* ----------------------------------------------- */
 /* COMMAND BUILD                                   */

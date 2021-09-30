@@ -11,7 +11,9 @@
 
 
 const mysql = require( "mysql2/promise" );
+const dateUtils = require( "./dateUtils" );
 const { HOST, USER, PASSWORD, DATABASE } = require( "../files/config.json" )
+const { Message, MessageAttachment } = require( "discord.js" );
 
 
 /* ----------------------------------------------- */
@@ -113,11 +115,84 @@ async function updateChannel( channelID, columnName, value ) {
 
 
 /* ----------------------------------------------- */
+/* FUNCTIONS MEMES                                 */
+/* ----------------------------------------------- */
+/**
+ * Add the message with its memes in the database.
+ * @param {Message} message The discord.Message object of the message.
+ * @param {int} likes The likes of the message. Can be more than 0 in some cases.
+ * @param {int} reposts The reposts of the message. Can be more than 0 in some cases.
+ * @param {array[string|MessageAttachment]} attachmentsArray The array with the message's memes.
+ */
+async function sendMemeToDatabase( message, likes, reposts, attachmentsArray ) {
+	await query(
+		"INSERT INTO Memes VALUES (?,?,?,?,?,?,?,?,?,?,?,?);",
+		[
+			message.id,
+			message.author.id,
+			message.channelId,
+			message.channel.parent.name,
+			likes,
+			reposts,
+			message.content,
+			dateUtils.getDayFormatDate(),
+			dateUtils.getMonthFormatDate(),
+			false,
+			false,
+			false
+		]
+	);
+
+	let queryParams;
+	for ( let cpt = 0; cpt < attachmentsArray.length; cpt++ ) {
+		let element = attachmentsArray[cpt];
+
+		if ( typeof element === "string" ) {
+			queryParams = [
+				message.id,
+				"lien",
+				element,
+				element
+			]
+		}
+		else {
+			queryParams = [
+				message.id,
+				element.contentType.split( "/" )[0],
+				element.name,
+				element.url
+			]
+		}
+
+		await query(
+			"INSERT INTO Attachments (msg_id, type, filename, link) VALUES (?,?,?,?);",
+			queryParams
+		)
+	}
+}
+
+
+/**
+ * Returns an array with the message's data if it is present in the table.
+ * @param {string} messageId The message's discord ID.
+ * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the query's result.
+ */
+async function getMessage( messageId ) {
+	return await query(
+		"SELECT * FROM Memes WHERE msg_id=?;",
+		[ messageId ]
+	);
+}
+
+
+/* ----------------------------------------------- */
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
 module.exports = {
 	query,
 	updateChannel,
 	getChannel,
-	getChannelsByType
+	getChannelsByType,
+	sendMemeToDatabase,
+	getMessage
 }
