@@ -64,10 +64,7 @@ async function fetchChannel( channelID ) {
 		[channelID]
 	);
 
-	if ( channel.length )
-		return channel[0];
-	else
-		return null;
+	return channel.length ? channel[0] : null;
 }
 
 
