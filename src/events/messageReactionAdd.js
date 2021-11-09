@@ -22,6 +22,7 @@ const { MessageReaction, Client, User } = require( "discord.js" );
  */
 async function execute( messageReaction, user, client ) {
 	// Checking if the bot is at the origin of the event.
+	if ( user.id === client.id ) return;
 
 
 	const channel = await sqlUtils.fetchChannel( messageReaction.message.channelId );
