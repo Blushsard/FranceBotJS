@@ -1,11 +1,12 @@
 /**
  * @author Benjamin Guirlet
  * @description
- *      .
+ *      Event called whenever an event is emitted.
+ *      It is used to manually emit events that are not received by the client.
+ *      For example, reactions added/removed from messages that are not in the client's cache.
  */
 
 
-const { Client } = require(  "discord.js"  );
 const { client } = require( "../index" );
 
 
