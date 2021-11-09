@@ -17,7 +17,7 @@ const { ADMINS } = require( "../../files/config.json" );
 /* COMMAND BUILD                                   */
 /* ----------------------------------------------- */
 const slashCommand = new SlashCommandBuilder()
-	.setName( "clear_channels" )
+	.setName( "clean_channels" )
 	.setDescription( "Supprime tout les salons inutilisés de la table Channels." );
 
 
