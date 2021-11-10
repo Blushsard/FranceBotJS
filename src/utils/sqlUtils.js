@@ -148,7 +148,7 @@ async function sendMemeToDatabase( message, likes, reposts, attachmentsArray ) {
 			queryParams = [
 				message.id,
 				"lien",
-				element,
+				"lien",
 				element
 			]
 		}
@@ -191,14 +191,10 @@ async function fetchMessage( messageId ) {
  * @param {int} udpValue The new value to put in the data cell.
  */
 async function updateMessage( messageId, udpType, udpValue ) {
-	switch ( udpType ) {
-		case 'likes':
-			await query(
-			`UPDATE Memes SET ${udpType}=? WHERE msg_id=?;`,
-			[ udpValue, messageId ]
-			);
-			break;
-	}
+	await query(
+		`UPDATE Memes SET ${udpType}=? WHERE msg_id=?;`,
+		[ udpValue, messageId ]
+	);
 }
 
 

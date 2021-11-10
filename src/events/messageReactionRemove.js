@@ -14,7 +14,7 @@ const { MessageReaction, Client, User } = require( "discord.js" );
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
 /**
- * Function called when the event 'messageReactionAdd' is emitted.
+ * Function called when the event 'messageReactionRemove' is emitted.
  * @param {MessageReaction} messageReaction The reaction object.
  * @param {User} user The user that applied the guild or reaction emoji.
  * @param {Client} client The client that emitted the event.
@@ -28,6 +28,6 @@ async function execute( messageReaction, user, client ) {
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
 module.exports = {
-	name: "messageReactionAdd",
+	name: "messageReactionRemove",
 	execute
 }
