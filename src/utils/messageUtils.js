@@ -5,7 +5,7 @@
  */
 
 
-const { Message } = require( "discord.js" );
+const { Message, Client, MessageReaction } = require( "discord.js" );
 const { WEBSITES, LIKE_EMOJI, REPOST_EMOJI } = require( "../files/config.json" );
 const sqlUtils = require( "./sqlUtils" );
 
@@ -69,44 +69,38 @@ async function addMemeToDatabase( message, likes, reposts ) {
 }
 
 
-async function updateMessageReactions( messageReaction, user, client ) {
+/**
+ * Updates the reaction (like/repost) count on a message if it is in the database.
+ * @param {MessageReaction} reaction The reaction that triggered the event.
+ * @param {User} user The user that added the reaction.
+ * @param {Client} client The client's object.
+ */
+async function updateMessageReactions( reaction, user, client ) {
 	// Checking if the bot is at the origin of the event.
 	if ( user.id === client.id ) return;
 
 
-	const channel = await sqlUtils.fetchChannel( messageReaction.message.channelId );
+	const messageDb = await sqlUtils.fetchMessage( reaction.message.id );
+	const channel = await sqlUtils.fetchChannel( reaction.message.channelId );
 
+	let emojiType;
 	if ( channel["memes"] ) {
-		if ( messageReaction.emoji.name === LIKE_EMOJI ) {
-			const messageDb = await sqlUtils.fetchMessage( messageReaction.message.id );
-			// If the message is in the database.
-			if ( messageDb ) {
-				await sqlUtils.updateMessage(
-					messageDb[0]["msg_id"],
-					"likes",
-					messageReaction.count - 1
-				)
-			}
-			// We add the message in the database if it is not in.
-			else {
-				// TODO add message to database when not in.
-			}
-		}
+		if ( reaction.emoji.name === LIKE_EMOJI )
+			emojiType = "likes";
+		else if ( reaction.emoji.name === REPOST_EMOJI )
+			emojiType = "repost"
 
-		else if ( messageReaction.emoji.name === REPOST_EMOJI ) {
-			const messageDb = await sqlUtils.fetchMessage( messageReaction.message.id );
-			// If the message is in the database.
-			if ( messageDb ) {
-				await sqlUtils.updateMessage(
-					messageDb[0]["msg_id"],
-					"repost",
-					messageReaction.count - 1
-				)
-			}
-			// We add the message in the database if it is not in.
-			else {
-				// TODO add message to database when not in.
-			}
+
+		if ( messageDb ) {
+			await sqlUtils.updateMessage(
+				messageDb[0]["msg_id"],
+				emojiType,
+				reaction.count - 1
+			)
+		}
+		else {
+			await reaction.fetch();
+			client.emit( "messageCreate", reaction.message );
 		}
 	}
 }

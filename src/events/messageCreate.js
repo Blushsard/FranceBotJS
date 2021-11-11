@@ -1,7 +1,7 @@
 /**
  * @author Benjamin Guirlet
  * @description
- *		Handler of the 'messageCreate' event.
+ *		This event is used to store the memes in the database and add their initial reactions.
  */
 
 
@@ -23,7 +23,6 @@ const { Client, Message } = require( "discord.js" );
  */
 async function execute( message, client ) {
 	const channel = await sqlUtils.fetchChannel( message.channelId );
-
 	if ( !channel )
 		return;
 

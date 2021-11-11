@@ -15,12 +15,12 @@ const { MessageReaction, Client, User } = require( "discord.js" );
 /* ----------------------------------------------- */
 /**
  * Function called when the event 'messageReactionAdd' is emitted.
- * @param {MessageReaction} messageReaction The reaction object.
+ * @param {MessageReaction} reaction The reaction object.
  * @param {User} user The user that applied the guild or reaction emoji.
  * @param {Client} client The client that emitted the event.
  */
-async function execute( messageReaction, user, client ) {
-	await msgUtils.updateMessageReactions( messageReaction, user, client );
+async function execute( reaction, user, client ) {
+	await msgUtils.updateMessageReactions( reaction, user, client );
 }
 
 

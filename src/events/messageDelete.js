@@ -1,27 +1,24 @@
 /**
  * @author Benjamin Guirlet
  * @description
- *		It manage the slash commands.
  */
 
 
-const { CommandInteraction, Client } = require( "discord.js" );
+const { Message, Client } = require( "discord.js" );
 
 
 /* ----------------------------------------------- */
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
 /**
- * The handler for the event 'interactionCreate'.
+ * The handler for the event 'messageDelete'.
  * It is called whenever an interaction is created.
  * It can be a button pressed, a slash command executed, etc.
- * @param {CommandInteraction} interaction The interaction that triggered the event.
+ * @param {Message} message The message that triggered the event.
  * @param {Client} client The client that created the interaction.
  */
-function execute( interaction, client ) {
-	if ( interaction.isCommand() ) {
-		client.commands.get( interaction.commandName ).execute( interaction );
-	}
+function execute( message, client ) {
+
 }
 
 
@@ -29,6 +26,6 @@ function execute( interaction, client ) {
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
 module.exports = {
-	name: "interactionCreate",
+	name: "messageCreate",
 	execute
 }
