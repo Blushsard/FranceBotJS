@@ -47,13 +47,13 @@ async function execute( interaction ) {
 
 	switch ( interaction.options.getSubcommand() ) {
 		case 'set':
-			await sqlUtils.updateChannel( interaction.channelId, "repost", true );
+			await sqlUtils.updateChannel( interaction.channelId, "reposts", true );
 			await interaction.reply(
 				{ content: "Ce salon est maintenant un salon de reposts!", ephemeral: true }
 			);
 			break;
 		case 'remove':
-			await sqlUtils.updateChannel( interaction.channelId, "repost", false );
+			await sqlUtils.updateChannel( interaction.channelId, "reposts", false );
 			await interaction.reply(
 				{ content: "Ce salon n'est plus un salon de reposts!", ephemeral: true }
 			);

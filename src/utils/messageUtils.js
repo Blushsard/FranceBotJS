@@ -83,25 +83,35 @@ async function updateMessageReactions( reaction, user, client ) {
 	const messageDb = await sqlUtils.fetchMessage( reaction.message.id );
 	const channel = await sqlUtils.fetchChannel( reaction.message.channelId );
 
-	let emojiType;
-	if ( channel["memes"] ) {
-		if ( reaction.emoji.name === LIKE_EMOJI )
-			emojiType = "likes";
-		else if ( reaction.emoji.name === REPOST_EMOJI )
-			emojiType = "repost"
-
-
-		if ( messageDb ) {
-			await sqlUtils.updateMessage(
-				messageDb[0]["msg_id"],
-				emojiType,
-				reaction.count - 1
-			)
-		}
-		else {
+	if ( channel["memes"] || channel["reposts"] ) {
+		// If the message was not in the client's cache.
+		if ( reaction.partial )
 			await reaction.fetch();
+
+		let nbLikes = 0;
+		let nbRepost = 0;
+		reaction.message.reactions.cache.forEach( mReaction => {
+			if ( mReaction.emoji.name === LIKE_EMOJI )
+				nbLikes = mReaction.count - 1;
+			else if ( mReaction.emoji.name === REPOST_EMOJI )
+				nbRepost = mReaction.count - 1;
+		});
+
+		// This allow us to add the message to the database before updating its likes and reposts.
+		if ( !messageDb )
 			client.emit( "messageCreate", reaction.message );
-		}
+
+		// We update to ensure that the message in the database has the right number of likes and reposts.
+		await sqlUtils.updateMessage(
+			messageDb[0]["msg_id"],
+			"likes",
+			reaction.count - 1
+		)
+		await sqlUtils.updateMessage(
+			messageDb[0]["msg_id"],
+			"reposts",
+			reaction.count - 1
+		)
 	}
 }
 
