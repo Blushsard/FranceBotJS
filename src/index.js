@@ -5,7 +5,7 @@
  */
 
 
-const { TOKEN, DEV_GUILD_ID } = require( "./files/config.json" );
+const { TOKEN, GUILD_ID } = require( "./files/config.json" );
 const { Client, Collection, Intents } = require( "discord.js" );
 const { loadCommands, loadEvents } = require( "./utils/loadAssets" );
 const { loadCommandsToGuild } = require( "./utils/registerCommands" );
@@ -31,7 +31,7 @@ client.commands = new Collection();
 	await loadEvents( client );
 	await client.login( TOKEN );
 	// Out-comment the following line if the commands where modified/added to upload the commands to the guild.
-	// await loadCommandsToGuild( client.user.id, DEV_GUILD_ID, TOKEN );
+	// await loadCommandsToGuild( client.user.id, GUILD_ID, TOKEN );
 })();
 
 
