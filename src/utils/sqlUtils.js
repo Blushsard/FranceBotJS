@@ -180,7 +180,7 @@ async function fetchMessage( messageId ) {
 		[ messageId ]
 	);
 
-	return row.length ? row : null;
+	return row.length ? row[0] : null;
 }
 
 

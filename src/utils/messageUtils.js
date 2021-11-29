@@ -40,10 +40,13 @@ async function getMemesLinks( message ) {
  * @returns {Promise<boolean>} Returns true if the message has at least a meme.
  */
 async function hasMeme( message ) {
-	for ( let wb of WEBSITES ) {
-		let matches = message.content.match( wb );
-		if ( matches ) {
-			return true;
+	// Checking if there is a message content to avoid an error.
+	if ( !!message.content ) {
+		for ( let wb of WEBSITES ) {
+			let matches = message.content.match(wb);
+			if (matches) {
+				return true;
+			}
 		}
 	}
 
@@ -58,14 +61,20 @@ async function hasMeme( message ) {
  * @param {Message} message The message that will be added to the database.
  * @param {int} likes The number of likes on the message.
  * @param {int} reposts The number of reposts on the message.
+ * @return boolean Returns a boolean indicating if the meme has been added to the database.
  */
 async function addMemeToDatabase( message, likes, reposts ) {
-	let memesArray = await getMemesLinks( message );
-	message.attachments.forEach( value => {
-		memesArray.push( value );
-	});
+	if ( await hasMeme( message ) ) {
+		console.log( hasMeme( message ) )
+		let memesArray = await getMemesLinks(message);
+		message.attachments.forEach(value => {
+			memesArray.push(value);
+		});
 
-	await sqlUtils.sendMemeToDatabase( message, 0, 0, memesArray );
+		await sqlUtils.sendMemeToDatabase(message, 0, 0, memesArray);
+		return true;
+	}
+	return false;
 }
 
 
@@ -80,8 +89,16 @@ async function updateMessageReactions( reaction, user, client ) {
 	if ( user.id === client.id ) return;
 
 
-	const messageDb = await sqlUtils.fetchMessage( reaction.message.id );
+	let messageDb = await sqlUtils.fetchMessage( reaction.message.id );
+	// This allow us to add the message to the database before updating its likes and reposts.
+	if ( !messageDb ) {
+		reaction.message.addToDatabase = true;
+		client.emit("messageCreate", reaction.message);
+		return;
+	}
+
 	const channel = await sqlUtils.fetchChannel( reaction.message.channelId );
+	if ( !channel ) return;
 
 	if ( channel["memes"] || channel["reposts"] ) {
 		// If the message was not in the client's cache.
@@ -97,20 +114,16 @@ async function updateMessageReactions( reaction, user, client ) {
 				nbRepost = mReaction.count - 1;
 		});
 
-		// This allow us to add the message to the database before updating its likes and reposts.
-		if ( !messageDb )
-			client.emit( "messageCreate", reaction.message );
-
 		// We update to ensure that the message in the database has the right number of likes and reposts.
 		await sqlUtils.updateMessage(
-			messageDb[0]["msg_id"],
+			reaction.message.id,
 			"likes",
-			reaction.count - 1
+			nbLikes
 		)
 		await sqlUtils.updateMessage(
-			messageDb[0]["msg_id"],
+			reaction.message.id,
 			"reposts",
-			reaction.count - 1
+			nbRepost
 		)
 	}
 }

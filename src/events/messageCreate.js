@@ -27,9 +27,8 @@ async function execute( message, client ) {
 		return;
 
 	if ( channel["memes"] ) {
-		if ( await msgUtils.hasMeme( message ) ) {
-			await msgUtils.addMemeToDatabase( message, 0, 0 );
-
+		const isAMeme = await msgUtils.addMemeToDatabase( message, 0, 0 );
+		if ( isAMeme ) {
 			await message.react( LIKE_EMOJI_MENTION );
 			await message.react( REPOST_EMOJI_MENTION );
 		}
