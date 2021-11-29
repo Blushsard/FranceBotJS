@@ -20,13 +20,6 @@ const { MessageReaction, Client, User } = require( "discord.js" );
  * @param {Client} client The client that emitted the event.
  */
 async function execute( reaction, user, client ) {
-	// the addToDatabase attribute is a manually added attribute in case the message is not in the database.
-	// Refers to messageUtils.js -> beginning of updateMessageReactions().
-	if ( reaction.message.addToDatabase ) {
-		msgUtils.addMemeToDatabase( reaction.message, 0, 0 )
-			.then( async () => await msgUtils.updateMessageReactions( reaction, user, client ) );
-		return;
-	}
 	await msgUtils.updateMessageReactions( reaction, user, client );
 }
 

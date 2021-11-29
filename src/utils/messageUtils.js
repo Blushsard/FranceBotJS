@@ -65,7 +65,6 @@ async function hasMeme( message ) {
  */
 async function addMemeToDatabase( message, likes, reposts ) {
 	if ( await hasMeme( message ) ) {
-		console.log( hasMeme( message ) )
 		let memesArray = await getMemesLinks(message);
 		message.attachments.forEach(value => {
 			memesArray.push(value);
@@ -88,23 +87,19 @@ async function updateMessageReactions( reaction, user, client ) {
 	// Checking if the bot is at the origin of the event.
 	if ( user.id === client.id ) return;
 
+	// If the message was not in the client's cache.
+	if ( reaction.partial )
+		await reaction.fetch();
 
 	let messageDb = await sqlUtils.fetchMessage( reaction.message.id );
-	// This allow us to add the message to the database before updating its likes and reposts.
 	if ( !messageDb ) {
-		reaction.message.addToDatabase = true;
-		client.emit("messageCreate", reaction.message);
-		return;
+		await addMemeToDatabase( reaction.message, 0, 0 )
 	}
 
 	const channel = await sqlUtils.fetchChannel( reaction.message.channelId );
 	if ( !channel ) return;
 
 	if ( channel["memes"] || channel["reposts"] ) {
-		// If the message was not in the client's cache.
-		if ( reaction.partial )
-			await reaction.fetch();
-
 		let nbLikes = 0;
 		let nbRepost = 0;
 		reaction.message.reactions.cache.forEach( mReaction => {

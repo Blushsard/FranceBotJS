@@ -30,7 +30,8 @@ client.commands = new Collection();
 	await loadCommands( client );
 	await loadEvents( client );
 	await client.login( TOKEN );
-	await loadCommandsToGuild( client.user.id, DEV_GUILD_ID, TOKEN );
+	// Out-comment the following line if the commands where modified/added to upload the commands to the guild.
+	// await loadCommandsToGuild( client.user.id, DEV_GUILD_ID, TOKEN );
 })();
 
 
