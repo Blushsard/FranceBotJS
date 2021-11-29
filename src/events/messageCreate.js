@@ -9,6 +9,7 @@ const sqlUtils = require( "../utils/sqlUtils" );
 const msgUtils = require( "../utils/messageUtils" );
 const { LIKE_EMOJI_MENTION, REPOST_EMOJI_MENTION } = require( "../files/config.json" );
 const { Client, Message } = require( "discord.js" );
+const { threads } = require("../utils/modules/threads.js")
 
 
 /* ----------------------------------------------- */
@@ -33,6 +34,9 @@ async function execute( message, client ) {
 			await message.react( REPOST_EMOJI_MENTION );
 		}
 	}
+
+	threads(message)
+
 }
 
 

@@ -104,4 +104,4 @@ dist
 .tern-port
 
 # Manually added files and folders
-/src/files/
+/src/files/config.json
