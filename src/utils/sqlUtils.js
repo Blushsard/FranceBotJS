@@ -14,6 +14,7 @@ const mysql = require( "mysql2/promise" );
 const dateUtils = require( "./dateUtils" );
 const { HOST, USER, PASSWORD, DATABASE } = require( "../files/config.json" )
 const { Message, MessageAttachment } = require( "discord.js" );
+const { DMessage, Channel, Attachment } = require( "../classes/importClasses" );
 
 
 /**
@@ -55,8 +56,8 @@ async function query( query, params = [] ) {
 /**
  * Retrieves from the table MRChannels a channel.
  * @param {string} channelID The TextChannel discord ID.
- * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the query's result
- * 							 if the channel is in the database, else it is fulfilled with 'null'.
+ * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the query's result as a Channel
+ * 							 object if the channel is in the database, else it is fulfilled with 'null'.
  */
 async function fetchChannel( channelID ) {
 	const channel = await query(
@@ -64,19 +65,23 @@ async function fetchChannel( channelID ) {
 		[channelID]
 	);
 
-	return channel.length ? channel[0] : null;
+	return channel.length ? new Channel( ...channel[0] ) : null;
 }
 
 
 /**
  * This function returns all the channels that correspond to the passed type.
  * @param {string} type The type of the channel(s) we want (memes, repost, feed, logs, stats).
- * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the request's results.
+ * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the request's results as Channel
+ * 							 objects.
  */
 async function fetchChannelsByType( type ) {
-	return await query(
+	const result = await query(
 		`SELECT * FROM Channels WHERE ${type}=true;`
 	);
+	let channels = [];
+	result.forEach( c => channels.push( new Channel( ...c ) ) );
+	return channels;
 }
 
 
@@ -172,7 +177,7 @@ async function sendMemeToDatabase( message, likes, reposts, attachmentsArray ) {
 /**
  * Returns an array with the message's data if it is present in the table.
  * @param {string} messageId The message's discord ID.
- * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the query's result.
+ * @returns {Promise<array>} Returns a Promise fulfilled with a DMessage object.
  */
 async function fetchMessage( messageId ) {
 	const row = await query(
@@ -180,7 +185,7 @@ async function fetchMessage( messageId ) {
 		[ messageId ]
 	);
 
-	return row.length ? row[0] : null;
+	return row.length ? new DMessage( ...row[0] ) : null;
 }
 
 
