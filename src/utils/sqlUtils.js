@@ -16,9 +16,6 @@ const { HOST, USER, PASSWORD, DATABASE } = require( "../files/config.json" )
 const { Message, MessageAttachment } = require( "discord.js" );
 
 
-/* ----------------------------------------------- */
-/* FUNCTIONS CHANNELS                              */
-/* ----------------------------------------------- */
 /**
  * Return a connection to the client's database.
  * @return {Promise<mysql.Connection>} A promise that is fulfilled with a mysql.Connection object.
@@ -52,6 +49,9 @@ async function query( query, params = [] ) {
 }
 
 
+/* ----------------------------------------------- */
+/* FUNCTIONS CHANNELS                              */
+/* ----------------------------------------------- */
 /**
  * Retrieves from the table MRChannels a channel.
  * @param {string} channelID The TextChannel discord ID.
@@ -123,7 +123,7 @@ async function updateChannel( channelID, columnName, value ) {
  */
 async function sendMemeToDatabase( message, likes, reposts, attachmentsArray ) {
 	await query(
-		"INSERT INTO Memes VALUES (?,?,?,?,?,?,?,?,?,?,?,?);",
+		"INSERT INTO Messages VALUES (?,?,?,?,?,?,?,?,?,?,?,?);",
 		[
 			message.id,
 			message.author.id,
@@ -176,7 +176,7 @@ async function sendMemeToDatabase( message, likes, reposts, attachmentsArray ) {
  */
 async function fetchMessage( messageId ) {
 	const row = await query(
-		"SELECT * FROM Memes WHERE msg_id=?;",
+		"SELECT * FROM Messages WHERE msg_id=?;",
 		[ messageId ]
 	);
 
@@ -185,14 +185,14 @@ async function fetchMessage( messageId ) {
 
 
 /**
- * Update a message row in the table Memes.
+ * Update a message row in the table Messages.
  * @param {string} messageId The message's discord ID.
  * @param {string} udpType Which column to update.
  * @param {int} udpValue The new value to put in the data cell.
  */
 async function updateMessage( messageId, udpType, udpValue ) {
 	await query(
-		`UPDATE Memes SET ${udpType}=? WHERE msg_id=?;`,
+		`UPDATE Messages SET ${udpType}=? WHERE msg_id=?;`,
 		[ udpValue, messageId ]
 	);
 }
