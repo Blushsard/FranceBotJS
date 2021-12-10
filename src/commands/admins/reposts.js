@@ -59,6 +59,7 @@ async function execute( interaction ) {
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
 module.exports = {
+	adminsOnly: true,
 	data: slashCommand,
 	execute
 }

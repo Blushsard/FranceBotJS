@@ -20,7 +20,7 @@ async function execute( client ) {
 	console.log( `${client.user.username} is connected!` );
 
 	// Out-comment when we need to actualise the commands' permissions.
-	// loadPermissions( client )
+	// await loadPermissions( client )
 }
 
 
@@ -39,7 +39,8 @@ async function loadPermissions( client ) {
 	]
 	await client.guilds.cache.get( GUILD_ID ).commands.fetch();
 	await client.guilds.cache.get( GUILD_ID ).commands.cache.forEach( command => {
-		command.permissions.add( { permissions: permission } );
+		if ( client.commands.get( command.name ).adminsOnly )
+			command.permissions.add( { permissions: permission } );
 	});
 }
 

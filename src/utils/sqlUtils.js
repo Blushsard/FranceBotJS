@@ -14,7 +14,8 @@ const mysql = require( "mysql2/promise" );
 const dateUtils = require( "./dateUtils" );
 const { HOST, USER, PASSWORD, DATABASE } = require( "../files/config.json" )
 const { Message, MessageAttachment } = require( "discord.js" );
-const { DMessage, Channel, Attachment } = require( "../classes/importClasses" );
+const { DMessage } = require( "../classes/DMessage" );
+const { Channel } = require( "../classes/Channel" );
 
 
 /**
