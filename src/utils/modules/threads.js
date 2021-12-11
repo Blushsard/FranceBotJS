@@ -11,7 +11,7 @@ const { Threads } = require('../../files/modules.js');
 /* ----------------------------------------------- */
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
-function threads(msg){
+/* function threads(msg){
     if(Threads == false) return;
 
     if(msg.content != ""){
@@ -54,4 +54,4 @@ function deleteThreads(msg){
 module.exports ={
     threads,
     deleteThreads
-}
+}*/

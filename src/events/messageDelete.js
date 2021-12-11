@@ -5,7 +5,7 @@
 
 
 const { Message, Client } = require( "discord.js" );
-const { deleteThreads } = require("../utils/modules/threads.js")
+// const { deleteThreads } = require("../utils/modules/threads.js")
 
 
 /* ----------------------------------------------- */
@@ -19,7 +19,7 @@ const { deleteThreads } = require("../utils/modules/threads.js")
  * @param {Client} client The client that created the interaction.
  */
 function execute( message, client ) {
-	deleteThreads(message)
+	// deleteThreads(message)
 }
 
 
