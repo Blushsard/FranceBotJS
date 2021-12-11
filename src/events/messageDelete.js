@@ -21,10 +21,8 @@ const sqlUtils = require( "../utils/sqlUtils" );
  */
 async function execute( message, client ) {
 	const msg = await sqlUtils.fetchMessage( message.id );
-	console.log( msg );
 	if ( msg ) {
 		await sqlUtils.removeMessage(message.id);
-		console.log( "test")
 	}
 	// deleteThreads(message)
 }
