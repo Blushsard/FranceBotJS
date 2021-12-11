@@ -92,9 +92,8 @@ async function updateMessageReactions( reaction, user, client ) {
 		await reaction.fetch();
 
 	let messageDb = await sqlUtils.fetchMessage( reaction.message.id );
-	if ( !messageDb ) {
-		await addMemeToDatabase( reaction.message, 0, 0 )
-	}
+	if ( !messageDb )
+		client.emit( "messageCreate", reaction.message );
 
 	const channel = await sqlUtils.fetchChannel( reaction.message.channelId );
 	if ( !channel ) return;
