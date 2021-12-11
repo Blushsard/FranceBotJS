@@ -5,6 +5,7 @@
 
 
 const { Message, Client } = require( "discord.js" );
+const sqlUtils = require( "../utils/sqlUtils" );
 // const { deleteThreads } = require("../utils/modules/threads.js")
 
 
@@ -18,7 +19,13 @@ const { Message, Client } = require( "discord.js" );
  * @param {Message} message The message that triggered the event.
  * @param {Client} client The client that created the interaction.
  */
-function execute( message, client ) {
+async function execute( message, client ) {
+	const msg = await sqlUtils.fetchMessage( message.id );
+	console.log( msg );
+	if ( msg ) {
+		await sqlUtils.removeMessage(message.id);
+		console.log( "test")
+	}
 	// deleteThreads(message)
 }
 
@@ -27,6 +34,6 @@ function execute( message, client ) {
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
 module.exports = {
-	name: "messageCreate",
+	name: "messageDelete",
 	execute
 }

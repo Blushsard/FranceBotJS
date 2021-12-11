@@ -43,6 +43,7 @@ async function query( query, params = [] ) {
 
 	// Executing the query.
 	const [ rows ] = await cnx.execute( query, params);
+	await cnx.commit();
 	await cnx.end();
 
 	return rows ;
@@ -198,6 +199,23 @@ async function updateMessage( messageId, udpType, udpValue ) {
 }
 
 
+/**
+ * Removes a messages and its attachments from the database.
+ * @param {string} messageId The message's discord ID.
+ */
+async function removeMessage( messageId ) {
+	await query(
+		"DELETE FROM Messages WHERE msg_id=?",
+		[ messageId ]
+	);
+
+	await query(
+		"DELETE FROM Attachments WHERE msg_id=?",
+		[ messageId ]
+	);
+}
+
+
 /* ----------------------------------------------- */
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
@@ -208,5 +226,6 @@ module.exports = {
 	fetchChannelsByType,
 	sendMemeToDatabase,
 	fetchMessage,
-	updateMessage
+	updateMessage,
+	removeMessage
 }
