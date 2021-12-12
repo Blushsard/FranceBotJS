@@ -9,7 +9,6 @@ const sqlUtils = require( "../utils/sqlUtils" );
 const msgUtils = require( "../utils/messageUtils" );
 const { LIKE_EMOJI_MENTION, REPOST_EMOJI_MENTION } = require( "../files/config.json" );
 const { Client, Message } = require( "discord.js" );
-const modules = require( "../utils/modules" );
 
 
 /* ----------------------------------------------- */
@@ -32,25 +31,21 @@ async function execute( message, client ) {
 		if ( isAMeme ) {
 			await message.react( LIKE_EMOJI_MENTION );
 			await message.react( REPOST_EMOJI_MENTION );
-			/* if ( modules.THREAD_ACTIVATED )
-				await message.startThread({
-					name: `Réponse | ${message.author.username} (${message.author.id})`,
-					autoArchiveDuration: 1440 }); */
 		}
 		else {
-			if ( !message.interaction ) // avoid the deletion of command's messages.
-				await message.delete();
+			await message.delete();
+			return;
 		}
 	}
-
-	// Out-comment the following line when reworking the threads with the no-messages rule in memes channels.
-	// It needs a rework as it comes from another bot.
-	// The file threads.js will also be removed from the utils folder and a new folder "modules" will be create at the
-	// same level as the commands/events folders. Modules will be functionnalities such as Twitter, the threads, Reddit.
-	// We will be able to enable/disable them from the file modules.js that may or may not need a rework.
-	// A new command will be create to allow the management of the modules.
-	// threads(message)
-
+	if ( channel["threads"] )
+	{
+		if ( !message.interaction )
+		{
+			await message.startThread({
+				name: `Réponse | ${message.author.username} (${message.author.id})`,
+				autoArchiveDuration: 1440 });
+		}
+	}
 }
 
 

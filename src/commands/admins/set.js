@@ -87,8 +87,9 @@ async function execute( interaction ) {
 
 	const channel = await sqlUtils.fetchChannel( interaction.channelId );
 	const embed = new MessageEmbed()
-		.setDescription( `**Memes :** ${channel.memes}\n**Reposts :** ${channel.reposts}\n**Threads :** ` +
-			`${channel.threads}\n**Feed :** ${channel.feed}\n**Logs :** ${channel.logs}\n**Stats :** ${channel.stats}` )
+		.setDescription( `**Memes :** ${channel["memes"]}\n**Reposts :** ${channel["reposts"]}\n**Threads :** ` +
+			`${channel["threads"]}\n**Feed :** ${channel["feed"]}\n**Logs :** ${channel["logs"]}\n**Stats :** ` +
+			`${channel["stats"]}` )
 		.setAuthor( "| Fonctionnalités du salon", interaction.user.avatarURL() );
 
 
