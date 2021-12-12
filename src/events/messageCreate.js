@@ -9,7 +9,7 @@ const sqlUtils = require( "../utils/sqlUtils" );
 const msgUtils = require( "../utils/messageUtils" );
 const { LIKE_EMOJI_MENTION, REPOST_EMOJI_MENTION } = require( "../files/config.json" );
 const { Client, Message } = require( "discord.js" );
-const { threads } = require("../utils/modules/threads.js")
+const modules = require( "../utils/modules" );
 
 
 /* ----------------------------------------------- */
@@ -32,6 +32,14 @@ async function execute( message, client ) {
 		if ( isAMeme ) {
 			await message.react( LIKE_EMOJI_MENTION );
 			await message.react( REPOST_EMOJI_MENTION );
+			/* if ( modules.THREAD_ACTIVATED )
+				await message.startThread({
+					name: `Réponse | ${message.author.username} (${message.author.id})`,
+					autoArchiveDuration: 1440 }); */
+		}
+		else {
+			if ( !message.interaction ) // avoid the deletion of command's messages.
+				await message.delete();
 		}
 	}
 

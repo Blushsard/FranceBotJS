@@ -88,8 +88,8 @@ async function fetchChannelsByType( type ) {
  */
 async function addChannel( channelID ) {
 	await query(
-		"INSERT INTO Channels VALUES (?, ?, ?, ?, ?, ?);",
-		[channelID, false, false, false, false, false]
+		"INSERT INTO Channels VALUES (?, ?, ?, ?, ?, ?, ?);",
+		[channelID, false, false, false, false, false, false]
 	);
 }
 
