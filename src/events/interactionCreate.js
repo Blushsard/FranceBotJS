@@ -19,9 +19,10 @@ const { CommandInteraction, Client } = require( "discord.js" );
  * @param {Client} client The client that created the interaction.
  */
 function execute( interaction, client ) {
-	if ( interaction.isCommand() ) {
+	if ( interaction.isCommand() )
 		client.commands.get( interaction.commandName ).execute( interaction );
-	}
+	else if ( interaction.isContextMenu() )
+		client.commands.get( interaction.commandName ).execute( interaction );
 }
 
 
