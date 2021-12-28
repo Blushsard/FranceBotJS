@@ -42,8 +42,8 @@ CREATE TABLE Attachments(
 );
 
 
-DROP TABLE Average;
-CREATE TABLE Average(
+DROP TABLE LikesAverage;
+CREATE TABLE LikesAverage(
     average FLOAT NOT NULL,
     average_min INT NOT NULL,
     nb_msg_average INT NOT NULL

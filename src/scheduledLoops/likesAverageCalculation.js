@@ -9,12 +9,19 @@
 const { query } = require( "../utils/sqlUtils" );
 
 
-async function calcAverage() {
+/**
+ * Function calculating the average of likes from the n top messages in the database.
+ * 'n' if stored in the 'LikesAverage' database.
+ * It is an infinite while loop using setInterval as it needs to run 24h, 7d a week.
+ */
+async function calcLikesAverage() {
 	setInterval( async () => {
+		// Getting the average of likes, the average_min and the number of likes in the average.
 		const queryResult = (await query(
 			"SELECT * FROM Average;"
 		))[0];
 
+		// Getting the n top messages to calculate the average.
 		const likesMsg = (await query(
 			`SELECT sum(likes) AS sumLikes, count(likes) as nbMsg 
 			FROM Messages ORDER BY LIKES LIMIT ${queryResult["nb_msg_average"]}`
@@ -33,5 +40,5 @@ async function calcAverage() {
 
 
 module.exports = {
-	calcAverage
+	calcLikesAverage
 }
