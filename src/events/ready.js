@@ -8,6 +8,8 @@
 const { Client } = require( "discord.js" );
 const { GUILD_ID, MODERATOR_ROLE } = require("../files/config.json");
 
+const { calcAverage } = require( "../scheduledLoops/averageCalculation" );
+
 
 /* ----------------------------------------------- */
 /* FUNCTIONS                                       */
@@ -18,6 +20,9 @@ const { GUILD_ID, MODERATOR_ROLE } = require("../files/config.json");
  */
 async function execute( client ) {
 	console.log( `${client.user.username} is connected!` );
+
+	// Starting the scheduled loops.
+	await calcAverage();
 
 	// Out-comment when we need to actualise the commands' permissions.
 	// await loadPermissions( client )

@@ -37,9 +37,9 @@ async function getMemesLinks( message ) {
 /**
  * Returns true if the message has at least a meme.
  * @param {Message} message The message to check.
- * @returns {Promise<boolean>} Returns true if the message has at least a meme.
+ * @returns {boolean} Returns true if the message has at least a meme.
  */
-async function hasMeme( message ) {
+function hasMeme( message ) {
 	// Checking if there is a message content to avoid an error.
 	if ( !!message.content ) {
 		for ( let wb of WEBSITES ) {
@@ -64,16 +64,12 @@ async function hasMeme( message ) {
  * @return boolean Returns a boolean indicating if the meme has been added to the database.
  */
 async function addMemeToDatabase( message, likes, reposts ) {
-	if ( await hasMeme( message ) ) {
-		let memesArray = await getMemesLinks(message);
-		message.attachments.forEach(value => {
-			memesArray.push(value);
-		});
+	let memesArray = await getMemesLinks(message);
+	message.attachments.forEach(value => {
+		memesArray.push(value);
+	});
 
-		await sqlUtils.sendMemeToDatabase(message, 0, 0, memesArray);
-		return true;
-	}
-	return false;
+	await sqlUtils.sendMemeToDatabase(message, 0, 0, memesArray);
 }
 
 

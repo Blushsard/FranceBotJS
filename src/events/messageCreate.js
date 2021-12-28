@@ -7,6 +7,7 @@
 
 const sqlUtils = require( "../utils/sqlUtils" );
 const msgUtils = require( "../utils/messageUtils" );
+const userUtils = require( "../utils/userUtils" );
 const { LIKE_EMOJI_MENTION, REPOST_EMOJI_MENTION } = require( "../files/config.json" );
 const { Client, Message } = require( "discord.js" );
 
@@ -27,14 +28,16 @@ async function execute( message, client ) {
 		return;
 
 	if ( channel["memes"] ) {
-		const isAMeme = await msgUtils.addMemeToDatabase( message, 0, 0 );
-		if ( isAMeme ) {
+		if ( msgUtils.hasMeme( message ) ) {
+			await msgUtils.addMemeToDatabase( message, 0, 0 );
 			await message.react( LIKE_EMOJI_MENTION );
 			await message.react( REPOST_EMOJI_MENTION );
 		}
 		else {
-			await message.delete();
-			return;
+			if ( !userUtils.isUserAdmin( message.member ) ) {
+				await message.delete();
+				return;
+			}
 		}
 	}
 	if ( channel["threads"] )

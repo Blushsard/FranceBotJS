@@ -70,19 +70,6 @@ async function fetchChannel( channelID ) {
 
 
 /**
- * This function returns all the channels that correspond to the passed type.
- * @param {string} type The type of the channel(s) we want (memes, repost, feed, logs, stats).
- * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the request's results.
- */
-async function fetchChannelsByType( type ) {
-	return await query(
-		`SELECT * FROM Channels WHERE ${type}=true;`
-	);
-}
-
-
-
-/**
  * Add a channel to the MRChannels database.
  * @param {string} channelID The TextChannel's discord ID.
  */
@@ -163,7 +150,7 @@ async function sendMemeToDatabase( message, likes, reposts, attachmentsArray ) {
 		}
 
 		await query(
-			"INSERT INTO Attachments (msg_id, type, filename, link) VALUES (?,?,?,?);",
+			"INSERT INTO Attachments VALUES (?,?,?,?);",
 			queryParams
 		)
 	}
@@ -223,7 +210,6 @@ module.exports = {
 	query,
 	updateChannel,
 	fetchChannel,
-	fetchChannelsByType,
 	sendMemeToDatabase,
 	fetchMessage,
 	updateMessage,
