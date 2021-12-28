@@ -26,7 +26,7 @@ const cmCommand = new ContextMenuCommandBuilder()
  */
 async function execute( interaction ) {
 	const msgContent = interaction.channel.messages.cache.get( interaction.targetId ).content;
-	await interaction.reply( msgContent === "" ? "Pas de msgContent" : msgContent );
+	await interaction.reply( msgContent === "" ? "Pas de msgContent" : `Contenu du message : ${msgContent}` );
 }
 
 
