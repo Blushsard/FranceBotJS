@@ -50,6 +50,7 @@ CREATE TABLE Average(
 );
 
 
+-- Temporary (only for dev). This file will be later removed from the git repository.
 DROP USER IF EXISTS 'franceBot'@'localhost';
 CREATE USER 'franceBot'@'localhost' IDENTIFIED BY 'N0XlWK$uw#A8UM';
 GRANT USAGE ON FranceBotDB.* TO 'franceBot'@'localhost';
