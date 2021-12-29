@@ -23,7 +23,6 @@ CREATE TABLE Messages(
     channel_id VARCHAR(22) NOT NULL,
     cat_name TEXT NOT NULL,
     likes INT NOT NULL,
-    reposts INT NOT NULL,
     msg_content TEXT,
     day_date INT NOT NULL,
     month_date INT NOT NULL,

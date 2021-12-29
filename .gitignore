@@ -104,5 +104,4 @@ dist
 .tern-port
 
 # Manually added files and folders
-/src/files/config.json
 /.idea

@@ -27,19 +27,6 @@ async function execute( message, client ) {
 	if ( !channel )
 		return;
 
-	if ( channel["memes"] ) {
-		if ( msgUtils.hasMeme( message ) ) {
-			await msgUtils.addMemeToDatabase( message, 0, 0 );
-			await message.react( LIKE_EMOJI_MENTION );
-			await message.react( REPOST_EMOJI_MENTION );
-		}
-		else {
-			if ( !userUtils.isUserAdmin( message.member ) ) {
-				await message.delete();
-				return;
-			}
-		}
-	}
 	if ( channel["threads"] )
 	{
 		if ( !message.interaction )
@@ -47,6 +34,20 @@ async function execute( message, client ) {
 			await message.startThread({
 				name: `Réponse | ${message.author.username} (${message.author.id})`,
 				autoArchiveDuration: 1440 });
+		}
+	}
+
+	if ( channel["memes"] ) {
+		if ( msgUtils.hasMeme( message ) ) {
+			await msgUtils.addMemeToDatabase( message, 0 );
+			await message.react( LIKE_EMOJI_MENTION );
+			await message.react( REPOST_EMOJI_MENTION );
+		}
+		else {
+			if ( !userUtils.isUserAdmin( message.member ) ) {
+				await message.delete();
+				// return; Commented as it will be needed if there is any code after this condition.
+			}
 		}
 	}
 }

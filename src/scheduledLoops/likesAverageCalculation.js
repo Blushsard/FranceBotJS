@@ -18,7 +18,7 @@ async function calcLikesAverage() {
 	setInterval( async () => {
 		// Getting the average of likes, the average_min and the number of likes in the average.
 		const queryResult = (await query(
-			"SELECT * FROM Average;"
+			"SELECT * FROM LikesAverage;"
 		))[0];
 
 		// Getting the n top messages to calculate the average.
@@ -33,7 +33,7 @@ async function calcLikesAverage() {
 
 		if ( average < queryResult["average_min"] ) average = queryResult["average_min"];
 
-		await query( "UPDATE Average SET average=?", [ average ] );
+		await query( "UPDATE LikesAverage SET average=?", [ average ] );
 
 	}, 60_000);
 }

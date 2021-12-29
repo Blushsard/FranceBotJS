@@ -57,7 +57,7 @@ async function loadCommandsToGuild( client, guildId ) {
 	});
 
 	await client.guilds.cache.get( guildId ).commands.set( commandsArray );
-	console.log( "Commande loaded!" );
+	console.log( `Application commands loaded in the guild : ${guildId}` );
 }
 
 
@@ -82,6 +82,5 @@ async function loadCommandToAllGuilds( client ) {
 module.exports = {
 	loadCommands,
 	loadEvents,
-	loadCommandsToGuild,
-	loadCommandToAllGuilds
+	loadCommandsToGuild
 }

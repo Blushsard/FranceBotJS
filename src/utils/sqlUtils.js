@@ -55,7 +55,7 @@ async function query( query, params = [] ) {
 /* ----------------------------------------------- */
 /**
  * Retrieves from the table MRChannels a channel.
- * @param {string} channelID The TextChannel discord ID.
+ * @param channelID The TextChannel discord ID as a Snowflake or a String.
  * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the query's result
  * 							 if the channel is in the database, else it is fulfilled with 'null'.
  */
@@ -106,19 +106,17 @@ async function updateChannel( channelID, columnName, value ) {
  * Add the message with its memes in the database.
  * @param {Message} message The discord.Message object of the message.
  * @param {int} likes The likes of the message. Can be more than 0 in some cases.
- * @param {int} reposts The reposts of the message. Can be more than 0 in some cases.
  * @param {array[string|MessageAttachment]} attachmentsArray The array with the message's memes.
  */
-async function sendMemeToDatabase( message, likes, reposts, attachmentsArray ) {
+async function sendMemeToDatabase( message, likes, attachmentsArray ) {
 	await query(
-		"INSERT INTO Messages VALUES (?,?,?,?,?,?,?,?,?,?,?,?);",
+		"INSERT INTO Messages VALUES (?,?,?,?,?,?,?,?,?,?,?);",
 		[
 			message.id,
 			message.author.id,
 			message.channelId,
 			message.channel.parent.name,
 			likes,
-			reposts,
 			message.content,
 			dateUtils.getDayFormatDate(),
 			dateUtils.getMonthFormatDate(),
@@ -159,7 +157,7 @@ async function sendMemeToDatabase( message, likes, reposts, attachmentsArray ) {
 
 /**
  * Returns an array with the message's data if it is present in the table.
- * @param {string} messageId The message's discord ID.
+ * @param messageId The message's discord ID as a Snowflake or a String.
  * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the query's result.
  */
 async function fetchMessage( messageId ) {
@@ -174,7 +172,7 @@ async function fetchMessage( messageId ) {
 
 /**
  * Update a message row in the table Messages.
- * @param {string} messageId The message's discord ID.
+ * @param messageId The message's discord ID as a Snowflake or a String.
  * @param {string} udpType Which column to update.
  * @param {int} udpValue The new value to put in the data cell.
  */
@@ -204,6 +202,15 @@ async function removeMessage( messageId ) {
 
 
 /* ----------------------------------------------- */
+/* FUNCTIONS MEMES                                 */
+/* ----------------------------------------------- */
+async function getLikesAverage() {
+	const row = await query( "SELECT average from LikesAverage;" );
+	return row.length ? row[0]['average'] : null;
+}
+
+
+/* ----------------------------------------------- */
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
 module.exports = {
@@ -213,5 +220,6 @@ module.exports = {
 	sendMemeToDatabase,
 	fetchMessage,
 	updateMessage,
-	removeMessage
+	removeMessage,
+	getLikesAverage
 }
