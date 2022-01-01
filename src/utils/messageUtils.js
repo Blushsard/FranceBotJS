@@ -1,7 +1,7 @@
 /**
  * @author Benjamin Guirlet
- * @description
- *      This file contains functions used to manage and process messages' data.
+ * @file
+ *      Ce fichier contient toutes les fonctions liées à la gestion des messages.
  */
 
 
