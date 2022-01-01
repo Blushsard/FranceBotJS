@@ -1,34 +1,32 @@
 /**
  * @author Benjamin Guirlet
  * @file
- *		This file contains the average calculation.
- *		It is started once the bot is ready.
+ *		Cette fonctionnalité calcule la moyenne des likes en prenant les N messages les plus likés dans la base de
+ *		données.
+ *		Le nombre de messages à prendre en compte dans la moyenne est stocké dans la table Moyenne.
  */
 
 
 const { query } = require( "../utils/sqlUtils" );
 
 
-/**
- * Function calculating the average of likes from the n top messages in the database.
- * 'n' if stored in the 'LikesAverage' database.
- * It is an infinite while loop using setInterval as it needs to run 24h, 7d a week.
- */
+/* ----------------------------------------------- */
+/* FUNCTIONS                                       */
+/* ----------------------------------------------- */
 async function calcLikesAverage() {
-	setInterval( async () => {
-		// Getting the average of likes, the average_min and the number of likes in the average.
+	const likesAverageLoop = setInterval( async () => {
 		const queryResult = (await query(
 			"SELECT * FROM LikesAverage;"
 		))[0];
 
-		// Getting the n top messages to calculate the average.
-		const likesMsg = (await query(
+		// Récupération du nombre de message à prendre en compte dans la moyenne.
+		const nbLikesMsg = (await query(
 			`SELECT sum(likes) AS sumLikes, count(likes) as nbMsg 
 			FROM Messages ORDER BY LIKES LIMIT ${queryResult["nb_msg_average"]}`
 		))[0];
 
-		let average = likesMsg["sumLikes"] != null ?
-			(likesMsg["sumLikes"] / likesMsg["nbMsg"]) :
+		let average = nbLikesMsg["sumLikes"] != null ?
+			(nbLikesMsg["sumLikes"] / nbLikesMsg["nbMsg"]) :
 			queryResult["average_min"];
 
 		if ( average < queryResult["average_min"] ) average = queryResult["average_min"];
@@ -39,6 +37,9 @@ async function calcLikesAverage() {
 }
 
 
+/* ----------------------------------------------- */
+/* MODULE EXPORTS                                  */
+/* ----------------------------------------------- */
 module.exports = {
 	calcLikesAverage
 }

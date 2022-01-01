@@ -1,22 +1,20 @@
 /**
  * @author Benjamin Guirlet
- * @description
- *		It manage the slash commands.
+ * @file
+ *		Évènement gérant les différentes interactions du client.
  */
 
 
-const { CommandInteraction, Client } = require( "discord.js" );
+const { CommandInteraction, ContextMenuInteraction, Client } = require( "discord.js" );
 
 
 /* ----------------------------------------------- */
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
 /**
- * The handler for the event 'interactionCreate'.
- * It is called whenever an interaction is created.
- * It can be a button pressed, a slash command executed, etc.
- * @param {CommandInteraction} interaction The interaction that triggered the event.
- * @param {Client} client The client that created the interaction.
+ * Handler pour l'évènement 'interactionCreate'.
+ * @param {CommandInteraction|ContextMenuInteraction} interaction L'interaction qui a déclenché l'évènement.
+ * @param {Client} client Le client qui a créé l'interaction.
  */
 function execute( interaction, client ) {
 	if ( interaction.isCommand() )

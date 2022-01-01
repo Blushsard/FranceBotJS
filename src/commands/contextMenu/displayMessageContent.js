@@ -1,7 +1,7 @@
 /**
  * @author Benjamin Guirlet
  * @file
- *		Just a ContextMenuCommand to test out this functionnality.
+ *		Exemple de ContextMenuCommand pour potentiellement être utilisé plus tard.
  */
 
 
@@ -21,8 +21,8 @@ const cmCommand = new ContextMenuCommandBuilder()
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
 /**
- * The handler for this command file.
- * @param {ContextMenuInteraction} interaction the interaction issued by the command.
+ * Handler pour la SlashCommande.
+ * @param {CommandInteraction} interaction L'interaction générée par l'exécution de la commande.
  */
 async function execute( interaction ) {
 	const msgContent = interaction.channel.messages.cache.get( interaction.targetId ).content;

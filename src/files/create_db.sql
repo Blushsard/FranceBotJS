@@ -22,6 +22,7 @@ CREATE TABLE Messages(
     author_id VARCHAR(22) NOT NULL,
     channel_id VARCHAR(22) NOT NULL,
     cat_name TEXT NOT NULL,
+    jump_url TEXT NOT NULL,
     likes INT NOT NULL,
     msg_content TEXT,
     day_date INT NOT NULL,
@@ -37,7 +38,7 @@ CREATE TABLE Attachments(
     msg_id VARCHAR(22) NOT NULL,
     type TEXT NOT NULL,
     filename TEXT NOT NULL,
-    link TEXT NOT NULL
+    url TEXT NOT NULL
 );
 
 
@@ -49,7 +50,6 @@ CREATE TABLE LikesAverage(
 );
 
 
--- Temporary (only for dev). This file will be later removed from the git repository.
 DROP USER IF EXISTS 'franceBot'@'localhost';
 CREATE USER 'franceBot'@'localhost' IDENTIFIED BY 'N0XlWK$uw#A8UM';
 GRANT USAGE ON FranceBotDB.* TO 'franceBot'@'localhost';

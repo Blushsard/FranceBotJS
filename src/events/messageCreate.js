@@ -1,7 +1,7 @@
 /**
  * @author Benjamin Guirlet
- * @description
- *		This event is used to store the memes in the database and add their initial reactions.
+ * @file
+ *		Cet évènement est utilisé pour stocker les messages et leurs pièces-jointes dans la base de données.
  */
 
 
@@ -18,9 +18,9 @@ const { Client, Message } = require( "discord.js" );
 
 
 /**
- * Function called when the event 'messageCreate' is emitted.
- * @param {Message} message The message created.
- * @param {Client} client The client that emitted the event.
+ * Handler pour l'évènement 'interactionCreate'.
+ * @param {Message} message Le message qui vient d'être créé.
+ * @param {Client} client Le client qui a émit l'évènement.
  */
 async function execute( message, client ) {
 	const channel = await sqlUtils.fetchChannel( message.channelId );
@@ -46,7 +46,7 @@ async function execute( message, client ) {
 		else {
 			if ( !userUtils.isUserAdmin( message.member ) ) {
 				await message.delete();
-				// return; Commented as it will be needed if there is any code after this condition.
+				// return; À décommenter si d'autres statements sont ajoutés après.
 			}
 		}
 	}

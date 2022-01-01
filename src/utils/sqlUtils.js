@@ -1,6 +1,6 @@
 /**
  * @author Benjamin Guirlet
- * @description
+ * @file
  * 		This file contains all the database related functions.
  * 		The client use the module 'mysql' to work with the database.
  *
@@ -83,7 +83,8 @@ async function addChannel( channelID ) {
 
 /**
  * Update a channel already present in the database.
- * @param {string} channelID The channel discord ID.
+ * The function will automaticaly disable the previous channel if the columnName is 'feed', 'logs' or 'stats'.
+ * @param channelID The channel discord ID.
  * @param {string} columnName The name of the column to update.
  * @param {boolean} value The new value of the column.
  */
@@ -92,15 +93,28 @@ async function updateChannel( channelID, columnName, value ) {
 	if ( !(await fetchChannel( channelID )) )
 		await addChannel( channelID );
 
-	await query(
-		`UPDATE Channels SET ${columnName}=? WHERE channel_id=?;`,
-		[value, channelID]
-	);
+	if ( [ 'feed', 'logs', 'stats' ].includes( columnName ) && value )
+	{
+		const prevChannelId = await fetchChannelByValue( columnName, true );
+		await query( `UPDATE Channels SET ${columnName}=0 WHERE channel_id=?`, [ prevChannelId ] );
+	}
+	await query( `UPDATE Channels SET ${columnName}=? WHERE channel_id=?;`, [value, channelID] );
+}
+
+
+/**
+ * Fetch all the channels with a specified value in a specified column.
+ * @param {string} columnName The specified column to check.
+ * @param {boolean} value The required value.
+ * @returns {Promise<array[object]>} Returns a promise fulfilled with an array of rows as objects.
+ */
+async function fetchChannelByValue( columnName, value ) {
+	return await query( `SELECT * from Channels WHERE ${columnName}=?`, [ value ] );
 }
 
 
 /* ----------------------------------------------- */
-/* FUNCTIONS MEMES                                 */
+/* FUNCTIONS MESSAGES                              */
 /* ----------------------------------------------- */
 /**
  * Add the message with its memes in the database.
@@ -110,12 +124,13 @@ async function updateChannel( channelID, columnName, value ) {
  */
 async function sendMemeToDatabase( message, likes, attachmentsArray ) {
 	await query(
-		"INSERT INTO Messages VALUES (?,?,?,?,?,?,?,?,?,?,?);",
+		"INSERT INTO Messages VALUES (?,?,?,?,?,?,?,?,?,?,?,?);",
 		[
 			message.id,
 			message.author.id,
 			message.channelId,
 			message.channel.parent.name,
+			message.url,
 			likes,
 			message.content,
 			dateUtils.getDayFormatDate(),
@@ -127,9 +142,7 @@ async function sendMemeToDatabase( message, likes, attachmentsArray ) {
 	);
 
 	let queryParams;
-	for ( let cpt = 0; cpt < attachmentsArray.length; cpt++ ) {
-		let element = attachmentsArray[cpt];
-
+	for ( let element of attachmentsArray ) {
 		if ( typeof element === "string" ) {
 			queryParams = [
 				message.id,
@@ -171,10 +184,20 @@ async function fetchMessage( messageId ) {
 
 
 /**
+ * Fetch multiple messages from the table Messages with a filter. The filter has to be in the form of an SQL condition.
+ * @param {string} filter The condition to apply to the request.
+ * @returns {Promise<array[object]>} A promise fulfilled with an array the rows as objects.
+ */
+async function fetchMessages( filter ) {
+	return await query( `SELECT * FROM Messages WHERE ${filter}` );
+}
+
+
+/**
  * Update a message row in the table Messages.
  * @param messageId The message's discord ID as a Snowflake or a String.
  * @param {string} udpType Which column to update.
- * @param {int} udpValue The new value to put in the data cell.
+ * @param udpValue The new value to put in the data cell.
  */
 async function updateMessage( messageId, udpType, udpValue ) {
 	await query(
@@ -186,7 +209,7 @@ async function updateMessage( messageId, udpType, udpValue ) {
 
 /**
  * Removes a messages and its attachments from the database.
- * @param {string} messageId The message's discord ID.
+ * @param messageId The message's discord ID.
  */
 async function removeMessage( messageId ) {
 	await query(
@@ -202,7 +225,23 @@ async function removeMessage( messageId ) {
 
 
 /* ----------------------------------------------- */
-/* FUNCTIONS MEMES                                 */
+/* FUNCTIONS ATTACHMENTS                           */
+/* ----------------------------------------------- */
+/**
+ * Fetch the attachments from a message.
+ * @param {String} messageId The attachments' message ID.
+ * @returns {Promise<array[object]>} Returns a promise fulfilled with an array of the attachments as objects.
+ */
+async function fetchAttachments( messageId ) {
+	return await query(
+		"SELECT * FROM Attachments WHERE msg_id=?",
+		[ messageId ]
+	);
+}
+
+
+/* ----------------------------------------------- */
+/* FUNCTIONS LIKESAVERAGE                          */
 /* ----------------------------------------------- */
 async function getLikesAverage() {
 	const row = await query( "SELECT average from LikesAverage;" );
@@ -217,9 +256,15 @@ module.exports = {
 	query,
 	updateChannel,
 	fetchChannel,
+	fetchChannelByValue,
+
 	sendMemeToDatabase,
 	fetchMessage,
+	fetchMessages,
 	updateMessage,
 	removeMessage,
+
+	fetchAttachments,
+
 	getLikesAverage
 }

@@ -1,6 +1,6 @@
 /**
  * @author Benjamin Guirlet
- * @description
+ * @file
  * 		The base file of the bot.
  */
 

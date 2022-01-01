@@ -1,7 +1,7 @@
 /**
  * @author Benjamin Guirlet
- * @description
- *      Contains the function linked to the dates.
+ * @file
+ *      Ces fonctions permettent de générer des entiers par rapport à la date courante.
  */
 
 
@@ -9,9 +9,9 @@
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
 /**
- * Returns the current date in an int with the following format :
- * 		year_number * 365 + month_number * 12 + day_number
- * @returns {int} The day format date.
+ * Retourne un entier généré avec la date courante avec une précision journalière:
+ * 		année * 365 + numéro_mois * 12 + numéro_jour
+ * @returns {int} L'entier généré.
  */
 function getDayFormatDate() {
 	const date = new Date();
@@ -22,8 +22,8 @@ function getDayFormatDate() {
 
 
 /**
- * Returns the current date in an int with the following format :
- * 		year_number * 12 + month_number
+ * Retourne un entier généré avec la date courante avec une précision mensuelle :
+ * 		année * 12 + numéro_mois
  * @returns {int} The month format date.
  */
 function getMonthFormatDate() {

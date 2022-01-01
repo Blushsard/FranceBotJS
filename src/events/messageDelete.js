@@ -1,30 +1,27 @@
 /**
  * @author Benjamin Guirlet
- * @description
+ * @file
+ * 		Permet de supprimer les messages de la base de données lorsqu'ils sont supprimés du serveur.
  */
 
 
 const { Message, Client } = require( "discord.js" );
 const sqlUtils = require( "../utils/sqlUtils" );
-// const { deleteThreads } = require("../utils/modules/threads.js")
 
 
 /* ----------------------------------------------- */
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
 /**
- * The handler for the event 'messageDelete'.
- * It is called whenever an interaction is created.
- * It can be a button pressed, a slash command executed, etc.
- * @param {Message} message The message that triggered the event.
- * @param {Client} client The client that created the interaction.
+ * Handler pour l'évènement 'messageDelete'.
+ * @param {Message} message Le message qui a déclenché l'évènement.
+ * @param {Client} client Le client qui a émit l'évènement.
  */
 async function execute( message, client ) {
 	const msg = await sqlUtils.fetchMessage( message.id );
 	if ( msg ) {
 		await sqlUtils.removeMessage(message.id);
 	}
-	// deleteThreads(message)
 }
 
 

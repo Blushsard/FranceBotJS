@@ -1,6 +1,6 @@
 /**
  * @author Benjamin Guirlet
- * @description
+ * @file
  *      This event is used to track the likes and repost of the messages.
  *      If a message with a meme is not in the database, then it will be added.
  */
@@ -14,10 +14,10 @@ const { MessageReaction, Client, User } = require( "discord.js" );
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
 /**
- * Function called when the event 'messageReactionRemove' is emitted.
- * @param {MessageReaction} reaction The reaction object.
- * @param {User} user The user that applied the guild or reaction emoji.
- * @param {Client} client The client that emitted the event.
+ * Handler pour l'évènement 'messageReactionRemove'.
+ * @param {MessageReaction} reaction L'objet de la réaction.
+ * @param {User} user L'utilisateur qui a retiré la réaction.
+ * @param {Client} client Le client qui a émit l'évènement.
  */
 async function execute( reaction, user, client ) {
 	await msgUtils.updateMessageReactions( reaction, user, client );

@@ -1,7 +1,8 @@
 /**
  * @author Benjamin Guirlet
- * @description
- *		Handler for the 'ready' event.
+ * @file
+ *		L'évènement 'ready' permet de lancer des fonctionnalités tournant h24 en background ainsi que de charger des
+ *		permisssions, etc.
  */
 
 
@@ -9,30 +10,27 @@ const { Client } = require( "discord.js" );
 const { GUILD_ID, MODERATOR_ROLE } = require("../files/config.json");
 
 const { calcLikesAverage } = require( "../scheduledLoops/likesAverageCalculation" );
+const { feed } = require( "../scheduledLoops/feed" );
 
 
 /* ----------------------------------------------- */
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
-/**
- * Event called when the bot is ready after the connection to the api.
- * @param {Client} client The client that emitted the event.
- */
 async function execute( client ) {
 	console.log( `${client.user.username} is connected!` );
 
-	// Starting the scheduled loops.
+	// Démarrage des fonctionnalités.
 	await calcLikesAverage();
+	await feed( client );
 
-	// Out-comment when we need to actualise the commands' permissions.
+	// Décommenter quand il faudra update les permissions des commandes.
 	// await loadPermissions( client )
 }
 
 
 /**
- * This function is used to load the permissions to the commands.
- * It only need to be called one time after updating the commands or adding concerned commands.
- * @param {Client} client The bot's client.
+ * Cette fonction permet de charger les permissions des commandes.
+ * @param {Client} client Le client du bot.
  */
 async function loadPermissions( client ) {
 	const permission = [
