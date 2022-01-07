@@ -61,7 +61,7 @@ async function query( query, params = [] ) {
  */
 async function fetchChannel( channelID ) {
 	const channel = await query(
-		"SELECT * FROM Channels WHERE channel_id=?;",
+		"SELECT * FROM Salons WHERE id_salon=?;",
 		[channelID]
 	);
 
@@ -75,7 +75,7 @@ async function fetchChannel( channelID ) {
  */
 async function addChannel( channelID ) {
 	await query(
-		"INSERT INTO Channels VALUES (?, ?, ?, ?, ?, ?, ?);",
+		"INSERT INTO Salons VALUES (?, ?, ?, ?, ?, ?, ?);",
 		[channelID, false, false, false, false, false, false]
 	);
 }
@@ -96,9 +96,9 @@ async function updateChannel( channelID, columnName, value ) {
 	if ( [ 'feed', 'logs', 'stats' ].includes( columnName ) && value )
 	{
 		const prevChannelId = await fetchChannelByValue( columnName, true );
-		await query( `UPDATE Channels SET ${columnName}=0 WHERE channel_id=?`, [ prevChannelId ] );
+		await query( `UPDATE Salons SET ${columnName}=0 WHERE id_salon=?`, [ prevChannelId ] );
 	}
-	await query( `UPDATE Channels SET ${columnName}=? WHERE channel_id=?;`, [value, channelID] );
+	await query( `UPDATE Salons SET ${columnName}=? WHERE id_salon=?;`, [value, channelID] );
 }
 
 
@@ -109,7 +109,7 @@ async function updateChannel( channelID, columnName, value ) {
  * @returns {Promise<array[object]>} Returns a promise fulfilled with an array of rows as objects.
  */
 async function fetchChannelByValue( columnName, value ) {
-	return await query( `SELECT * from Channels WHERE ${columnName}=?`, [ value ] );
+	return await query( `SELECT * from Salons WHERE ${columnName}=?`, [ value ] );
 }
 
 
@@ -244,7 +244,7 @@ async function fetchAttachments( messageId ) {
 /* FUNCTIONS LIKESAVERAGE                          */
 /* ----------------------------------------------- */
 async function getLikesAverage() {
-	const row = await query( "SELECT average from LikesAverage;" );
+	const row = await query( "SELECT moyenne from Moyenne;" );
 	return row.length ? row[0]['average'] : null;
 }
 

@@ -15,10 +15,10 @@ const sqlUtils = require( "./sqlUtils" );
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
 /**
- * Returns an array with all the links that are from memes' websites.
- * @param {Message} message A discord.Message object.
- * @returns {Promise<array[string]>} A Promise fulfilled with an array containing the memes' links.
- * 									 If there isn't any links, then the array is empty.
+ * Retourne une liste contenant les liens provenant de sites enregistrés comme site de memes qui sont contenus dans le
+ * texte du message.
+ * @param {Message} message Le message contenant les liens à vérifier.
+ * @returns {Promise<array[string]>} Une promesse complétée avec la liste des liens des memes.
  */
 async function getMemesLinks( message ) {
 	let linksArray = [];
@@ -36,12 +36,13 @@ async function getMemesLinks( message ) {
 
 
 /**
- * Returns true if the message has at least a meme.
- * @param {Message} message The message to check.
- * @returns {boolean} Returns true if the message has at least a meme.
+ * Retourne vrai si le message contient au moins 1 meme. Elle vérifie donc si le message contient au moins 1 lien
+ * provenant d'un site de memes ou sinon, si le message à au moins une pièce-jointe.
+ * @param {Message} message Le message à vérifier.
+ * @returns {boolean} Vrai si le message contient au moins 1 meme (lien ou image/vidéo).
  */
 function hasMeme( message ) {
-	// Checking if there is a message content to avoid an error.
+	// On vérifie si le message à du texte pour éviter une erreur.
 	if ( !!message.content ) {
 		for ( let wb of WEBSITES ) {
 			let matches = message.content.match(wb);
@@ -56,12 +57,10 @@ function hasMeme( message ) {
 
 
 /**
- * Add the message and its attachments to the database.
- * This function only do the treatments of the attachments, it call the sqlUtils.addMemeToDatabase() function
- * to add the message to the database.
- * @param {Message} message The message that will be added to the database.
- * @param {int} likes The number of likes on the message.
- * @return boolean Returns a boolean indicating if the meme has been added to the database.
+ * Cette fonction ajoute un message dans la base de données. Elle récupère donc tout les memes (liens et fichiers) avant
+ * de l'envoyer sur la base de données.
+ * @param {Message} message Le message à ajouté sur la base de donnée.
+ * @param {int} likes Le nombre de likes sur le message. Est utile si le message a déjà des réactions likes.
  */
 async function addMemeToDatabase( message, likes ) {
 	let memesArray = await getMemesLinks(message);
@@ -74,28 +73,30 @@ async function addMemeToDatabase( message, likes ) {
 
 
 /**
- * Updates the reaction (like/repost) count on a message if it is in the database.
- * @param {MessageReaction} reaction The reaction that triggered the event.
- * @param {User} user The user that added the reaction.
- * @param {Client} client The client's object.
+ * Met à jour le nombre de likes sur un message dans la base de données et vérifie le nombre de reposts sur ce message.
+ * Si le message n'est pas dans la base de données et qu'il contient des memes, alors il est ajouté en émittant
+ * l'évènement 'messageCreate'.
+ * @param {MessageReaction} reaction La réaction qui a émit l'évènement.
+ * @param {User} user L'utilisateur qui a ajouté l'évènement. Permet de vérifier si l'utilisateur n'est pas le bot.
+ * @param {Client} client Le client du bot.
  */
 async function updateMessageReactions( reaction, user, client ) {
-	// Checking if the bot is at the origin of the event.
+	// Vérifie si le bot n'est pas l'utilisateur à l'origine de l'évènement.
 	if ( user.id === client.user.id ) return;
 
 	const channel = await sqlUtils.fetchChannel( reaction.message.channelId );
 	const messageDb = await sqlUtils.fetchMessage( reaction.message.id );
 
-	// The channel needs to be at least a memes or reposts channel. Else we just leave the function;
+	// Le salon doit être un salon de memes ou de reposts.
 	if ( !channel && !channel["memes"] && !channel["reposts"] ) return;
 
-	// If the message was not in the client's cache.
+	// Dans le cas où le message n'est pas dans le cache du client.
 	if ( reaction.partial )
 		await reaction.fetch();
 
 	let { nbLikes, nbReposts } = getLikesAndReposts( reaction.message.reactions.cache );
 
-	// Checking if the message needs to be removed because of reposts.
+	// On regarde si le message dépasse ou pas la moyenne en reposts.
 	if ( channel["reposts"] ) {
 		if ( nbReposts >= (await sqlUtils.getLikesAverage()) ) {
 			if ( messageDb )
@@ -107,20 +108,19 @@ async function updateMessageReactions( reaction, user, client ) {
 		}
 	}
 
-	// We use the messageCreate event to upload the message to the database in case it isn't in and it contains a meme.
+	// On utilise l'évènement messageCreate pour ajouter un meme dans la base de données.
 	if ( !messageDb )
 		client.emit( "messageCreate", reaction.message );
 
-	// We update to ensure that the message in the database has the right number of likes.
 	if ( channel["memes"] )
 		await sqlUtils.updateMessage( reaction.message.id, "likes", nbLikes )
 }
 
 
 /**
- * Fetch the number of likes and reposts on a message.
- * @param {Collection} reactionsCache The cache with the message's reactions.
- * @returns {{nbLikes: number, nbReposts: number}} Two ints with respectively the likes and the reposts.
+ * Récupère le nombre de likes et de reposts sur un message.
+ * @param {Collection} reactionsCache Une Collection contenant les réactions du message.
+ * @returns {{nbLikes: number, nbReposts: number}} Deux entier représentant les likes et les resposts.
  */
 function getLikesAndReposts( reactionsCache ) {
 	let nbLikes = 0;

@@ -4,9 +4,9 @@ CREATE DATABASE FranceBotDB;
 USE FranceBotDB;
 
 
-DROP TABLE IF EXISTS Channels;
-CREATE TABLE Channels(
-    channel_id VARCHAR(22) PRIMARY KEY NOT NULL,
+DROP TABLE IF EXISTS Salons;
+CREATE TABLE Salons(
+    id_salon VARCHAR(22) PRIMARY KEY NOT NULL,
     memes TINYINT NOT NULL,
     reposts TINYINT NOT NULL,
     threads TINYINT NOT NULL,
@@ -42,11 +42,11 @@ CREATE TABLE Attachments(
 );
 
 
-DROP TABLE LikesAverage;
-CREATE TABLE LikesAverage(
-    average FLOAT NOT NULL,
-    average_min INT NOT NULL,
-    nb_msg_average INT NOT NULL
+DROP TABLE Moyenne;
+CREATE TABLE Moyenne(
+    moyenne FLOAT NOT NULL,
+    moyenne_min INT NOT NULL,
+    nb_msg_moyenne INT NOT NULL
 );
 
 

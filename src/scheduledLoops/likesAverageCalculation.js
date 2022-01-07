@@ -16,7 +16,7 @@ const { query } = require( "../utils/sqlUtils" );
 async function calcLikesAverage() {
 	const likesAverageLoop = setInterval( async () => {
 		const queryResult = (await query(
-			"SELECT * FROM LikesAverage;"
+			"SELECT * FROM Moyenne;"
 		))[0];
 
 		// Récupération du nombre de message à prendre en compte dans la moyenne.
@@ -31,7 +31,7 @@ async function calcLikesAverage() {
 
 		if ( average < queryResult["average_min"] ) average = queryResult["average_min"];
 
-		await query( "UPDATE LikesAverage SET average=?", [ average ] );
+		await query( "UPDATE Moyenne SET moyenne=?", [ average ] );
 
 	}, 60_000);
 }
