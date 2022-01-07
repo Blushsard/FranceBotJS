@@ -1,12 +1,8 @@
 /**
  * @author Benjamin Guirlet
  * @file
- * 		This file contains all the database related functions.
- * 		The client use the module 'mysql' to work with the database.
- *
- * 		It is recommended to import the file with:
- * 			const sqlUtils = require( './utils/db_function' );
- * 		It allows the user to know more easily from where the functions are.
+ * 		Ce fichier contient toutes les méthodes interagissant avec la base de données.
+ * 		Le module 'mysql2' est utilisé pour les requêtes SQL.
  */
 
 
@@ -17,8 +13,8 @@ const { Message, MessageAttachment } = require( "discord.js" );
 
 
 /**
- * Return a connection to the client's database.
- * @return {Promise<mysql.Connection>} A promise that is fulfilled with a mysql.Connection object.
+ * Retourne une connexion avec la base de données.
+ * @return {Promise<mysql.Connection>} Une Promesse complétée avec la connexion à la base de données.
  */
 async function getConnection() {
 	return ( await mysql.createConnection({
@@ -32,16 +28,14 @@ async function getConnection() {
 
 
 /**
- * Execute the query passed as a parameter and return the results.
- * @param {string} query - The MySQL query to execute.
- * @param {array} [params] - An array containing the query's parameters.
- * @returns {Promise<array>} A Promise that is fulfilled with an array of the results of the passed query.
+ * Exécute la requête passée en paramètres et retourne le résultat de cette requête.
+ * @param {string} query - La requête SQL à exécuter.
+ * @param {array} [params] - Une liste contenant les paramètres de la requête (optionnel).
+ * @returns {Promise<array>} Une Promesse complété avec une liste contenant les résultats de la requête.
  */
 async function query( query, params = [] ) {
-	// Connecting to the database.
 	const cnx = await getConnection();
 
-	// Executing the query.
 	const [ rows ] = await cnx.execute( query, params);
 	await cnx.commit();
 	await cnx.end();
@@ -54,10 +48,10 @@ async function query( query, params = [] ) {
 /* FUNCTIONS CHANNELS                              */
 /* ----------------------------------------------- */
 /**
- * Retrieves from the table MRChannels a channel.
- * @param channelID The TextChannel discord ID as a Snowflake or a String.
- * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the query's result
- * 							 if the channel is in the database, else it is fulfilled with 'null'.
+ * Récupère un salon de la base de données.
+ * @param channelID L'identifiant du salon.
+ * @returns {Promise<array>} Une Promesse complétée avec un objet contenant les données du salon si il est présent dans
+ * 							 la bdd, sinon null.
  */
 async function fetchChannel( channelID ) {
 	const channel = await query(
@@ -70,8 +64,9 @@ async function fetchChannel( channelID ) {
 
 
 /**
- * Add a channel to the MRChannels database.
- * @param {string} channelID The TextChannel's discord ID.
+ * Ajoute un salon à la base de données.
+ * Par défaut, toutes les valeurs du salon sont fausses.
+ * @param {string} channelID L'identifiant du salon à ajouté.
  */
 async function addChannel( channelID ) {
 	await query(
@@ -82,14 +77,14 @@ async function addChannel( channelID ) {
 
 
 /**
- * Update a channel already present in the database.
- * The function will automaticaly disable the previous channel if the columnName is 'feed', 'logs' or 'stats'.
- * @param channelID The channel discord ID.
- * @param {string} columnName The name of the column to update.
- * @param {boolean} value The new value of the column.
+ * Met-à-jour un salon dans la base de données. Si le salon n'est pas dans la bdd, alors il est ajouté puis mis-à-jour.
+ * Si la mise à jour concerne les valeurs 'feed', 'logs' et 'stats', alors le salon ayant précédemment cette valeur
+ * verra sa valeur passée à false dans la colonne correspondante.
+ * @param channelID L'identifiant du salon.
+ * @param {string} columnName Le nom de la colonne à mettre à jour.
+ * @param {boolean} value La nouvelle valeur de la colonne.
  */
 async function updateChannel( channelID, columnName, value ) {
-	// Checking the array's length to know is the channel is already in the database.
 	if ( !(await fetchChannel( channelID )) )
 		await addChannel( channelID );
 
@@ -103,10 +98,10 @@ async function updateChannel( channelID, columnName, value ) {
 
 
 /**
- * Fetch all the channels with a specified value in a specified column.
- * @param {string} columnName The specified column to check.
- * @param {boolean} value The required value.
- * @returns {Promise<array[object]>} Returns a promise fulfilled with an array of rows as objects.
+ * Récupère tout les salons avec une valeur ciblée dans une colonne.
+ * @param {string} columnName La colonne ciblée.
+ * @param {boolean} value La valeur requise.
+ * @returns {Promise<array[object]>} Une Promesse complétée avec la liste de tous les salons trouvés.
  */
 async function fetchChannelByValue( columnName, value ) {
 	return await query( `SELECT * from Salons WHERE ${columnName}=?`, [ value ] );
@@ -117,10 +112,10 @@ async function fetchChannelByValue( columnName, value ) {
 /* FUNCTIONS MESSAGES                              */
 /* ----------------------------------------------- */
 /**
- * Add the message with its memes in the database.
- * @param {Message} message The discord.Message object of the message.
- * @param {int} likes The likes of the message. Can be more than 0 in some cases.
- * @param {array[string|MessageAttachment]} attachmentsArray The array with the message's memes.
+ * Ajoute le message ainsi que ses memes dans la base de données.
+ * @param {Message} message L'objet du message concerné.
+ * @param {int} likes Le nombre de likes du message.
+ * @param {array[string|MessageAttachment]} attachmentsArray La liste contenant les memes du message.
  */
 async function sendMemeToDatabase( message, likes, attachmentsArray ) {
 	await query(
@@ -169,9 +164,9 @@ async function sendMemeToDatabase( message, likes, attachmentsArray ) {
 
 
 /**
- * Returns an array with the message's data if it is present in the table.
- * @param messageId The message's discord ID as a Snowflake or a String.
- * @returns {Promise<array>} Returns a Promise fulfilled with an array containing the query's result.
+ * Retourne une liste avec les données du message si il est présent dans la base de données sinon null.
+ * @param messageId L'identifiant du message.
+ * @returns {Promise<object>} Une Promesse complétée avec un objet contenant les données du message.
  */
 async function fetchMessage( messageId ) {
 	const row = await query(
@@ -184,9 +179,10 @@ async function fetchMessage( messageId ) {
 
 
 /**
- * Fetch multiple messages from the table Messages with a filter. The filter has to be in the form of an SQL condition.
- * @param {string} filter The condition to apply to the request.
- * @returns {Promise<array[object]>} A promise fulfilled with an array the rows as objects.
+ * Récupère plusieurs messages de la base de données avec une condition.
+ * La condition doit être sous la forme d'une condition SQL.
+ * @param {string} filter La condition servant de filtre.
+ * @returns {Promise<array[object]>} Une Promesse complétée avec la liste des objets contenant les données des memes.
  */
 async function fetchMessages( filter ) {
 	return await query( `SELECT * FROM Messages WHERE ${filter}` );
@@ -194,10 +190,10 @@ async function fetchMessages( filter ) {
 
 
 /**
- * Update a message row in the table Messages.
- * @param messageId The message's discord ID as a Snowflake or a String.
- * @param {string} udpType Which column to update.
- * @param udpValue The new value to put in the data cell.
+ * Met à jour un message.
+ * @param messageId L'identifiant du message.
+ * @param {string} udpType Le nom de la colonne à mettre à jour.
+ * @param udpValue La nouvelle valeur de la colonne.
  */
 async function updateMessage( messageId, udpType, udpValue ) {
 	await query(
@@ -208,8 +204,8 @@ async function updateMessage( messageId, udpType, udpValue ) {
 
 
 /**
- * Removes a messages and its attachments from the database.
- * @param messageId The message's discord ID.
+ * Supprime un message et ses memes de la base de données.
+ * @param messageId L'identifiant du message.
  */
 async function removeMessage( messageId ) {
 	await query(
@@ -228,9 +224,9 @@ async function removeMessage( messageId ) {
 /* FUNCTIONS ATTACHMENTS                           */
 /* ----------------------------------------------- */
 /**
- * Fetch the attachments from a message.
- * @param {String} messageId The attachments' message ID.
- * @returns {Promise<array[object]>} Returns a promise fulfilled with an array of the attachments as objects.
+ * Récupère les memes d'un message.
+ * @param {String} messageId L'identifiant du message.
+ * @returns {Promise<array[object]>} Une Promesse complétée avec une liste des objets contenant les données des messages.
  */
 async function fetchAttachments( messageId ) {
 	return await query(

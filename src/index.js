@@ -1,7 +1,7 @@
 /**
  * @author Benjamin Guirlet
  * @file
- * 		The base file of the bot.
+ * 		Le fichier de base du bot.
  */
 
 
@@ -30,7 +30,8 @@ client.commands = new Collection();
 	await loadEvents( client );
 	await client.login( TOKEN );
 
-	// Out-comment the following line if the commands where modified/added to upload the commands to the guild.
+	// Dé-commenté les lignes suivantes pour charger dans le serveur de dev de nouvelles commandes ou les mise à jour
+	// sur les commandes.
 	/* const { DEV_GUILD_ID } = require( "./files/config.json" );
 	const { loadCommandsToGuild } = require( "./utils/loadAssets" );
 	await loadCommandsToGuild( client, DEV_GUILD_ID ); */
