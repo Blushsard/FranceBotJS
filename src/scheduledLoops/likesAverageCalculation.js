@@ -19,17 +19,17 @@ async function calcLikesAverage() {
 			"SELECT * FROM Moyenne;"
 		))[0];
 
-		// Récupération du nombre de message à prendre en compte dans la moyenne.
+		// Récupération de la somme des likes et du nombre de memes dans la moyenne.
 		const nbLikesMsg = (await query(
-			`SELECT sum(likes) AS sumLikes, count(likes) as nbMsg 
-			FROM Messages ORDER BY LIKES LIMIT ${queryResult["nb_msg_average"]}`
+			`SELECT sum(likes) AS sommeLikes, count(likes) as nbMsg 
+			FROM Messages ORDER BY LIKES LIMIT ${queryResult["nb_msg_moyenne"]}`
 		))[0];
 
-		let average = nbLikesMsg["sumLikes"] != null ?
-			(nbLikesMsg["sumLikes"] / nbLikesMsg["nbMsg"]) :
-			queryResult["average_min"];
+		let average = nbLikesMsg["sommeLikes"] != null ?
+			(nbLikesMsg["sommeLikes"] / nbLikesMsg["nbMsg"]) :
+			queryResult["moyenne_min"];
 
-		if ( average < queryResult["average_min"] ) average = queryResult["average_min"];
+		if ( average < queryResult["moyenne_min"] ) average = queryResult["moyenne_min"];
 
 		await query( "UPDATE Moyenne SET moyenne=?", [ average ] );
 
