@@ -9,7 +9,7 @@
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
 async function execute( rateLimit ) {
-	console.log( `\033[31mIMPORTANT\033[0m : ${rateLimit}` );
+	console.log( "\033[31mIMPORTANT\033[0m : " + rateLimit );
 }
 
 
