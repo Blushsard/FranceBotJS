@@ -8,7 +8,7 @@
 
 const mysql = require( "mysql2/promise" );
 const dateUtils = require( "./dateUtils" );
-const { HOST, USER, PASSWORD, DATABASE } = require( "../files/config.json" )
+const { HOST, USER, PASSWORD, DATABASE } = require( "../files/authKey.json" )
 const { Message, MessageAttachment } = require( "discord.js" );
 
 

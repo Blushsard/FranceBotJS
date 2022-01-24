@@ -7,7 +7,7 @@
 
 
 const sqlUtils = require( "../utils/sqlUtils" );
-const { MessageEmbed, Client } = require( "discord.js" );
+const { MessageEmbed } = require( "discord.js" );
 
 /* ----------------------------------------------- */
 /* FUNCTIONS                                       */

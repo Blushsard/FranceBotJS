@@ -5,7 +5,7 @@
  */
 
 
-const { TOKEN } = require( "./files/config.json" );
+const { TOKEN } = require( "./files/authKey.json" );
 const { Client, Collection, Intents } = require( "discord.js" );
 const { loadCommands, loadEvents } = require( "./utils/loadAssets" );
 
