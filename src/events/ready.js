@@ -7,10 +7,10 @@
 
 
 const { Client } = require( "discord.js" );
-const { GUILD_ID, MODERATOR_ROLE } = require("../files/config.json");
+const { GUILD_ID, MODERATOR_ROLE } = require( `${process.cwd()}/files/config.json` );
 
-const { calcLikesAverage } = require( "../scheduledLoops/likesAverageCalculation" );
-const { feed } = require( "../scheduledLoops/feed" );
+const { calcLikesAverage } = require( `${process.cwd()}/scheduledLoops/calculMoyenneLikes` );
+const { feed } = require( `${process.cwd()}/scheduledLoops/feed` );
 
 
 /* ----------------------------------------------- */

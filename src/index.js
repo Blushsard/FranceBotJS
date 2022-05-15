@@ -5,9 +5,9 @@
  */
 
 
-const { TOKEN } = require( "./files/authKey.json" );
+const { TOKEN } = require( `${process.cwd()}/files/authKey.json` );
 const { Client, Collection, Intents } = require( "discord.js" );
-const { loadCommands, loadEvents } = require( "./utils/loadAssets" );
+const { loadCommands, loadEvents } = require( `${process.cwd()}/utils/loadAssets` );
 
 
 const client = new Client({

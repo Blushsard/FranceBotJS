@@ -6,7 +6,7 @@
 
 
 const { GuildMember } = require( "discord.js" );
-const  { ADMINISTRATORS } = require( "../files/config.json" );
+const  { ADMINISTRATORS } = require( `${process.cwd()}/files/config.json` );
 
 
 /* ----------------------------------------------- */

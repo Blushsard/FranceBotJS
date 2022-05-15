@@ -5,10 +5,10 @@
  */
 
 
-const sqlUtils = require( "../utils/sqlUtils" );
-const msgUtils = require( "../utils/messageUtils" );
-const userUtils = require( "../utils/userUtils" );
-const { LIKE_EMOJI_MENTION, REPOST_EMOJI_MENTION } = require( "../files/config.json" );
+const sqlUtils = require( `${process.cwd()}/utils/sqlUtils` );
+const msgUtils = require( `${process.cwd()}/utils/messageUtils` );
+const userUtils = require( `${process.cwd()}/utils/userUtils` );
+const { LIKE_EMOJI_MENTION, REPOST_EMOJI_MENTION } = require( `${process.cwd()}/files/config.json` );
 const { Client, Message } = require( "discord.js" );
 
 

@@ -8,7 +8,7 @@
 
 const { SlashCommandBuilder } = require( "@discordjs/builders" );
 const { CommandInteraction, MessageEmbed } = require( "discord.js" );
-const sqlUtils = require( "../../utils/sqlUtils" );
+const sqlUtils = require( `${process.cwd()}/utils/sqlUtils` );
 
 
 /* ----------------------------------------------- */

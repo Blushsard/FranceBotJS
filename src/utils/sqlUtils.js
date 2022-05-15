@@ -8,7 +8,7 @@
 
 const mysql = require( "mysql2/promise" );
 const dateUtils = require( "./dateUtils" );
-const { HOST, USER, PASSWORD, DATABASE } = require( "../files/authKey.json" )
+const { HOST, USER, PASSWORD, DATABASE } = require( `${process.cwd()}/files/authKey.json` )
 const { Message, MessageAttachment } = require( "discord.js" );
 
 
@@ -240,8 +240,10 @@ async function fetchAttachments( messageId ) {
 /* FUNCTIONS LIKESAVERAGE                          */
 /* ----------------------------------------------- */
 async function getLikesAverage() {
-	const row = await query( "SELECT moyenne from Moyenne;" );
-	return row.length ? row[0]['average'] : null;
+	let row = {};		// Création d'un objet row avant la requête afin de créer l'attribut moyenne pour éviter de
+	row.moyenne = 3;	// générer un warning.
+	row = await query( "SELECT moyenne from Moyenne;" );
+	return row[0].moyenne;
 }
 
 

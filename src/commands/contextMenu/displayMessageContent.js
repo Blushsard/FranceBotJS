@@ -22,7 +22,7 @@ const cmCommand = new ContextMenuCommandBuilder()
 /* ----------------------------------------------- */
 /**
  * Handler pour la SlashCommande.
- * @param {CommandInteraction} interaction L'interaction générée par l'exécution de la commande.
+ * @param {ContextMenuInteraction} interaction L'interaction générée par l'exécution de la commande.
  */
 async function execute( interaction ) {
 	const msgContent = interaction.channel.messages.cache.get( interaction.targetId ).content;

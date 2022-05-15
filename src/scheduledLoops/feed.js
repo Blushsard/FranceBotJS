@@ -6,7 +6,7 @@
  */
 
 
-const sqlUtils = require( "../utils/sqlUtils" );
+const sqlUtils = require( `${process.cwd()}/utils/sqlUtils` );
 const { MessageEmbed } = require( "discord.js" );
 
 /* ----------------------------------------------- */
@@ -23,18 +23,18 @@ async function feed() {
 
 		const guild = client.guilds.cache.at( 0 );
 
-		const feedChannelIds = await sqlUtils.fetchChannelByValue( "feed", true );
-		if ( !feedChannelIds.length ) return;	// Dans le cas où il n'y a pas de salon pour le feed.
-		const feedChannel = guild.channels.cache.get( feedChannelIds[0] );
+		const feedChannelDB = await sqlUtils.fetchChannelByValue( "feed", true );
+		if ( !feedChannelDB.length ) return;	// Dans le cas où il n'y a pas de salon pour le feed.
+		const feedChannel = await guild.channels.fetch( feedChannelDB[0].id_salon );
 
-		const likesAverage = await sqlUtils.getLikesAverage( "SELECT average FROM LikesAverage" );
+		const likesAverage = await sqlUtils.getLikesAverage();
 		const messages = await sqlUtils.fetchMessages( `likes>=${likesAverage} AND stf=0` );
 
 		// On traite chaque message ici.
 		for ( const msg of messages ) {
 			const author = guild.members.cache.get( msg["author_id"] );
-			const title = msg["content"] === "" ? `Message par ${author.nickname}` : msg["content"];
-			console.log( `Message par ${author.nickname}` );
+			const authorName = "Message par " + (!author ? "Inconnu(e)" : author.nickname);
+			let title = msg.content !== undefined ? msg.content : authorName;
 
 			const attachments = await sqlUtils.fetchAttachments( msg["msg_id"] );
 			const embedEnd = new MessageEmbed().setDescription( "Fin des memes!" );
@@ -45,15 +45,15 @@ async function feed() {
 
 			const attachmentsArray = [];
 			for ( const attach of attachments )
-				attachmentsArray.push( attach["url"] );
+				attachmentsArray.push( attach.url );
 
 			await feedChannel.send( { embeds : [ embedBegin ] } );
 			await feedChannel.send( { files : attachmentsArray } );
 			await feedChannel.send( { embeds : [ embedEnd ] } );
 
-			await sqlUtils.updateMessage( msg["msg_id"], "stf", true );
+			await sqlUtils.updateMessage( msg.msg_id, "stf", true );
 		}
-	}, 1_000);
+	}, 5_000);
 }
 
 

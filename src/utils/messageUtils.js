@@ -7,7 +7,7 @@
 
 const { Message, Client, MessageReaction, User } = require( "discord.js" );
 const { Collection } = require( "@discordjs/collection" );
-const { WEBSITES, LIKE_EMOJI, REPOST_EMOJI } = require( "../files/config.json" );
+const { WEBSITES, LIKE_EMOJI, REPOST_EMOJI } = require( `${process.cwd()}/files/config.json` );
 const sqlUtils = require( "./sqlUtils" );
 
 

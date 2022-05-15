@@ -4,13 +4,23 @@
  *      Cet évènement permet d'indiquer quand le bot atteint la limite de requêtes par seconde avec l'api discord.
  *      Il n'est pas utilisé pour le moment mais sera utile pour surveyer le nombre de requêtes du bot plus tard.
  */
+const { RateLimitData } = require( "discord.js" );
 
 
 /* ----------------------------------------------- */
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
+/**
+ * Est appelé
+ * @param rateLimit {RateLimitData}
+ * @returns {Promise<void>}
+ */
 async function execute( rateLimit ) {
-	console.log( "\033[31mIMPORTANT\033[0m : " + rateLimit );
+	if ( rateLimit.timeout > 1000 )
+	{
+		console.log( "\033[31mRATE LIMIT\033[0m : Timeout de " + rateLimit.timeout + "ms" );
+		console.log( `                            Route de la requête : ${rateLimit.route}` );
+	}
 }
 
 

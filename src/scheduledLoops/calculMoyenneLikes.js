@@ -7,7 +7,7 @@
  */
 
 
-const { query } = require( "../utils/sqlUtils" );
+const { query } = require( `${process.cwd()}/utils/sqlUtils` );
 
 
 /* ----------------------------------------------- */
@@ -25,11 +25,11 @@ async function calcLikesAverage() {
 			FROM Messages ORDER BY LIKES LIMIT ${queryResult["nb_msg_moyenne"]}`
 		))[0];
 
-		let average = nbLikesMsg["sommeLikes"] != null ?
-			(nbLikesMsg["sommeLikes"] / nbLikesMsg["nbMsg"]) :
-			queryResult["moyenne_min"];
-
-		if ( average < queryResult["moyenne_min"] ) average = queryResult["moyenne_min"];
+		// Dans le cas ou le nombre de messages est à 0, on met la moyenne à 1 car elle est inutile tant qu'il n'y a pas
+		// de messages. De plus, il y aura toujours des messages.
+		let average = nbLikesMsg["sommeLikes"] != null
+			? (nbLikesMsg["sommeLikes"] / nbLikesMsg["nbMsg"])
+			: 1;
 
 		await query( "UPDATE Moyenne SET moyenne=?", [ average ] );
 

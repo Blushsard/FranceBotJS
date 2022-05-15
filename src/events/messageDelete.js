@@ -6,7 +6,7 @@
 
 
 const { Message, Client } = require( "discord.js" );
-const sqlUtils = require( "../utils/sqlUtils" );
+const sqlUtils = require( `${process.cwd()}/utils/sqlUtils` );
 
 
 /* ----------------------------------------------- */

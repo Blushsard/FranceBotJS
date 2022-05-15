@@ -45,9 +45,10 @@ CREATE TABLE Attachments(
 DROP TABLE Moyenne;
 CREATE TABLE Moyenne(
     moyenne FLOAT NOT NULL,
-    moyenne_min INT NOT NULL,
     nb_msg_moyenne INT NOT NULL
 );
+
+INSERT INTO Moyenne VALUES (3, 50);
 
 
 DROP USER IF EXISTS 'franceBot'@'localhost';

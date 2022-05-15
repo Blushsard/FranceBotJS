@@ -6,7 +6,7 @@
  */
 
 
-const msgUtils = require( "../utils/messageUtils" );
+const msgUtils = require( `${process.cwd()}/utils/messageUtils` );
 const { MessageReaction, Client, User } = require( "discord.js" );
 
 
