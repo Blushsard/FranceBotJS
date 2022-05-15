@@ -7,11 +7,7 @@
 
 
 const { Client } = require( "discord.js" );
-
-// Les 3 require suivant permettent de récupérer tout les chemins des commandes et events.
-const { promisify } = require( "util" );
-const { glob } = require( "glob" );
-const globPromise = promisify( glob );
+const fs = require( "fs" );
 
 
 /* ----------------------------------------------- */
@@ -22,10 +18,18 @@ const globPromise = promisify( glob );
  * @param {Client} client Le client qui reçoit les commandes.
  */
 async function loadCommands( client ) {
-	const files = await globPromise( `${process.cwd()}/commands/*/*.js` );
-	files.map( file => {
-		const command = require( file );
-		client.commands.set( command.data.name, command );
+	const dir = process.cwd() + "/commands"
+
+	// Reading the commands' folders.
+	fs.readdirSync( dir ).forEach( sub_dir => {
+		// Reading the commands in the current folder.
+		const commandFiles = fs.readdirSync( `${dir}/${sub_dir}` ).filter( file => file.endsWith( ".js" ) );
+
+		for ( const file of commandFiles ) {
+			// Using another pathname because require works from the current file path and not the project path.
+			const command = require( `${dir}/${sub_dir}/${file}` );
+			client.commands.set( command.data.name, command );
+		}
 	});
 }
 
@@ -35,14 +39,18 @@ async function loadCommands( client ) {
  * @param {Client} client Le client qui reçoit les évènements.
  */
 async function loadEvents( client ) {
-	const files = await globPromise( `${process.cwd()}/events/*.js` );
-	files.map( file => {
-		const event = require( file );
-		if ( event.once )
+	const dir = process.cwd() + "/events"
+
+	// Reading the events' files.
+	const eventFiles = fs.readdirSync( dir ).filter(file => file.endsWith('.js'));
+	for ( const file of eventFiles ) {
+		const event = require( `${dir}/${file}` );
+		if ( event.once ) {
 			client.once( event.name, ( ...args ) => event.execute( ...args, client ) );
-		else
+		} else {
 			client.on( event.name, ( ...args ) => event.execute( ...args, client ) );
-	});
+		}
+	}
 }
 
 
@@ -67,7 +75,7 @@ async function loadCommandsToGuild( client, guildId ) {
  * Les commandes peuvent mettre jusqu'à une heure avant d'être disponible sur tout les serveurs.
  * @param {Client} client Le client du bot.
  */
-async function loadCommandToAllGuilds( client ) {
+/*async function loadCommandToAllGuilds( client ) {
 	const commandsArray = [];
 	client.commands.map( command => {
 		commandsArray.push( command.data.toJSON() );
@@ -79,7 +87,7 @@ async function loadCommandToAllGuilds( client ) {
 		"sur toutes les guilds."
 	);
 
-}
+}*/
 
 
 /* ----------------------------------------------- */

@@ -30,7 +30,7 @@ client.commands = new Collection();
 	await loadEvents( client );
 	await client.login( TOKEN );
 
-	// Dé-commenté les lignes suivantes pour charger dans le serveur de dev de nouvelles commandes ou les mise à jour
+	// Dé-commenter les lignes suivantes pour charger dans le serveur de dev de nouvelles commandes ou les mise à jour
 	// sur les commandes.
 	/* const { DEV_GUILD_ID } = require( "./files/config.json" );
 	const { loadCommandsToGuild } = require( "./utils/loadAssets" );
