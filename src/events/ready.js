@@ -21,7 +21,7 @@ async function execute( client ) {
 
 	// Démarrage des fonctionnalités.
 	await calcLikesAverage();
-	await feed( client );
+	//await feed( client );
 
 	// Décommenter quand il faudra update les permissions des commandes.
 	// await loadPermissions( client )

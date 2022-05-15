@@ -85,7 +85,10 @@ async function execute( interaction ) {
 		.setDescription( `**Memes :** ${channel["memes"]}\n**Reposts :** ${channel["reposts"]}\n**Threads :** ` +
 			`${channel["threads"]}\n**Feed :** ${channel["feed"]}\n**Logs :** ${channel["logs"]}\n**Stats :** ` +
 			`${channel["stats"]}` )
-		.setAuthor( "| Fonctionnalités du salon", interaction.user.avatarURL() );
+		.setAuthor({
+			name: "| Fonctionnalités du salon",
+			iconURL: interaction.user.avatarURL()
+		});
 
 
 	await interaction.reply( { embeds: [ embed ], ephemeral: true } );
