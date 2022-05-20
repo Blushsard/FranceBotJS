@@ -26,12 +26,12 @@ const slashCommand = new SlashCommandBuilder()
  * @param {CommandInteraction} interaction L'interaction générée par l'exécution de la commande.
  */
 async function execute( interaction ) {
-	const averageData = (await sqlUtils.query( "SELECT * FROM Average" ))[0];
+	const averageData = (await sqlUtils.query( "SELECT * FROM Moyenne" ))[0];
 	await interaction.reply({
 		embeds: [
 			new MessageEmbed()
-				.addField( "Moyenne actuelle", `${averageData["average"]}` )
-				.addField( "Nombre de memes dans le calcul de la moyenne", `${averageData["nb_msg_average"]}` )
+				.addField( "Moyenne actuelle", `${averageData["moyenne"]}` )
+				.addField( "Nombre de memes dans le calcul de la moyenne", `${averageData["nb_msg_moyenne"]}` )
 	]});
 }
 

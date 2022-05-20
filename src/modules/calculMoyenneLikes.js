@@ -14,7 +14,7 @@ const { query } = require( `${process.cwd()}/utils/sqlUtils` );
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
 async function calcLikesAverage() {
-	const likesAverageLoop = setInterval( async () => {
+	setInterval( async () => {
 		const queryResult = (await query(
 			"SELECT * FROM Moyenne;"
 		))[0];
