@@ -53,9 +53,9 @@ INSERT INTO Moyenne VALUES (3, 50);
 DROP TABLE IF EXISTS Users;
 CREATE TABLE Users(
     pk_id_user VARCHAR(22) PRIMARY KEY NOT NULL,
-    i_level INT NOT NULL,
+    n_level INT NOT NULL,
     n_xp BIGINT NOT NULL,
-    i_messages INT NOT NULL,
+    n_nb_messages INT NOT NULL,
     n_progress DOUBLE NOT NULL
 );
 
