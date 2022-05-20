@@ -101,9 +101,13 @@ async function updateMessageReactions( reaction, user, client ) {
 		if ( nbReposts >= (await sqlUtils.getLikesAverage()) ) {
 			if ( messageDb )
 				await sqlUtils.removeMessage( messageDb["msg_id"] );
-			await reaction.message.author.send(
-				"Suite à des votes signalent votre message comme un reposts, ce dernier a été supprimé !"
-			)
+
+			// try...catch utilisé pour éviter une erreur si l'auteur ne peut pas recevoir de messages.
+			try {
+				await reaction.message.author.send(
+					"Suite à des votes signalent votre message comme un reposts, ce dernier a été supprimé !"
+				);
+			} catch( error ) {}
 			await reaction.message.delete();
 		}
 	}
@@ -129,7 +133,7 @@ function getLikesAndReposts( reactionsCache ) {
 		if ( mReaction.emoji.name === LIKE_EMOJI )
 			nbLikes = mReaction.count - 1;
 		else if ( mReaction.emoji.name === REPOST_EMOJI )
-			nbReposts = mReaction.count;
+			nbReposts = mReaction.count - 1;
 	});
 
 	return { nbLikes, nbReposts };
