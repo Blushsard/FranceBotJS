@@ -47,13 +47,20 @@ CREATE TABLE Moyenne(
     moyenne FLOAT NOT NULL,
     nb_msg_moyenne INT NOT NULL
 );
-
 INSERT INTO Moyenne VALUES (3, 50);
 
+
+DROP TABLE IF EXISTS Users;
+CREATE TABLE Users(
+    pk_id_user VARCHAR(22) PRIMARY KEY NOT NULL,
+    i_level INT NOT NULL,
+    n_xp BIGINT NOT NULL,
+    i_messages INT NOT NULL,
+    n_progress DOUBLE NOT NULL
+);
 
 DROP USER IF EXISTS 'franceBot'@'localhost';
 CREATE USER 'franceBot'@'localhost' IDENTIFIED BY 'N0XlWK$uw#A8UM';
 GRANT USAGE ON FranceBotDB.* TO 'franceBot'@'localhost';
 GRANT ALL PRIVILEGES ON FranceBotDB.* TO 'franceBot'@'localhost';
 FLUSH PRIVILEGES;
-

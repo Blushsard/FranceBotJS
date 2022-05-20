@@ -24,7 +24,10 @@ const client = new Client({
 });
 
 
+// Ajout des différentes fonctionnalités dans le client.
 client.commands = new Collection();
+
+
 (async () => {
 	await loadCommands( client );
 	await loadEvents( client );
