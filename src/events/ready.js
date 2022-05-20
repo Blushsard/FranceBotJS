@@ -9,8 +9,8 @@
 const { Client } = require( "discord.js" );
 const { GUILD_ID, MODERATOR_ROLE } = require( `${process.cwd()}/files/config.json` );
 
-const { calcLikesAverage } = require( `${process.cwd()}/scheduledLoops/calculMoyenneLikes` );
-const { feed } = require( `${process.cwd()}/scheduledLoops/feed` );
+const { calcLikesAverage } = require( `${process.cwd()}/modules/calculMoyenneLikes` );
+const { feed } = require( `${process.cwd()}/modules/feed` );
 
 
 /* ----------------------------------------------- */
@@ -20,7 +20,7 @@ async function execute( client ) {
 	console.log( `${client.user.username} is connected!` );
 
 	// Démarrage des fonctionnalités.
-	await calcLikesAverage();
+	// await calcLikesAverage();
 	//await feed( client );
 
 	// Décommenter quand il faudra update les permissions des commandes.

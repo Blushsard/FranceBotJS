@@ -49,17 +49,17 @@ async function query( query, params = [] ) {
 /* ----------------------------------------------- */
 /**
  * Récupère un salon de la base de données.
- * @param channelID L'identifiant du salon.
+ * @param {string} channelID L'identifiant du salon.
  * @returns {Promise<array>} Une Promesse complétée avec un objet contenant les données du salon si il est présent dans
  * 							 la bdd, sinon null.
  */
 async function fetchChannel( channelID ) {
-	const channel = await query(
-		"SELECT * FROM Salons WHERE id_salon=?;",
+	const row = await query(
+		"SELECT * FROM salons WHERE id_salon=?;",
 		[channelID]
 	);
 
-	return channel.length ? channel[0] : null;
+	return row.length ? row[0] : null;
 }
 
 
@@ -70,8 +70,8 @@ async function fetchChannel( channelID ) {
  */
 async function addChannel( channelID ) {
 	await query(
-		"INSERT INTO Salons VALUES (?, ?, ?, ?, ?, ?, ?);",
-		[channelID, false, false, false, false, false, false]
+		"INSERT INTO salons VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+		[channelID, false, false, false, false, false, false, false]
 	);
 }
 
@@ -80,7 +80,7 @@ async function addChannel( channelID ) {
  * Met-à-jour un salon dans la base de données. Si le salon n'est pas dans la bdd, alors il est ajouté puis mis-à-jour.
  * Si la mise à jour concerne les valeurs 'feed', 'logs' et 'stats', alors le salon ayant précédemment cette valeur
  * verra sa valeur passée à false dans la colonne correspondante.
- * @param channelID L'identifiant du salon.
+ * @param {string} channelID L'identifiant du salon.
  * @param {string} columnName Le nom de la colonne à mettre à jour.
  * @param {boolean} value La nouvelle valeur de la colonne.
  */
@@ -91,9 +91,9 @@ async function updateChannel( channelID, columnName, value ) {
 	if ( [ 'feed', 'logs', 'stats' ].includes( columnName ) && value )
 	{
 		const prevChannelId = await fetchChannelByValue( columnName, true );
-		await query( `UPDATE Salons SET ${columnName}=0 WHERE id_salon=?`, [ prevChannelId ] );
+		await query( `UPDATE salons SET ${columnName}=0 WHERE id_salon=?`, [ prevChannelId ] );
 	}
-	await query( `UPDATE Salons SET ${columnName}=? WHERE id_salon=?;`, [value, channelID] );
+	await query( `UPDATE salons SET ${columnName}=? WHERE id_salon=?;`, [value, channelID] );
 }
 
 
@@ -104,7 +104,7 @@ async function updateChannel( channelID, columnName, value ) {
  * @returns {Promise<array[object]>} Une Promesse complétée avec la liste de tous les salons trouvés.
  */
 async function fetchChannelByValue( columnName, value ) {
-	return await query( `SELECT * from Salons WHERE ${columnName}=?`, [ value ] );
+	return await query( `SELECT * from salons WHERE ${columnName}=?`, [ value ] );
 }
 
 
@@ -119,7 +119,7 @@ async function fetchChannelByValue( columnName, value ) {
  */
 async function sendMemeToDatabase( message, likes, attachmentsArray ) {
 	await query(
-		"INSERT INTO Messages VALUES (?,?,?,?,?,?,?,?,?,?,?,?);",
+		"INSERT INTO messages VALUES (?,?,?,?,?,?,?,?,?,?,?,?);",
 		[
 			message.id,
 			message.author.id,
@@ -156,7 +156,7 @@ async function sendMemeToDatabase( message, likes, attachmentsArray ) {
 		}
 
 		await query(
-			"INSERT INTO Attachments VALUES (?,?,?,?);",
+			"INSERT INTO attachments VALUES (?,?,?,?);",
 			queryParams
 		)
 	}
@@ -165,12 +165,12 @@ async function sendMemeToDatabase( message, likes, attachmentsArray ) {
 
 /**
  * Retourne une liste avec les données du message si il est présent dans la base de données sinon null.
- * @param messageId L'identifiant du message.
+ * @param {string} messageId L'identifiant du message.
  * @returns {Promise<object>} Une Promesse complétée avec un objet contenant les données du message.
  */
 async function fetchMessage( messageId ) {
 	const row = await query(
-		"SELECT * FROM Messages WHERE msg_id=?;",
+		"SELECT * FROM messages WHERE msg_id=?;",
 		[ messageId ]
 	);
 
@@ -185,19 +185,19 @@ async function fetchMessage( messageId ) {
  * @returns {Promise<array[object]>} Une Promesse complétée avec la liste des objets contenant les données des memes.
  */
 async function fetchMessages( filter ) {
-	return await query( `SELECT * FROM Messages WHERE ${filter}` );
+	return await query( `SELECT * FROM messages WHERE ${filter}` );
 }
 
 
 /**
  * Met à jour un message.
- * @param messageId L'identifiant du message.
+ * @param {string} messageId L'identifiant du message.
  * @param {string} udpType Le nom de la colonne à mettre à jour.
  * @param udpValue La nouvelle valeur de la colonne.
  */
 async function updateMessage( messageId, udpType, udpValue ) {
 	await query(
-		`UPDATE Messages SET ${udpType}=? WHERE msg_id=?;`,
+		`UPDATE messages SET ${udpType}=? WHERE msg_id=?;`,
 		[ udpValue, messageId ]
 	);
 }
@@ -209,14 +209,79 @@ async function updateMessage( messageId, udpType, udpValue ) {
  */
 async function removeMessage( messageId ) {
 	await query(
-		"DELETE FROM Messages WHERE msg_id=?",
+		"DELETE FROM messages WHERE msg_id=?",
 		[ messageId ]
 	);
 
 	await query(
-		"DELETE FROM Attachments WHERE msg_id=?",
+		"DELETE FROM attachments WHERE msg_id=?",
 		[ messageId ]
 	);
+}
+
+
+/* ----------------------------------------------- */
+/* FUNCTIONS USERS                                 */
+/* ----------------------------------------------- */
+/**
+ * Récupère un utilisateur depuis la base de données.
+ * @param {string} userId L'identifiant de l'utilisateur.
+ * @returns {Promise<object|null>} Un objet contenant les données de l'utilisateur ou null.
+ */
+async function fetchUser( userId ) {
+	const row = await query(
+		"SELECT * FROM users WHERE pk_user_id=?;",
+		[ userId ]
+	);
+	return row.length ? row[0] : null;
+}
+
+
+/**
+ * Ajoute un utilisateur dans la base de données.
+ * @param {string} userId L'identifiant de l'utilisateur.
+ */
+async function addUser( userId ) {
+	await query(
+		"INSERT INTO users VALUES (?,?,?,?,?);",
+		[ userId, 0, 0, 0, 0 ]
+	);
+}
+
+
+/**
+ * Met à jour une colonne de l'utilisateur.
+ * @param {string} userId L'identifiant de l'utilisateur.
+ * @param {string} columnName Le nom de la colonne.
+ * @param value La nouvelle valeur de cette colonne.
+ */
+async function updateUser( userId, columnName, value ) {
+	await query(
+		`UPDATE users SET ${columnName}=? WHERE pk_user_id=?;`,
+		[ value, userId ]
+	);
+}
+
+
+/**
+ * Ajoute de l'expérience à l'utilisateur dans la base de données.
+ * @param {string} userId L'identifiant de l'utilisateur.
+ * @param {int} exp L'expérience à ajouter.
+ * @return {Promise<object>} L'objet contenant les données de l'utilisateurs après l'ajout.
+ */
+async function addExpToUser( userId, exp ) {
+	if ( !(await fetchUser( userId ) ) )
+		await addUser( userId );
+
+	await query(
+			"UPDATE users SET n_xp=n_xp+? WHERE pk_user_id=?;",
+		[ exp, userId ]
+	);
+
+	return (await query(
+		"SELECT * FROM users WHERE pk_user_id=?;",
+		[ userId ]
+	))[0];
 }
 
 
@@ -230,7 +295,7 @@ async function removeMessage( messageId ) {
  */
 async function fetchAttachments( messageId ) {
 	return await query(
-		"SELECT * FROM Attachments WHERE msg_id=?",
+		"SELECT * FROM attachments WHERE msg_id=?",
 		[ messageId ]
 	);
 }
@@ -242,7 +307,7 @@ async function fetchAttachments( messageId ) {
 async function getLikesAverage() {
 	let row = {};		// Création d'un objet row avant la requête afin de créer l'attribut moyenne pour éviter de
 	row.moyenne = 3;	// générer un warning.
-	row = await query( "SELECT moyenne from Moyenne;" );
+	row = await query( "SELECT moyenne from moyenne;" );
 	return row[0].moyenne;
 }
 
@@ -261,6 +326,9 @@ module.exports = {
 	fetchMessages,
 	updateMessage,
 	removeMessage,
+
+	updateUser,
+	addExpToUser,
 
 	fetchAttachments,
 

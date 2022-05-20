@@ -5,6 +5,5 @@
  */
 
 
-class ModuleManager
-{
+class ModuleManager {
 }

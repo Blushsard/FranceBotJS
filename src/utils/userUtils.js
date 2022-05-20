@@ -24,9 +24,20 @@ function isUserAdmin( user ) {
 }
 
 
+/**
+ * Calcule l'expérience requise pour un niveau donné.
+ * @param {int} level Le niveau pour lequel il faut calculer l'expérience requise.
+ * @return {int} L'expérience requise.
+ */
+function getRequiredExpForLevel( level ) {
+	return (5 * level**2 + 50) * level;
+}
+
+
 /* ----------------------------------------------- */
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
 module.exports = {
-	isUserAdmin
+	isUserAdmin,
+	getRequiredExpForLevel
 }

@@ -20,7 +20,7 @@ const { MessageReaction, Client, User } = require( "discord.js" );
  * @param {Client} client Le client qui a émit l'évènement.
  */
 async function execute( reaction, user, client ) {
-	await msgUtils.updateMessageReactions( reaction, user, client );
+	// await msgUtils.updateMessageReactions( reaction, user, client );
 }
 
 

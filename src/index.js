@@ -26,6 +26,7 @@ const client = new Client({
 
 // Ajout des différentes fonctionnalités dans le client.
 client.commands = new Collection();
+client.expLimits = new Collection();
 
 
 (async () => {
@@ -35,9 +36,9 @@ client.commands = new Collection();
 
 	// Dé-commenter les lignes suivantes pour charger dans le serveur de dev de nouvelles commandes ou les mise à jour
 	// sur les commandes.
-	/* const { DEV_GUILD_ID } = require( "./files/config.json" );
+	const { DEV_GUILD_ID } = require( "./files/config.json" );
 	const { loadCommandsToGuild } = require( "./utils/loadAssets" );
-	await loadCommandsToGuild( client, DEV_GUILD_ID ); */
+	await loadCommandsToGuild( client, DEV_GUILD_ID );
 })();
 
 

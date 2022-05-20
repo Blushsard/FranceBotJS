@@ -19,10 +19,11 @@ const sqlUtils = require( `${process.cwd()}/utils/sqlUtils` );
  */
 async function execute( message, client ) {
 	const msg = await sqlUtils.fetchMessage( message.id );
+	/*
 	if ( msg ) {
 		await sqlUtils.removeMessage(message.id);
 		await message.thread.delete();
-	}
+	}*/
 }
 
 

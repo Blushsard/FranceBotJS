@@ -50,6 +50,11 @@ const slashCommand = new SlashCommandBuilder()
 	)
 	.addBooleanOption( option =>
 		option
+			.setName( "exp" )
+			.setDescription( "Activation/désactivation du système de l'expérience." )
+	)
+	.addBooleanOption( option =>
+		option
 			.setName( "all" )
 			.setDescription( "Désactive/active toutes les fonctionnalités du salon." )
 	);
@@ -64,6 +69,10 @@ const slashCommand = new SlashCommandBuilder()
  */
 async function execute( interaction ) {
 	const options = interaction.options;
+	if ( options.data.length === 0 ) {
+		await interaction.reply({ content: "Vous devez indiquer au moins un paramètre !", ephemeral: true });
+		return;
+	}
 
 	if ( options.get ( "memes" ) )
 		await sqlUtils.updateChannel( interaction.channelId, "memes", options.get( "memes" ).value );
@@ -77,14 +86,22 @@ async function execute( interaction ) {
 		await sqlUtils.updateChannel( interaction.channelId, "logs", options.get( "logs" ).value );
 	if ( options.get ( "stats" ) )
 		await sqlUtils.updateChannel( interaction.channelId, "stats", options.get( "stats" ).value );
+	if ( options.get ( "exp" ) )
+		await sqlUtils.updateChannel( interaction.channelId, "exp", options.get( "exp" ).value );
 	if ( options.get( "all" ) )
 		await changeAllValues( interaction.channelId, options.get( "all" ).value );
 
 	const channel = await sqlUtils.fetchChannel( interaction.channelId );
 	const embed = new MessageEmbed()
-		.setDescription( `**Memes :** ${channel["memes"]}\n**Reposts :** ${channel["reposts"]}\n**Threads :** ` +
-			`${channel["threads"]}\n**Feed :** ${channel["feed"]}\n**Logs :** ${channel["logs"]}\n**Stats :** ` +
-			`${channel["stats"]}` )
+		.setDescription(
+			`**Memes :** ${channel["memes"]}\n` +
+			`**Reposts :** ${channel["reposts"]}\n` +
+			`**Threads :** ${channel["threads"]}\n` +
+			`**Feed :** ${channel["feed"]}\n` +
+			`**Logs :** ${channel["logs"]}\n` +
+			`**Stats :** ${channel["stats"]}\n` +
+			`**Exp: ** ${channel['exp']}`
+		)
 		.setAuthor({
 			name: "| Fonctionnalités du salon",
 			iconURL: interaction.user.avatarURL()

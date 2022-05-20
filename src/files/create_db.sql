@@ -4,20 +4,21 @@ CREATE DATABASE FranceBotDB;
 USE FranceBotDB;
 
 
-DROP TABLE IF EXISTS Salons;
-CREATE TABLE Salons(
+DROP TABLE IF EXISTS salons;
+CREATE TABLE salons(
     id_salon VARCHAR(22) PRIMARY KEY NOT NULL,
     memes TINYINT NOT NULL,
     reposts TINYINT NOT NULL,
     threads TINYINT NOT NULL,
     feed TINYINT NOT NULL,
     stats TINYINT NOT NULL,
-    logs TINYINT NOT NULL
+    logs TINYINT NOT NULL,
+    exp TINYINT NOT NUll
 );
 
 
-DROP TABLE IF EXISTS Messages;
-CREATE TABLE Messages(
+DROP TABLE IF EXISTS messages;
+CREATE TABLE messages(
     msg_id VARCHAR(22) PRIMARY KEY NOT NULL,
     author_id VARCHAR(22) NOT NULL,
     channel_id VARCHAR(22) NOT NULL,
@@ -33,8 +34,8 @@ CREATE TABLE Messages(
 );
 
 
-DROP TABLE IF EXISTS Attachments;
-CREATE TABLE Attachments(
+DROP TABLE IF EXISTS attachments;
+CREATE TABLE attachments(
     msg_id VARCHAR(22) NOT NULL,
     type TEXT NOT NULL,
     filename TEXT NOT NULL,
@@ -42,17 +43,17 @@ CREATE TABLE Attachments(
 );
 
 
-DROP TABLE Moyenne;
-CREATE TABLE Moyenne(
+DROP TABLE moyenne;
+CREATE TABLE moyenne(
     moyenne FLOAT NOT NULL,
     nb_msg_moyenne INT NOT NULL
 );
 INSERT INTO Moyenne VALUES (3, 50);
 
 
-DROP TABLE IF EXISTS Users;
-CREATE TABLE Users(
-    pk_id_user VARCHAR(22) PRIMARY KEY NOT NULL,
+DROP TABLE IF EXISTS users;
+CREATE TABLE users(
+    pk_user_id VARCHAR(22) PRIMARY KEY NOT NULL,
     n_level INT NOT NULL,
     n_xp BIGINT NOT NULL,
     n_nb_messages INT NOT NULL,
