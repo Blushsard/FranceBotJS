@@ -30,8 +30,8 @@ async function execute( interaction ) {
 	await interaction.reply({
 		embeds: [
 			new MessageEmbed()
-				.addField( "Moyenne actuelle", `${averageData["moyenne"]}` )
-				.addField( "Nombre de memes dans le calcul de la moyenne", `${averageData["nb_msg_moyenne"]}` )
+				.addField( "Moyenne actuelle", `${averageData["n_moyenne"]}` )
+				.addField( "Nombre de memes dans le calcul de la moyenne", `${averageData["n_nb_msg_moyenne"]}` )
 	]});
 }
 

@@ -23,7 +23,7 @@ async function feed() {
 
 		const guild = client.guilds.cache.at( 0 );
 
-		const feedChannelDB = await sqlUtils.fetchChannelByValue( "feed", true );
+		const feedChannelDB = await sqlUtils.fetchChannelByValue( "b_feed", true );
 		if ( !feedChannelDB.length ) return;	// Dans le cas où il n'y a pas de salon pour le feed.
 		const feedChannel = await guild.channels.fetch( feedChannelDB[0].id_salon );
 
@@ -36,7 +36,7 @@ async function feed() {
 			const authorName = "Message par " + (!author ? "Inconnu(e)" : author.nickname);
 			let title = msg.content !== undefined ? msg.content : authorName;
 
-			const attachments = await sqlUtils.fetchAttachments( msg["msg_id"] );
+			const attachments = await sqlUtils.fetchAttachments( msg["pk_msg_id"] );
 			const embedEnd = new MessageEmbed().setDescription( "Fin des memes!" );
 			const embedBegin = new MessageEmbed()
 				.setTitle( title )
@@ -51,7 +51,7 @@ async function feed() {
 			await feedChannel.send( { files : attachmentsArray } );
 			await feedChannel.send( { embeds : [ embedEnd ] } );
 
-			await sqlUtils.updateMessage( msg.msg_id, "stf", true );
+			await sqlUtils.updateMessage( msg.pk_msg_id, "b_stf", true );
 		}
 	}, 5_000);
 }

@@ -55,8 +55,8 @@ async function query( query, params = [] ) {
  */
 async function fetchChannel( channelID ) {
 	const row = await query(
-		"SELECT * FROM salons WHERE id_salon=?;",
-		[channelID]
+		"SELECT * FROM salons WHERE pk_id_salon=?;",
+		[ channelID ]
 	);
 
 	return row.length ? row[0] : null;
@@ -71,7 +71,7 @@ async function fetchChannel( channelID ) {
 async function addChannel( channelID ) {
 	await query(
 		"INSERT INTO salons VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
-		[channelID, false, false, false, false, false, false, false]
+		[ channelID, false, false, false, false, false, false, false ]
 	);
 }
 
@@ -91,9 +91,9 @@ async function updateChannel( channelID, columnName, value ) {
 	if ( [ 'feed', 'logs', 'stats' ].includes( columnName ) && value )
 	{
 		const prevChannelId = await fetchChannelByValue( columnName, true );
-		await query( `UPDATE salons SET ${columnName}=0 WHERE id_salon=?`, [ prevChannelId ] );
+		await query( `UPDATE salons SET ${columnName}=0 WHERE pk_id_salon=?`, [ prevChannelId ] );
 	}
-	await query( `UPDATE salons SET ${columnName}=? WHERE id_salon=?;`, [value, channelID] );
+	await query( `UPDATE salons SET ${columnName}=? WHERE pk_id_salon=?;`, [value, channelID] );
 }
 
 
@@ -170,7 +170,7 @@ async function sendMemeToDatabase( message, likes, attachmentsArray ) {
  */
 async function fetchMessage( messageId ) {
 	const row = await query(
-		"SELECT * FROM messages WHERE msg_id=?;",
+		"SELECT * FROM messages WHERE pk_msg_id=?;",
 		[ messageId ]
 	);
 
@@ -197,7 +197,7 @@ async function fetchMessages( filter ) {
  */
 async function updateMessage( messageId, udpType, udpValue ) {
 	await query(
-		`UPDATE messages SET ${udpType}=? WHERE msg_id=?;`,
+		`UPDATE messages SET ${udpType}=? WHERE pk_msg_id=?;`,
 		[ udpValue, messageId ]
 	);
 }
@@ -209,12 +209,12 @@ async function updateMessage( messageId, udpType, udpValue ) {
  */
 async function removeMessage( messageId ) {
 	await query(
-		"DELETE FROM messages WHERE msg_id=?",
+		"DELETE FROM messages WHERE pk_msg_id=?",
 		[ messageId ]
 	);
 
 	await query(
-		"DELETE FROM attachments WHERE msg_id=?",
+		"DELETE FROM attachments WHERE pk_msg_id=?",
 		[ messageId ]
 	);
 }
@@ -295,7 +295,7 @@ async function addExpToUser( userId, exp ) {
  */
 async function fetchAttachments( messageId ) {
 	return await query(
-		"SELECT * FROM attachments WHERE msg_id=?",
+		"SELECT * FROM attachments WHERE pk_msg_id=?",
 		[ messageId ]
 	);
 }
@@ -305,10 +305,8 @@ async function fetchAttachments( messageId ) {
 /* FUNCTIONS LIKESAVERAGE                          */
 /* ----------------------------------------------- */
 async function getLikesAverage() {
-	let row = {};		// Création d'un objet row avant la requête afin de créer l'attribut moyenne pour éviter de
-	row.moyenne = 3;	// générer un warning.
-	row = await query( "SELECT moyenne from moyenne;" );
-	return row[0].moyenne;
+	const row = await query( "SELECT moyenne from n_moyenne;" );
+	return row[0]["n_moyenne"];
 }
 
 

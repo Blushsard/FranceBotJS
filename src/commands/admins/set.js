@@ -75,32 +75,32 @@ async function execute( interaction ) {
 	}
 
 	if ( options.get ( "memes" ) )
-		await sqlUtils.updateChannel( interaction.channelId, "memes", options.get( "memes" ).value );
+		await sqlUtils.updateChannel( interaction.channelId, "b_memes", options.get( "memes" ).value );
 	if ( options.get ( "reposts" ) )
-		await sqlUtils.updateChannel( interaction.channelId, "reposts", options.get( "reposts" ).value );
+		await sqlUtils.updateChannel( interaction.channelId, "b_reposts", options.get( "reposts" ).value );
 	if ( options.get ( "threads" ) )
-		await sqlUtils.updateChannel( interaction.channelId, "threads", options.get( "threads" ).value );
+		await sqlUtils.updateChannel( interaction.channelId, "b_threads", options.get( "threads" ).value );
 	if ( options.get ( "feed" ) )
-		await sqlUtils.updateChannel( interaction.channelId, "feed", options.get( "feed" ).value );
+		await sqlUtils.updateChannel( interaction.channelId, "b_feed", options.get( "feed" ).value );
 	if ( options.get ( "logs" ) )
-		await sqlUtils.updateChannel( interaction.channelId, "logs", options.get( "logs" ).value );
+		await sqlUtils.updateChannel( interaction.channelId, "b_logs", options.get( "logs" ).value );
 	if ( options.get ( "stats" ) )
-		await sqlUtils.updateChannel( interaction.channelId, "stats", options.get( "stats" ).value );
+		await sqlUtils.updateChannel( interaction.channelId, "b_stats", options.get( "stats" ).value );
 	if ( options.get ( "exp" ) )
-		await sqlUtils.updateChannel( interaction.channelId, "exp", options.get( "exp" ).value );
+		await sqlUtils.updateChannel( interaction.channelId, "b_exp", options.get( "exp" ).value );
 	if ( options.get( "all" ) )
 		await changeAllValues( interaction.channelId, options.get( "all" ).value );
 
 	const channel = await sqlUtils.fetchChannel( interaction.channelId );
 	const embed = new MessageEmbed()
 		.setDescription(
-			`**Memes :** ${channel["memes"]}\n` +
-			`**Reposts :** ${channel["reposts"]}\n` +
-			`**Threads :** ${channel["threads"]}\n` +
-			`**Feed :** ${channel["feed"]}\n` +
-			`**Logs :** ${channel["logs"]}\n` +
-			`**Stats :** ${channel["stats"]}\n` +
-			`**Exp: ** ${channel['exp']}`
+			`**Memes :** ${channel["b_memes"]}\n` +
+			`**Reposts :** ${channel["b_reposts"]}\n` +
+			`**Threads :** ${channel["b_threads"]}\n` +
+			`**Feed :** ${channel["b_feed"]}\n` +
+			`**Logs :** ${channel["b_logs"]}\n` +
+			`**Stats :** ${channel["b_stats"]}\n` +
+			`**Exp: ** ${channel["b_exp"]}`
 		)
 		.setAuthor({
 			name: "| Fonctionnalités du salon",
@@ -118,12 +118,12 @@ async function execute( interaction ) {
  * @param {boolean} value La nouvelle valeur des fonctionnalités du salon.
  */
 async function changeAllValues( channelId, value ) {
-	await sqlUtils.updateChannel( channelId, "reposts", value );
-	await sqlUtils.updateChannel( channelId, "memes", value );
-	await sqlUtils.updateChannel( channelId, "threads", value );
-	await sqlUtils.updateChannel( channelId, "feed", value );
-	await sqlUtils.updateChannel( channelId, "logs", value );
-	await sqlUtils.updateChannel( channelId, "stats", value );
+	await sqlUtils.updateChannel( channelId, "b_reposts", value );
+	await sqlUtils.updateChannel( channelId, "b_memes", value );
+	await sqlUtils.updateChannel( channelId, "b_threads", value );
+	await sqlUtils.updateChannel( channelId, "b_feed", value );
+	await sqlUtils.updateChannel( channelId, "b_logs", value );
+	await sqlUtils.updateChannel( channelId, "b_stats", value );
 }
 
 

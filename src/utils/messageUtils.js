@@ -100,7 +100,7 @@ async function updateMessageReactions( reaction, user, client ) {
 	if ( channel["reposts"] ) {
 		if ( nbReposts >= (await sqlUtils.getLikesAverage()) ) {
 			if ( messageDb )
-				await sqlUtils.removeMessage( messageDb["msg_id"] );
+				await sqlUtils.removeMessage( messageDb["pk_msg_id"] );
 
 			// try...catch utilisé pour éviter une erreur si l'auteur ne peut pas recevoir de messages.
 			try {
@@ -117,7 +117,7 @@ async function updateMessageReactions( reaction, user, client ) {
 		client.emit( "messageCreate", reaction.message );
 
 	if ( channel["memes"] )
-		await sqlUtils.updateMessage( reaction.message.id, "likes", nbLikes )
+		await sqlUtils.updateMessage( reaction.message.id, "b_likes", nbLikes )
 }
 
 

@@ -29,7 +29,8 @@ const slashCommand = new SlashCommandBuilder()
  */
 async function execute( interaction ) {
 	await sqlUtils.query(
-		"DELETE FROM Channels WHERE memes=false AND reposts=false AND feed=false AND logs=false AND stats=false;"
+		"DELETE FROM Channels " +
+		"HERE b_memes=false AND b_reposts=false AND b_feed=false AND b_logs=false AND b_stats=false AND _exp=false;"
 	);
 
 	await interaction.reply(
