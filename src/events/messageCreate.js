@@ -22,11 +22,9 @@ const { Client, Message, MessageEmbed } = require( "discord.js" );
  */
 async function execute( message, client ) {
 	const channel = await sqlUtils.fetchChannel( message.channelId );
-	if ( !channel )
-		return;
 
 	// Ajout de l'exp.
-	if ( channel["exp"] && !message.author.bot ) {
+	if ( (!channel || !channel["exp"]) && !message.author.bot ) {
 		let user = null;
 		const msTime = (new Date()).getTime();
 		if ( client.expLimits.has( message.author.id ) ) {

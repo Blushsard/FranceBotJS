@@ -8,6 +8,8 @@
 // IMPORTS
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { MessageEmbed } = require("discord.js");
+const sqlUtils = require( `${process.cwd()}/utils/sqlUtils` );
+const userUtils = require( `${process.cwd()}/utils/userUtils` );
 
 // COMMANDE BUILD
 
@@ -25,14 +27,24 @@ const slashCommand = new SlashCommandBuilder()
 
 async function execute(interaction) {
 	const user = interaction.options.getUser('user') ? interaction.options.getUser('user') : interaction.user
+	const userLevel = await sqlUtils.fetchUser( user.id );
+
+	let progressLevel;
+	if ( userLevel['n_level'] === 0 )
+		progressLevel = userLevel['n_xp'] * 100 / userUtils.getRequiredExpForLevel( userLevel['n_level'] + 1 );
+	else {
+		progressLevel = (userLevel['n_xp'] - userUtils.getRequiredExpForLevel( userLevel['n_level'] )) * 100 /
+			(userUtils.getRequiredExpForLevel( userLevel['n_level'] + 1 ) - userUtils.getRequiredExpForLevel( userLevel['n_level'] ));
+	}
+
     const embed = new MessageEmbed()
-	.setColor('#0099ff')
-	.setAuthor({ name: user.username, iconURL: user.avatarURL()})
-	.addFields(
-		{ name: 'Rank', value: '9/12,703', inline: true },
-		{ name: 'Level', value: '51 (30%)', inline: true },
-		{ name: 'XP', value: '`144,238` xp total', inline: true },
-	)
+		.setColor('#0099ff')
+		.setAuthor({ name: user.username, iconURL: user.avatarURL()})
+		.addFields(
+			{ name: 'Rank', value: `${userLevel['rang']}/${userLevel['total_users']}`, inline: true },
+			{ name: 'Level', value: `${userLevel['n_level']} (${progressLevel.toFixed( 2 )}%)`, inline: true },
+			{ name: 'XP', value: `\`${userLevel['n_xp']}\` au total` , inline: true },
+		);
 
     return interaction.reply({
         embeds: [embed],

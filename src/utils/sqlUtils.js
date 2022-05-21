@@ -230,7 +230,10 @@ async function removeMessage( messageId ) {
  */
 async function fetchUser( userId ) {
 	const row = await query(
-		"SELECT * FROM users WHERE pk_user_id=?;",
+		"SELECT *, " +
+		"(SELECT count(*) FROM users AS u WHERE u.pk_user_id <= users.pk_user_id ORDER BY u.n_xp DESC) AS rang," +
+		"(SELECT count(*) FROM users) AS total_users" +
+		" FROM users where users.pk_user_id=?;",
 		[ userId ]
 	);
 	return row.length ? row[0] : null;
@@ -278,10 +281,7 @@ async function addExpToUser( userId, exp ) {
 		[ exp, userId ]
 	);
 
-	return (await query(
-		"SELECT * FROM users WHERE pk_user_id=?;",
-		[ userId ]
-	))[0];
+	return await fetchUser( userId );
 }
 
 
@@ -327,6 +327,7 @@ module.exports = {
 	updateMessage,
 	removeMessage,
 
+	fetchUser,
 	updateUser,
 	addExpToUser,
 
