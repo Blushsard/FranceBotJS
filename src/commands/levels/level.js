@@ -29,9 +29,11 @@ async function execute(interaction) {
 	const userUtils = interaction.client.db.usersManager;
 	const userLevel = await userUtils.fetchUser( user.id );
 
+	if ( !userLevel ) return interaction.reply( "L'utilisateur n'a pas d'expérience!" );
+
 	let progressLevel;
 	if ( userLevel['n_level'] === 0 )
-		progressLevel = userLevel['n_xp'] * 100 / userUtils.getRequiredExpForLevel( userLevel['n_level'] + 1 );
+		progressLevel = userLevel['n_xp'] * 100 / levels.getRequiredExpForLevel( userLevel['n_level'] + 1 );
 	else {
 		progressLevel = (userLevel['n_xp'] - levels.getRequiredExpForLevel( userLevel['n_level'] )) * 100 /
 			(levels.getRequiredExpForLevel( userLevel['n_level'] + 1 ) - levels.getRequiredExpForLevel( userLevel['n_level'] ));
@@ -48,7 +50,6 @@ async function execute(interaction) {
 
     return interaction.reply({
         embeds: [embed],
-        ephemeral: false,
     });
 }
 
