@@ -38,11 +38,11 @@ Modules:	A PRENDRE EN COMPTE PENDANT TOUT LE DEV
 		ATTRIBUTS:
 			- active	// indique si le module est activé.
 			- client	// Le client du bot.
+			- database	// l'objet contenant les fonctions de base de la bdd.
 		METHODES:
 			- toutes les méthodes de la base de données liées à ce module.
 			- les méthodes liées aux évènements.
 	- Liste des modules prévus:
-		- Database: contiendra les fonctions lambda de la db (getConnection, etc). (exception, toujours actif).
 		- Likes: inclus le système de Repost.
 		- Feed:
 		- Levels:
