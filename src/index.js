@@ -4,6 +4,7 @@
  *      Le point de base du bot.
  */
 const { Client, Intents, Collection } = require( "discord.js" );
+const { loadCommands, loadEvents } = require( `${process.cwd()}/utils/loadAssets` );
 require( "dotenv" ).config( { path: '.env.local' } );
 
 
@@ -23,5 +24,12 @@ const client = new Client({
 
 client.commands = new Collection();
 (async () => {
+	await loadCommands( client );
+	await loadEvents( client );
+	await client.login( process.env.TOKEN );
 
+	// Dé-commenter les lignes suivantes pour charger dans le serveur de dev de nouvelles commands ou les mise à jour
+	// sur les commands.
+	/* const { loadCommandsToGuild } = require( "./utils/loadAssets" );
+	await loadCommandsToGuild( client, "908744886474407988" ); */
 })();

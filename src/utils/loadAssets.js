@@ -1,7 +1,7 @@
 /**
  * @author Benjamin Guirlet
  * @file
- * 		Ce fichier contient les fonctions permettant de charger les commandes dans le client et dans les guilds sur
+ * 		Ce fichier contient les fonctions permettant de charger les commands dans le client et dans les guilds sur
  * 		lesquelles le client se trouve.
  */
 
@@ -14,9 +14,9 @@ const fs = require( "fs" );
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
 /**
- * Charge les commandes dans le client.
- * Les commandes doivent être dans des sous-dossiers du dossier 'commands'.
- * @param {Client} client Le client qui reçoit les commandes.
+ * Charge les commands dans le client.
+ * Les commands doivent être dans des sous-dossiers du dossier 'commands'.
+ * @param {Client} client Le client qui reçoit les commands.
  */
 async function loadCommands( client ) {
 	const dir = process.cwd() + "/commands"
@@ -56,7 +56,7 @@ async function loadEvents( client ) {
 
 
 /**
- * Charge les commandes dans la guild spécifiée.
+ * Charge les commands dans la guild spécifiée.
  * @param {Client} client Le client du bot.
  * @param {string} guildId L'identifiant de la guild visée.
  */
@@ -72,8 +72,8 @@ async function loadCommandsToGuild( client, guildId ) {
 
 
 /**
- * Charge les commandes dans toutes les guilds du client.
- * Les commandes peuvent mettre jusqu'à une heure avant d'être disponible sur tout les serveurs.
+ * Charge les commands dans toutes les guilds du client.
+ * Les commands peuvent mettre jusqu'à une heure avant d'être disponible sur tout les serveurs.
  * @param {Client} client Le client du bot.
  */
 /*async function loadCommandToAllGuilds( client ) {
@@ -84,7 +84,7 @@ async function loadCommandsToGuild( client, guildId ) {
 
 	await client.application.commands.set( commandsArray );
 	console.log(
-		"Commandes chargées ! Il peut y avoir un délai d'une heure avant que les commandes soient disponible " +
+		"Commandes chargées ! Il peut y avoir un délai d'une heure avant que les commands soient disponible " +
 		"sur toutes les guilds."
 	);
 
