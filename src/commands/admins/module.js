@@ -40,16 +40,9 @@ const slashCommand = new SlashCommandBuilder()
  */
 async function execute( interaction ) {
 	// Update du fichier modules.json.
-	fs.readFile( `${process.cwd()}/data/modules.json`, function( err, buff ) {
-		if ( err ) throw err;
-
-		let modules = JSON.parse( buff );
-		modules[interaction.options.get( "nom_module" ).value] = interaction.options.get( "etat" ).value;
-
-		fs.writeFile( `${process.cwd()}/data/modules.json`, JSON.stringify( modules ), (err) => {
-			if ( err ) throw err;
-		});
-	});
+	let modules = JSON.parse( fs.readFileSync( `${process.cwd()}/data/modules.json` ) );
+	modules[interaction.options.get( "nom_module" ).value] = interaction.options.get( "etat" ).value;
+	fs.writeFileSync( `${process.cwd()}/data/modules.json`, modules );
 
 	// Update du module dans le client.
 	interaction.client.modules.get( interaction.options.get( "nom_module" ).value ).setActive(

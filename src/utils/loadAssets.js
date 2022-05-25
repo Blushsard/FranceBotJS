@@ -19,8 +19,7 @@ const fs = require( "fs" );
  * @param {Client} client Le client du bot.
  */
 async function loadModules( client ) {
-	let rawdata = fs.readFileSync( `${process.cwd()}/data/modules.json` );
-	let modules = JSON.parse( rawdata );
+	let modules = JSON.parse( fs.readFileSync( `${process.cwd()}/data/modules.json` ) );
 
 	// Chargement des modules dans le client.
 	client.modules.set( 'levels', new Levels( client, modules['levels'] ) );
