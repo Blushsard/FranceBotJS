@@ -1,3 +1,8 @@
+Multi-serveurs:
+	- Le bot doit prendre en compte le fait qu'il sera sans doute utilisé plus tard sur plusieurs serveurs.
+	- Le code doit donc être prévu pour.
+
+
 Base de données:
 	- La table Message va être réduite afin de ne garder que certaines données essentielles (et optimisation).
 		Colonnes:
@@ -17,6 +22,10 @@ Base de données:
 Le dossier utils:
 	- Ce dossier existera toujours car il contiendra certaines fonctions n'appartenant à aucun modules.
 	- Exemples: loadAssets, userUtils(?), dateUtils, messageUtils(?).
+
+Le dossier data:
+	- Ce nouveau dossier contiendra des fichiers contenant des données propres aux modules.
+	- Exemple: l'attribution des rôles par niveau pour le module Levels.
 
 
 Modules:
@@ -44,4 +53,6 @@ Modules:
 
 
 Fichiers de configuration:
-	- Les fichiers de configuration authKey.json et config.json vont être remplacé par un fichier .env.local.
+	- Les fichiers de configuration authKey.json et config.json vont être remplacé ou en partie par un fichier .env.local.
+	- Le fichier config.json ne pourra pas être complètement remplacé car il contient des listes de données.
+	- Ce dernier sera donc placé dans le dossier 'data'.

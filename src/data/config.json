@@ -1,0 +1,33 @@
+{
+	"MODERATOR_ROLE" : "908748280530346047",
+	"ADMINISTRATORS" : [
+		"310430388336197632",
+		"268078126179942410"
+	],
+
+	"LIKE_EMOJI": "\uD83D\uDC4D",
+	"LIKE_EMOJI_MENTION": "\uD83D\uDC4D",
+	"REPOST_EMOJI": "♻️",
+	"REPOST_EMOJI_MENTION": "♻️",
+
+	"FORMATS": [
+		"image/png",
+		"image/png",
+		"image/jpeg",
+		"image/tiff",
+		"image/webp",
+		"image/bmp",
+		"video/webm",
+		"video/quicktime",
+		"video/mp4",
+		"video/mkv"
+	],
+	"WEBSITES": [
+		"https:\\/\\/www\\.youtube\\.com\\/watch\\?v=\\S{11}",
+		"https://youtu.be/.{6,20}",
+		"https://coub\\.com/view/\\w{6}",
+		"https://www.instagram.com/.*",
+		"https:\\/\\/twitter.com\\/\\w*\\/status\\/\\d{19}",
+		"https:\\/\\/cdn\\.discordapp\\.com\\/attachments\\/\\d{18}\\/\\d{18}\\/.+\\.[a-zA-Z0-9]{2,4}"
+	]
+}

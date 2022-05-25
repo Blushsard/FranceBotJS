@@ -7,12 +7,26 @@
 
 
 const { Client } = require( "discord.js" );
+const { Levels } = require( `${process.cwd()}/modules/Levels` );
 const fs = require( "fs" );
 
 
 /* ----------------------------------------------- */
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
+/**
+ * Charge les modules dans le client.
+ * @param {Client} client Le client du bot.
+ */
+async function loadModules( client ) {
+	let rawdata = fs.readFileSync( `${process.cwd()}/data/modules.json` );
+	let modules = JSON.parse( rawdata );
+
+	// Chargement des modules dans le client.
+	client.modules.set( 'levels', new Levels( client, modules['levels'] ) );
+}
+
+
 /**
  * Charge les commands dans le client.
  * Les commands doivent être dans des sous-dossiers du dossier 'commands'.
@@ -97,5 +111,6 @@ async function loadCommandsToGuild( client, guildId ) {
 module.exports = {
 	loadCommands,
 	loadEvents,
+	loadModules,
 	loadCommandsToGuild
 }
