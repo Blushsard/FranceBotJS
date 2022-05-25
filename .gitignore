@@ -106,3 +106,5 @@ dist
 # Manually added files and folders
 /.idea
 /src/files/authKey.json
+/archive/
+/src/.env.local

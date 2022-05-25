@@ -15,6 +15,7 @@ const fs = require( "fs" );
 /* ----------------------------------------------- */
 /**
  * Charge les commandes dans le client.
+ * Les commandes doivent être dans des sous-dossiers du dossier 'commands'.
  * @param {Client} client Le client qui reçoit les commandes.
  */
 async function loadCommands( client ) {

@@ -19,18 +19,15 @@ CREATE TABLE salons(
 
 DROP TABLE IF EXISTS messages;
 CREATE TABLE messages(
-    pk_msg_id VARCHAR(22) PRIMARY KEY NOT NULL,
-    s_author_id VARCHAR(22) NOT NULL,
-    s_channel_id VARCHAR(22) NOT NULL,
-    s_cat_name TEXT NOT NULL,
-    s_jump_url TEXT NOT NULL,
-    n_likes INT NOT NULL,
-    s_msg_content TEXT,
-    n_day_date INT NOT NULL,
-    n_month_date INT NOT NULL,
-    b_stf TINYINT NOT NULL,
-    b_stt TINYINT NOT NULL,
-    b_str TINYINT NOT NULL
+	pk_msg_id VARCHAR(22) PRIMARY KEY NOT NULL,	-- L'identifiant du message.
+	s_author_id VARCHAR(22) NOT NULL,	-- L'identifiant de l'auteur du message
+	s_channel_id VARCHAR(22) NOT NULL,	-- L'identifiant du salon pour fetch le message.
+	n_likes INT NOT NULL,		-- Le nombre de likes.
+	b_stf TINYINT NOT NULL,		-- Envoyé dans le feed.
+	b_stt TINYINT NOT NULL,		-- Envoyé sur twitter.
+	b_str TINYINT NOT NULL,		-- Envoyé sur reddit.
+	b_repost TINYINT NOT NULL,	-- Si le message a été supprimé pour respost.
+	n_date INT NOT NULL		-- La date d'envoi convertie en mois.
 );
 
 
@@ -43,16 +40,8 @@ CREATE TABLE attachments(
 );
 
 
-DROP TABLE moyenne;
-CREATE TABLE moyenne(
-    n_moyenne FLOAT NOT NULL,
-    n_nb_msg_moyenne INT NOT NULL
-);
-INSERT INTO Moyenne VALUES (3, 50);
-
-
-DROP TABLE IF EXISTS users;
-CREATE TABLE users(
+DROP TABLE IF EXISTS utilisateurs;
+CREATE TABLE utilisateurs(
     pk_user_id VARCHAR(22) PRIMARY KEY NOT NULL,
     n_level INT NOT NULL,
     n_xp BIGINT NOT NULL,

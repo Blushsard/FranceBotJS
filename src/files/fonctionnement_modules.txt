@@ -1,4 +1,0 @@
-Chaque module à un booléen indiquant si il est activé. Ce booléen peut être modifié à chaud avec une commande.
-Les valeurs des booléens sont enregistrées dans le fichier config.json pour éviter de les perdres au démarrage du bot.
-
-Chaque modules a ses propres méthodes et leur placement dans le code du bot doit être indiqué dans la doc.
