@@ -1,9 +1,9 @@
-Multi-serveurs:
+Multi-serveurs: A PRENDRE EN COMPTE PENDANT TOUT LE DEV
 	- Le bot doit prendre en compte le fait qu'il sera sans doute utilisé plus tard sur plusieurs serveurs.
 	- Le code doit donc être prévu pour.
 
 
-Base de données:
+Base de données:	FAIT
 	- La table Message va être réduite afin de ne garder que certaines données essentielles (et optimisation).
 		Colonnes:
 			    pk_msg_id VARCHAR(22) PRIMARY KEY NOT NULL,	// L'identifiant du message.
@@ -19,16 +19,16 @@ Base de données:
     - Toutes les autres tables ne changent pas.
 
 
-Le dossier utils:
+Le dossier utils:	A PRENDRE EN COMPTE PENDANT TOUT LE DEV
 	- Ce dossier existera toujours car il contiendra certaines fonctions n'appartenant à aucun modules.
 	- Exemples: loadAssets, userUtils(?), dateUtils, messageUtils(?).
 
-Le dossier data:
+Le dossier data:	A PRENDRE EN COMPTE PENDANT TOUT LE DEV
 	- Ce nouveau dossier contiendra des fichiers contenant des données propres aux modules.
 	- Exemple: l'attribution des rôles par niveau pour le module Levels.
 
 
-Modules:
+Modules:	A PRENDRE EN COMPTE PENDANT TOUT LE DEV
 	- Chaque fonctionnalité du bot est présente sous la forme d'un module.
 	- Tout les modules seront instanciés comme des attributs du client.
 	- Un fichier JSON gardera trace des modules activés/désactivés.
@@ -52,7 +52,7 @@ Modules:
 			  itération du calcul de la moyenne se fasse.
 
 
-Fichiers de configuration:
+Fichiers de configuration: FAIT
 	- Les fichiers de configuration authKey.json et config.json vont être remplacé ou en partie par un fichier .env.local.
 	- Le fichier config.json ne pourra pas être complètement remplacé car il contient des listes de données.
 	- Ce dernier sera donc placé dans le dossier 'data'.
