@@ -5,7 +5,7 @@
  */
 const { Client, Intents, Collection } = require( "discord.js" );
 const { loadCommands, loadEvents, loadModules } = require( `${process.cwd()}/utils/loadAssets` );
-const { Database } = require( `${process.cwd()}/utils/Database.js` );
+const { Database } = require( `${process.cwd()}/database/Database.js` );
 
 require( "dotenv" ).config( { path: '.env.local' } );
 
