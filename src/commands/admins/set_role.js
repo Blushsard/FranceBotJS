@@ -44,7 +44,7 @@ async function execute( interaction ) {
 		await rlManager.removeRoleByLevel( niveau, interaction.guildId );
 	else {
 		// Si le serveur à déjà un rôle pour le niveau demandé.
-		if ( await rlManager.fetchChannelByLevel( niveau, interaction.guildId ) )
+		if ( await rlManager.fetchRoleByLevel( niveau, interaction.guildId ) )
 			await rlManager.updateRoleByLevel( options.getRole( "role_palier" ).id, niveau, interaction.guildId );
 		else
 			await rlManager.ajouterRoleLevel( options.getRole( 'role_palier' ).id, interaction.guildId, niveau );

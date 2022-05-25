@@ -26,7 +26,7 @@ class RolesLevelsManager
 	 * @returns {Promise<array>} Une Promesse complétée avec un objet contenant les données du salon si il est présent dans
 	 * 							 la bdd, sinon null.
 	 */
-	async fetchChannelByLevel( niveau, guildId ) {
+	async fetchRoleByLevel( niveau, guildId ) {
 		const row = await this.db.query(
 			"SELECT * FROM roles_levels WHERE n_niveau_requis=? AND s_guild_id=?;",
 			[ niveau, guildId ]

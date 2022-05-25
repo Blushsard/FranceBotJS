@@ -40,7 +40,7 @@ class UsersManager
 	 * Ajoute un user dans la base de données.
 	 * @param {string} userId L'identifiant discord de l'user.
 	 */
-	async ajouterUser( userId ) {
+	async addUser( userId ) {
 		await this.db.query(
 			"INSERT INTO users VALUES (?,?,?,?,?);",
 			[ userId, 0, 0, 0, 0 ]
@@ -70,7 +70,7 @@ class UsersManager
 	 */
 	async ajouterExperienceUser( userId, exp ) {
 		if ( !(await this.fetchUser( userId ) ) )
-			await this.ajouterUser( userId );
+			await this.addUser( userId );
 
 		await this.db.query(
 			"UPDATE users SET n_xp=n_xp+? WHERE pk_user_id=?;",
