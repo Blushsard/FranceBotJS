@@ -35,18 +35,16 @@ async function execute(interaction) {
 	if ( userLevel['n_level'] === 0 )
 		progressLevel = userLevel['n_xp'] * 100 / levels.getRequiredExpForLevel( userLevel['n_level'] + 1 );
 	else {
-		progressLevel = (userLevel['n_xp'] - levels.getRequiredExpForLevel( userLevel['n_level'] )) * 100 /
+		progressLevel = ((userLevel['n_xp'] - levels.getRequiredExpForLevel( userLevel['n_level'] )) * 100) /
 			(levels.getRequiredExpForLevel( userLevel['n_level'] + 1 ) - levels.getRequiredExpForLevel( userLevel['n_level'] ));
 	}
 
     const embed = new MessageEmbed()
 		.setColor('#0099ff')
 		.setAuthor({ name: user.username, iconURL: user.avatarURL()})
-		.addFields(
-			{ name: 'Rank', value: `${userLevel['rang']}/${userLevel['total_users']}`, inline: true },
-			{ name: 'Level', value: `${userLevel['n_level']} (${progressLevel.toFixed( 2 )}%)`, inline: true },
-			{ name: 'XP', value: `\`${userLevel['n_xp']}\` au total` , inline: true },
-		);
+		.addField( 'Rank', `${userLevel['rang']}/${userLevel['total_users']}`, true )
+		.addField( 'Level', `${userLevel['n_level']} (${progressLevel.toFixed( 2 )}%)`, true )
+		.addField( 'XP', `\`${userLevel['n_xp']}\` au total`, true );
 
     return interaction.reply({
         embeds: [embed],
