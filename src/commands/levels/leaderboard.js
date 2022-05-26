@@ -25,16 +25,32 @@ async function execute(interaction) {
 
 	if ( !usersLevel ) return interaction.reply( "Impossible de trouver le leaderboard... 😪" );
 
-	let leaderboard;
+	let leaderboard = "";
 	for (let i = 0; i < usersLevel.length; i++) {
-		leaderboard[i] = `<@${usersLevel[i]['pk_user_id']}> ${usersLevel[i]['rang']}/${usersLevel[i]['total_users']}`;
+		let rank = " ";
+		switch(i){
+			case 0:
+				rank = "🏆"
+				break;
+			case 1 :
+				rank = "🥈"
+				break;
+			case 2 :
+				rank = "🥉"
+				break;
+			default :
+				rank = i + 1;
+		}
+
+		leaderboard += `**${rank}** - <@${usersLevel[i]['pk_user_id']}> - **LVL${usersLevel[i]['n_level']}**, ${usersLevel[i]['n_progress']}%\n`;
 	}
 	
-	console.log(usersLevel)
     const embed = new MessageEmbed()
 		.setColor('#0099ff')
-		.setAuthor({ name: 'Test', iconURL: interaction.user.avatarURL()})
-		.addField( 'Classement', leaderboard );
+		.setAuthor({ name: interaction.client.user.username, iconURL: interaction.client.user.avatarURL()})
+		.addField( `Classement sur ${usersLevel[0]['total_users']}`, leaderboard )
+		.setFooter({text:interaction.guild.name, iconURL:interaction.guild.iconURL()})
+		.setTimestamp();
 
     return interaction.reply({
         embeds: [embed],
