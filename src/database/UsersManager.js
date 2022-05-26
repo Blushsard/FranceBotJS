@@ -26,10 +26,8 @@ class UsersManager
 	 */
 	async fetchUser( userId ) {
 		const row = await this.db.query(
-			"SELECT *, " +
-			"(SELECT count(*) FROM users AS u WHERE u.pk_user_id <= users.pk_user_id ORDER BY u.n_xp DESC) AS rang," +
-			"(SELECT count(*) FROM users) AS total_users" +
-			" FROM users where users.pk_user_id=?;",
+			"SELECT *, (SELECT COUNT(*) FROM users) AS total_users FROM " +
+			"(SELECT *, ROW_NUMBER() OVER (ORDER BY n_xp DESC) AS rang FROM users) AS u WHERE u.pk_user_id=?;",
 			[ userId ]
 		);
 		return row.length ? row[0] : null;
@@ -54,11 +52,15 @@ class UsersManager
 	/**
 	 * Ajoute un user dans la base de données.
 	 * @param {string} userId L'identifiant discord de l'user.
+	 * @param {int} level Le niveau de l'utilisateur.
+	 * @param {int} xp L'expérience totale de l'utilisateur.
+	 * @param {int} nb_msg Le nombre de messages total envoyés par l'utilisateur.
+	 * @param {number} progress Le progrès sur le niveau actuel en pourcentage.
 	 */
-	async addUser( userId ) {
+	async addUser( userId, level=0, xp=0, nb_msg=0, progress=0 ) {
 		await this.db.query(
 			"INSERT INTO users VALUES (?,?,?,?,?);",
-			[ userId, 0, 0, 0, 0 ]
+			[ userId, level, xp, nb_msg, progress ]
 		);
 	}
 

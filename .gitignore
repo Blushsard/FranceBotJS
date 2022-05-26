@@ -107,3 +107,5 @@ dist
 /.idea
 /archive/
 /src/.env.local
+/src/database/create_db.sql
+/src/database/connect.bat

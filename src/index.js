@@ -31,6 +31,30 @@ client.modules = new Collection();
 client.db = new Database();
 
 
+// A décommenter une fois que le code sera sur le vps pour charger les utilisateurs dans la base de données.
+/*const data = require( "./python_scripts/data.json" );
+console.log( "Nombre d'utilisateurs: " + data.length );
+let cpt = 1;
+for ( let user of data ) {
+	(async ( cpt ) => {
+		try {
+			let level = 0;
+			while ( ((5 * level**2 + 50) * level) < user['xp'] )
+				level++;
+
+			await client.db.usersManager.addUser(
+				user['id'],
+				level - 1,
+				user['xp'],
+				user['messages'],
+				user['progress']
+			);
+		}
+		catch ( err ) {}
+		console.log( "Nombre d'utilisateurs ajoutés: " + cpt );
+	})( cpt++ );
+}*/
+
 // Démarrage du client.
 (async () => {
 	await loadCommands( client );
