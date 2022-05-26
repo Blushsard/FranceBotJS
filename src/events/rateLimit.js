@@ -11,9 +11,8 @@ const { RateLimitData } = require( "discord.js" );
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
 /**
- * Est appelé
- * @param rateLimit {RateLimitData}
- * @returns {Promise<void>}
+ * Handler pour l'évènement.
+ * @param {RateLimitData} rateLimit
  */
 async function execute( rateLimit ) {
 	if ( rateLimit.timeout > 1000 ) {

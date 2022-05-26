@@ -37,6 +37,19 @@ class RolesLevelsManager
 
 
 	/**
+	 * Récupère tout les role_levels d'un serveur.
+	 * @param {string} guildId L'identifiant discord du serveur.
+	 * @returns {Promise<array>} Une promesse complétée avec une liste contenant les role_levels de la guild.
+	 */
+	async fetchGuildRoles( guildId ) {
+		return await this.db.query(
+			"SELECT * FROM roles_levels WHERE s_guild_id=? ORDER BY n_niveau_requis;",
+			[ guildId ]
+		);
+	}
+
+
+	/**
 	 * Ajouter un rôle dans la base de données.
 	 * @param {string} roleId L'identifiant discord du rôle.
 	 * @param {string} guildId L'identifiant discord de la guild concernée.
