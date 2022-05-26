@@ -16,7 +16,7 @@ const { ChannelsManager } = require( `${process.cwd()}/database/ChannelsManager`
 /* ----------------------------------------------- */
 const slashCommand = new SlashCommandBuilder()
 	.setName( "set" )
-	.setDescription( "Permet d'activer/désactiver des fonctionnalités sur un salon." )
+	.setDescription( "[admin] Permet d'activer/désactiver des fonctionnalités sur un salon." )
 	.setDefaultPermission( false )
 	.addBooleanOption( option =>
 		option

@@ -49,7 +49,7 @@ class Levels
 
 		if ( this.limits.has( message.author.id ) ) {
 			// 1 minute
-			if ( msTime > this.limits.get( message.author.id ) + 60000 ) {
+			if ( msTime > this.limits.get( message.author.id ) + 60_000 ) {
 				user = await this.client.db.usersManager.ajouterExperienceUser( message.author.id, 8 );
 				this.limits.set( message.author.id, msTime );
 			}
@@ -59,7 +59,34 @@ class Levels
 			user = await this.client.db.usersManager.ajouterExperienceUser( message.author.id, 8 );
 		}
 
+		if ( user ) await this.refreshUser( message.member, user );
 		if ( user ) await this.levelUpUtilisateur( user, message.member, message.channel );
+	}
+
+
+	/**
+	 * Regarde si les rôles et niveau de l'utilisateur sont à jour et les met à jour si besoin.
+	 * @param {GuildMember} member L'objet GuildMember de l'utilisateur à refresh.
+	 * @param {object} userDb Les données de l'utilisateur dans la bdd.
+	 */
+	async refreshUser( member, userDb ) {
+		const guildRoles = await this.client.db.rolesLevelsManager.fetchGuildRoles( member.guild.id );
+
+		// Refresh du niveau.
+		if ( userDb['n_level'] !== this.getLevelFromXp( userDb['n_xp'] ) ) {
+			userDb['n_level'] = this.getLevelFromXp(userDb['n_xp']);
+			await this.client.db.usersManager.updateUser(userDb['pk_user_id'], 'n_level', userDb['n_level']);
+		}
+
+		// Refresh des roles.
+		for ( let role of guildRoles ) {
+			if ( member.roles.cache.has( role['pk_role_id'] ) && role['n_niveau_requis'] > userDb['n_level'] )
+			{
+				await member.roles.remove( role['pk_role_id'] )
+			}
+			else if ( role['n_niveau_requis'] <= userDb['n_level'] )
+				await member.roles.add( role["pk_role_id"] );
+		}
 	}
 
 
@@ -100,6 +127,18 @@ class Levels
 	 */
 	getRequiredExpForLevel( level ) {
 		return (5 * level**2 + 50) * level;
+	}
+
+
+	/**
+	 * Calcule le niveau à partir de l'xp passée en paramètre.
+	 * @param {int} xp L'xp du niveau à calculer.
+	 * @return {int} Le niveau.
+	 */
+	getLevelFromXp( xp ) {
+		let level = 0;
+		while ( xp > this.getRequiredExpForLevel( level ) )	level++;
+		return --level;
 	}
 }
 

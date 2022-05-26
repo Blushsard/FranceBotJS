@@ -14,7 +14,7 @@ const { MessageEmbed } = require("discord.js");
 const slashCommand = new SlashCommandBuilder()
     .setName("level")
     .setDescription(
-        "[level] Obtenir votre niveau ou celui de la perosnne spécifié."
+        "[level] Obtenir votre niveau ou celui de la personne spécifié."
     )
 	.addUserOption(option =>
 		option.setName('user')

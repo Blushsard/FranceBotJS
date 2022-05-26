@@ -3,8 +3,6 @@
  * @description
  *      La commande permettant de gérer les roles palier des niveaux.
  */
-
-
 const { SlashCommandBuilder } = require( "@discordjs/builders" );
 const { CommandInteraction } = require( "discord.js" );
 
@@ -14,7 +12,7 @@ const { CommandInteraction } = require( "discord.js" );
 /* ----------------------------------------------- */
 const slashCommand = new SlashCommandBuilder()
 	.setName( "set_role" )
-	.setDescription( "Définit un rôle pour un niveau atteint. Ne pas mettre de rôle pour supprimer le rôle lié au level." )
+	.setDescription( "[admin] Définit un rôle pour un niveau atteint. Ne pas mettre de rôle = supprime le rôle du level." )
 	.addIntegerOption( option =>
 		option
 			.setName( "niveau_requis" )

@@ -15,7 +15,7 @@ const fs = require( "fs" );
 /* ----------------------------------------------- */
 const slashCommand = new SlashCommandBuilder()
 	.setName( "module" )
-	.setDescription( "Permet d'activer/désactiver un module." )
+	.setDescription( "[admin] Permet d'activer/désactiver un module." )
 	.addStringOption( option =>
 		option
 			.setName( "nom_module" )
