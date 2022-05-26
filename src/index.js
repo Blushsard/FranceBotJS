@@ -32,7 +32,7 @@ client.db = new Database();
 
 
 // A décommenter une fois que le code sera sur le vps pour charger les utilisateurs dans la base de données.
-/*const data = require( "./python_scripts/data.json" );
+const data = require( "./python_scripts/data.json" );
 console.log( "Nombre d'utilisateurs: " + data.length );
 let cpt = 1;
 for ( let user of data ) {
@@ -53,7 +53,7 @@ for ( let user of data ) {
 		catch ( err ) {}
 		console.log( "Nombre d'utilisateurs ajoutés: " + cpt );
 	})( cpt++ );
-}*/
+}
 
 // Démarrage du client.
 (async () => {
