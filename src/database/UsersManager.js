@@ -35,6 +35,21 @@ class UsersManager
 		return row.length ? row[0] : null;
 	}
 
+	/**
+	 * Récupère la liste des 10 premiers en XP dans la base, changer la limite si on veut plus.
+	 * @returns {Promise<Array|null>}
+	 */
+	async fetchLeaderboard() {
+		const rows = await this.db.query(
+			"SELECT *," +
+			"ROW_NUMBER() OVER (ORDER BY n_xp desc) AS rang, " +
+			"(SELECT count(*) FROM users) AS total_users " +
+			"FROM users " +
+			"LIMIT 10;"
+		)
+		return rows.length ? rows : null;
+	}
+
 
 	/**
 	 * Ajoute un user dans la base de données.

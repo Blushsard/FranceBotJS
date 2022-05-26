@@ -57,7 +57,8 @@ const slashCommand = new SlashCommandBuilder()
 		option
 			.setName( "all" )
 			.setDescription( "Désactive/active toutes les fonctionnalités du salon." )
-	);
+	)
+	.setDefaultPermission(false);
 
 
 /* ----------------------------------------------- */

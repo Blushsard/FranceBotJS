@@ -25,7 +25,8 @@ const slashCommand = new SlashCommandBuilder()
 		option
 			.setName( "role_palier" )
 			.setDescription( "Le rôle à donner pour le niveau (vide pour supprimer le palier actuel)." )
-	);
+	)
+	.setDefaultPermission(false);
 
 
 /* ----------------------------------------------- */

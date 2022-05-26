@@ -28,7 +28,8 @@ const slashCommand = new SlashCommandBuilder()
 			.setName( "etat" )
 			.setDescription( "Activer ou désactiver le module" )
 			.setRequired( true )
-	);
+	)
+	.setDefaultPermission(false);
 
 
 /* ----------------------------------------------- */
