@@ -75,7 +75,7 @@ class Levels
 			user["n_nb_messages"]++;
 
 			// Vérification pour le level up.
-			if ( this.getRequiredExpForLevel( user["n_level"] + 1 ) < user["n_xp"] ) {
+			if ( this.getRequiredExpForLevel( user["n_level"] + 60_000 ) < user["n_xp"] ) {
 				// Passage au niveau supérieur.
 				user["n_level"]++;
 				await this.client.db.usersManager.updateUser( user["pk_user_id"], "n_level", user["n_level"] );

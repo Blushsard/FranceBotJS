@@ -42,7 +42,7 @@ async function execute(interaction) {
 				rank = i + 1;
 		}
 
-		leaderboard += `**${rank}** - <@${usersLevel[i]['pk_user_id']}> - **LVL${usersLevel[i]['n_level']}**, ${usersLevel[i]['n_progress']}%\n`;
+		leaderboard += `**${rank}** - <@${usersLevel[i]['pk_user_id']}> - **LVL ${usersLevel[i]['n_level']}**, ${usersLevel[i]['n_progress'].toFixed(2)}%\n`;
 	}
 	
     const embed = new MessageEmbed()
