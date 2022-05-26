@@ -57,7 +57,7 @@ class Database
 	 */
 	async query( req, params ) {
 		while ( this.limit === this.currentRequests ) {
-			await this.sleep( 100 );
+			await this.sleep( 20 );
 		}
 
 		this.currentRequests++;
