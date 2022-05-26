@@ -40,14 +40,16 @@ class Levels
 	 * @param {object} channel Le salon de la base de données dans lequel le message a été envoyé.
 	 */
 	async ajouterExperienceMessage( message, channel ) {
-		if ( !this.active || message.author.bot || !channel['b_exp'] ) return;
+		if ( channel && !channel['b_exp'] ) return;
+		if ( !this.active || message.author.bot ) return;
 		if ( message.channel instanceof DMChannel ) return;	// On empêche les gens de gagner de l'xp avec les DM du bot.
 
 		let user = null;
 		const msTime = (new Date()).getTime();
 
 		if ( this.limits.has( message.author.id ) ) {
-			if ( msTime > this.limits.get( message.author.id ) + 1 ) {
+			// 1 minute
+			if ( msTime > this.limits.get( message.author.id ) + 60000 ) {
 				user = await this.client.db.usersManager.ajouterExperienceUser( message.author.id, 8 );
 				this.limits.set( message.author.id, msTime );
 			}
