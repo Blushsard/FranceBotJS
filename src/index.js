@@ -55,7 +55,6 @@ for ( let user of data ) {
 			);
 		}
 		catch ( err ) { console.log( err ); }
-		await sleep( 500 );
 		console.log( "Nombre d'utilisateurs ajoutés: " + cpt );
 	})( cpt++ );
 }
@@ -71,5 +70,5 @@ for ( let user of data ) {
 	// Dé-commenter les lignes suivantes pour charger dans le serveur de dev de nouvelles commands ou les mise à jour
 	// sur les commands.
 	const { loadCommandsToGuild } = require( "./utils/loadAssets" );
-	await loadCommandsToGuild( client, "908744886474407988" );
+	await loadCommandsToGuild( client, process.env.GUILD_ID );
 })();
