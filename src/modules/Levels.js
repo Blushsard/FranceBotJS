@@ -59,8 +59,10 @@ class Levels
 			user = await this.client.db.usersManager.ajouterExperienceUser( message.author.id, 8 );
 		}
 
-		if ( user ) await this.refreshUser( message.member, user );
-		if ( user ) await this.levelUpUtilisateur( user, message.member, message.channel );
+		if ( user ) {
+			await this.levelUpUtilisateur( user, message.member, message.channel );
+			await this.refreshUser( message.member, user );
+		}
 	}
 
 
@@ -78,12 +80,13 @@ class Levels
 			await this.client.db.usersManager.updateUser(userDb['pk_user_id'], 'n_level', userDb['n_level']);
 		}
 
+		// Refresh du progress
+		await this.refreshProgressUser( userDb );
+
 		// Refresh des roles.
 		for ( let role of guildRoles ) {
 			if ( member.roles.cache.has( role['pk_role_id'] ) && role['n_niveau_requis'] > userDb['n_level'] )
-			{
 				await member.roles.remove( role['pk_role_id'] )
-			}
 			else if ( role['n_niveau_requis'] <= userDb['n_level'] )
 				await member.roles.add( role["pk_role_id"] );
 		}
@@ -102,21 +105,34 @@ class Levels
 			user["n_nb_messages"]++;
 
 			// Vérification pour le level up.
-			if ( this.getRequiredExpForLevel( user["n_level"] + 60_000 ) < user["n_xp"] ) {
+			if ( this.getRequiredExpForLevel( user["n_level"] + 1 ) < user["n_xp"] ) {
 				// Passage au niveau supérieur.
 				user["n_level"]++;
 				await this.client.db.usersManager.updateUser( user["pk_user_id"], "n_level", user["n_level"] );
-
-				// Ajout du nouveau rôle si besoin.
-				let role = await this.client.db.rolesLevelsManager.fetchRoleByLevel( user["n_level"], salon.guildId );
-				if ( role ) await member.roles.add( role['pk_role_id'] );
-
+				console.log( "test" );
 				await salon.send(`Brave ${userMention}! Tu es passé au niveau **${user['n_level']}**!`);
 			}
 
 			await this.client.db.usersManager.updateUser(
 				user["pk_user_id"], "n_nb_messages", user["n_nb_messages"] );
 		}
+	}
+
+
+	/**
+	 * Met à jour le progrès de l'utilisateur.
+	 * @param {object} user Les données de l'utilisateur dans la base de données.
+	 */
+	async refreshProgressUser( user ) {
+		let progress;
+		if ( user['n_level'] === 0 )
+			progress = user['n_xp'] * 100 / this.getRequiredExpForLevel( user['n_level'] + 1 );
+		else
+			progress = ((user['n_xp'] - this.getRequiredExpForLevel( user['n_level'] )) * 100) /
+				(this.getRequiredExpForLevel( user['n_level'] + 1 ) - this.getRequiredExpForLevel( user['n_level'] ));
+
+		if ( user['n_progress'] !== progress )
+			await this.client.db.usersManager.updateUser( user['pk_user_id'], 'n_progress', progress );
 	}
 
 
