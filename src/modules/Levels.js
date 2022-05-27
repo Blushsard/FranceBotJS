@@ -109,7 +109,6 @@ class Levels
 				// Passage au niveau supérieur.
 				user["n_level"]++;
 				await this.client.db.usersManager.updateUser( user["pk_user_id"], "n_level", user["n_level"] );
-				console.log( "test" );
 				await salon.send(`Brave ${userMention}! Tu es passé au niveau **${user['n_level']}**!`);
 			}
 
