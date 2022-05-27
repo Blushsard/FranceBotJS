@@ -42,6 +42,7 @@ async function execute(interaction) {
 				rank = i + 1;
 		}
 
+		usersLevel[i]['n_progress'] = await interaction.client.modules.get('levels').refreshProgressUser( usersLevel[i] );
 		leaderboard += `**${rank}** - <@${usersLevel[i]['pk_user_id']}> - **LVL ${usersLevel[i]['n_level']}**, ${usersLevel[i]['n_progress'].toFixed(2)}%\n`;
 	}
 	

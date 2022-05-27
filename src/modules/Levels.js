@@ -121,6 +121,7 @@ class Levels
 	/**
 	 * Met à jour le progrès de l'utilisateur.
 	 * @param {object} user Les données de l'utilisateur dans la base de données.
+	 * @return {Promise<number>} Une Promise complétée avec le progrès de l'utilisateur.
 	 */
 	async refreshProgressUser( user ) {
 		let progress;
@@ -132,6 +133,7 @@ class Levels
 
 		if ( user['n_progress'] !== progress )
 			await this.client.db.usersManager.updateUser( user['pk_user_id'], 'n_progress', progress );
+		return progress;
 	}
 
 
