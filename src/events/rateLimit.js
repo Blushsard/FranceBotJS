@@ -18,6 +18,7 @@ async function execute( rateLimit ) {
 	if ( rateLimit.timeout > 1000 ) {
 		console.log( "\033[31mRATE LIMIT\033[0m\nTimeout            : " + rateLimit.timeout + "ms" );
 		console.log( `Route de la requête: ${rateLimit.route}` );
+		console.log( `Heure du rateLimit: ${(new Date()).toUTCString()} (+2h pour le bon fuseau horaire)\n` );
 	}
 }
 

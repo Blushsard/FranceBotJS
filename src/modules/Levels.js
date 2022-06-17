@@ -72,9 +72,8 @@ class Levels
 	 * @param {object} userDb Les données de l'utilisateur dans la bdd.
 	 */
 	async refreshUser( member, userDb ) {
-		const guildRoles = await this.client.db.rolesLevelsManager.fetchGuildRoles( member.guild.id );
-
 		// Refresh du niveau.
+		const oldLevel = userDb['n_level'];
 		if ( userDb['n_level'] !== this.getLevelFromXp( userDb['n_xp'] ) ) {
 			userDb['n_level'] = this.getLevelFromXp(userDb['n_xp']);
 			await this.client.db.usersManager.updateUser(userDb['pk_user_id'], 'n_level', userDb['n_level']);
@@ -84,6 +83,7 @@ class Levels
 		await this.refreshProgressUser( userDb );
 
 		// Refresh des roles.
+		const guildRoles = await this.client.db.rolesLevelsManager.fetchGuildRoles( member.guild.id );
 		for ( let role of guildRoles ) {
 			if ( member.roles.cache.has( role['pk_role_id'] ) && role['n_niveau_requis'] > userDb['n_level'] )
 				await member.roles.remove( role['pk_role_id'] )
