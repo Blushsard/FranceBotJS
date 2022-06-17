@@ -61,7 +61,6 @@ class Levels
 
 		if ( user ) {
 			await this.levelUpUtilisateur( user, message.member, message.channel );
-			await this.refreshUser( message.member, user );
 		}
 	}
 
@@ -73,7 +72,6 @@ class Levels
 	 */
 	async refreshUser( member, userDb ) {
 		// Refresh du niveau.
-		const oldLevel = userDb['n_level'];
 		if ( userDb['n_level'] !== this.getLevelFromXp( userDb['n_xp'] ) ) {
 			userDb['n_level'] = this.getLevelFromXp(userDb['n_xp']);
 			await this.client.db.usersManager.updateUser(userDb['pk_user_id'], 'n_level', userDb['n_level']);
