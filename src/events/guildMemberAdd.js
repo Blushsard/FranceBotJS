@@ -21,11 +21,7 @@ async function execute( member, client ) {
 		return;
 	}
 
-	let guildRoles = await client.db.rolesLevelsManager.fetchGuildRoles( member.guild.id );
-	for ( let role of guildRoles ) {
-		if ( role["n_niveau_requis"] <= userDb['n_level'] )
-			await member.roles.add( role['pk_role_id'] );
-	}
+	await client.modules.get( "levels" ).refreshUser( member, userDb );
 }
 
 
