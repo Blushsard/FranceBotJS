@@ -48,6 +48,20 @@ class RolesLevelsManager
 		);
 	}
 
+	/**
+	 * Renvoit un rôle récupéré pour le niveau et la guild désigné.
+	 * @param {string} guildId L'identifiant de la guild.
+	 * @param {int} level Le niveau du rôle à récupérer.
+	 * @returns {Promise<object|null>} Le ou les rôles trouvés ou null si il n'y a pas de rôles pour ce niveau.
+	 */
+	async fetchGuildRoleByLevel( guildId, level ) {
+		const row = await this.db.query(
+			"SELECT * FROM roles_levels WHERE s_guild_id=? AND n_niveau_requis=?;",
+			[ guildId, level ]
+		);
+		return row.length ? row[0]: null;
+	}
+
 
 	/**
 	 * Ajouter un rôle dans la base de données.

@@ -55,3 +55,8 @@ class Memes
 
 	}
 }
+
+
+module.exports = {
+	Memes
+}

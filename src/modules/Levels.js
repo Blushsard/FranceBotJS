@@ -41,7 +41,7 @@ class Levels
 	 */
 	async ajouterExperienceMessage( message, channel ) {
 		if ( channel && !channel['b_exp'] ) return;
-		if ( !this.active || message.author.bot ) return;
+		if ( !this._active || message.author.bot ) return;
 		if ( message.channel instanceof DMChannel ) return;	// On empêche les gens de gagner de l'xp avec les DM du bot.
 
 		let user = null;
@@ -108,6 +108,12 @@ class Levels
 				user["n_level"]++;
 				await this.client.db.usersManager.updateUser( user["pk_user_id"], "n_level", user["n_level"] );
 				await salon.send(`Bravo ${userMention}! Tu es passé au niveau **${user['n_level']}**!`);
+
+				// Ajout du nouveau rôle si nécessaire.
+				const role = await this.client.db.rolesLevelsManager.fetchGuildRoleByLevel(
+					member.guild.id, user["n_level"] );
+				if ( role )
+					await member.roles.add( role["pk_role_id"] );
 			}
 
 			await this.client.db.usersManager.updateUser(
