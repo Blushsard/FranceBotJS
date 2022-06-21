@@ -22,15 +22,15 @@ class Levels
 	 * @param {boolean} active Indique si le client est activé ou non.
 	 */
 	constructor( client, active ) {
-		this.active = active;
+		this._active = active;
 		this.client = client;
 
 		// Collection contenant les vérifications des différentes limitations par user.
 		this.limits = new Collection();
 	}
 
-	getActive() { return this.active; }
-	setActive( active ) { this.active = active; }
+	getActive() { return this._active; }
+	setActive( active ) { this._active = active; }
 
 
 	/**

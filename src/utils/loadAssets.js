@@ -8,6 +8,7 @@
 
 const { Client } = require( "discord.js" );
 const { Levels } = require( `${process.cwd()}/modules/Levels` );
+const { Memes } = require( `${process.cwd()}/modules/Memes` );
 const fs = require( "fs" );
 
 
@@ -23,6 +24,7 @@ async function loadModules( client ) {
 
 	// Chargement des modules dans le client.
 	client.modules.set( 'levels', new Levels( client, modules['levels'] ) );
+	client.modules.set( 'memes', new Memes( client, modules['levels'] ) );
 }
 
 
