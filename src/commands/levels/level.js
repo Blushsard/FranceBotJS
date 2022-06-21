@@ -31,11 +31,13 @@ async function execute(interaction) {
 
 	if ( !userLevel ) return interaction.reply( "L'utilisateur n'a pas d'expérience!" );
 
+	const progress = await levels.refreshProgressUser( userLevel );
+
     const embed = new MessageEmbed()
 		.setColor('#0099ff')
 		.setAuthor({ name: user.username, iconURL: user.avatarURL()})
 		.addField( 'Rank', `${userLevel['rang']}/${userLevel['total_users']}`, true )
-		.addField( 'Level', `${userLevel['n_level']} (${userLevel['n_progress'].toFixed( 2 )}%)`, true )
+		.addField( 'Level', `${userLevel['n_level']} (${progress.toFixed( 2 )}%)`, true )
 		.addField( 'XP', `\`${userLevel['n_xp']}\` au total`, true );
 
     return interaction.reply({
