@@ -26,5 +26,32 @@ class Memes
 	set active( active ) { this._active = active; }
 	get active() { return this._active; }
 
+	addMessage( message ) {
 
+	}
+
+	removeMessage( message ) {
+
+	}
+
+	updateCountEmoji( emoji, incrementValue ) {
+
+	}
+
+	/**
+	 * Ajouter les attachments à la base de données.
+	 * @param Message
+	 */
+	addAttachments( Message ) {
+
+	}
+
+
+	/**
+	 * Met à jour le message (voir si il faut faire des fonctions séparées pour update le texte ou les attachments).
+	 * @param message
+	 */
+	updateMessage( message ) {
+
+	}
 }
