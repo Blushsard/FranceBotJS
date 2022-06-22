@@ -37,7 +37,7 @@ class Levels
 	 * Ajoute de l'expérience à un utilisateur suite à un message envoyé.
 	 * Cette fonction doit être placée dans l'event messageCreate.
 	 * @param {Message} message Le message envoyé par l'utilisateur.
-	 * @param {object} channel Le salon de la base de données dans lequel le message a été envoyé.
+	 * @param {object|null} channel Le salon de la base de données dans lequel le message a été envoyé.
 	 */
 	async ajouterExperienceMessage( message, channel ) {
 		if ( channel && !channel['b_exp'] ) return;

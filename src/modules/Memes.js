@@ -36,14 +36,23 @@ class Memes
 	/**
 	 * Ajoute un message dans la base de données si il contient au moins un meme.
 	 * @param {Message} message Le message à potentiellement mettre dans la base de données.
-	 * @param {object} salon Les données de la base de données du salon dans lequel le message a été envoyé.
+	 * @param {object|null} salon Les données de la base de données du salon dans lequel le message a été envoyé.
 	 * @param {int} likes Le nombre de likes du message.
 	 */
 	async ajouterMessageMeme( message, salon, likes ) {
-		if ( salon && !salon["b_memes"] ) return;
+		if ( !salon ) return;
+		if ( !salon["b_memes"] ) return;
+		if ( !this._active ) return;
 		if ( !this.hasMeme( message ) ) return;
 
-		await this.ajouterMemeDatabase( message, likes );
+		// Récupération des memes du message (liens puis pièce-jointes).
+		let memes = await this.getMemesLinks( message );
+		message.attachments.forEach(value => {
+			memes.push( value );
+		});
+
+		await this.db.messagesManager.ajouterMessage( message, memes, likes );
+
 		await message.react( process.env.EMOJI_LIKE );
 		await message.react( process.env.EMOJI_REPOST );
 	}
@@ -89,21 +98,6 @@ class Memes
 			}
 		}
 		return !!message.attachments.size;
-	}
-
-	/**
-	 * Cette fonction ajoute un message dans la base de données. Elle récupère donc tout les memes (liens et fichiers) avant
-	 * de l'envoyer sur la base de données.
-	 * @param {Message} message Le message à ajouter sur la base de donnée.
-	 * @param {int} likes Le nombre de likes sur le message. Est utile si le message a déjà des réactions likes.
-	 */
-	async ajouterMemeDatabase( message, likes ) {
-		let memes = await this.getMemesLinks( message );
-		message.attachments.forEach(value => {
-			memes.push( value );
-		});
-
-		await this.db.messagesManager.ajouterMessage( message, memes, likes );
 	}
 
 	/**
