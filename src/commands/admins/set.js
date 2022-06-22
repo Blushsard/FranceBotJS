@@ -8,7 +8,8 @@
 
 const { SlashCommandBuilder } = require( "@discordjs/builders" );
 const { CommandInteraction, MessageEmbed } = require( "discord.js" );
-const { ChannelsManager } = require( `${process.cwd()}/database/ChannelsManager` );
+// Uniquement pour la documentation.
+const { ChannelsManager } = require( `${process.cwd()}/database/modules/ChannelsManager` );
 
 
 /* ----------------------------------------------- */

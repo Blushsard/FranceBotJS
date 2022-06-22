@@ -5,9 +5,10 @@
  * 		Le module 'mysql2' est utilisé pour les requêtes SQL.
  */
 const mysql = require( "mysql2/promise" );
-const { UsersManager } = require( `${process.cwd()}/database/UsersManager` );
-const { ChannelsManager } = require( `${process.cwd()}/database/ChannelsManager` );
-const { RolesLevelsManager } = require( `${process.cwd()}/database/RolesLevelsManager` );
+const { UsersManager } = require( `${process.cwd()}/database/modules/UsersManager` );
+const { ChannelsManager } = require( `${process.cwd()}/database/modules/ChannelsManager` );
+const { RolesLevelsManager } = require( `${process.cwd()}/database/modules/RolesLevelsManager` );
+const { MessagesManager } = require( `${process.cwd()}/database/modules/MessagesManager` );
 
 
 /**
@@ -26,6 +27,7 @@ class Database
 		this.usersManager = new UsersManager( this );
 		this.channelsManager = new ChannelsManager( this );
 		this.rolesLevelsManager = new RolesLevelsManager( this );
+		this.messagesManager = new MessagesManager( this );
 	}
 
 

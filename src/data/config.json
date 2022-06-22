@@ -28,6 +28,6 @@
 		"https://coub\\.com/view/\\w{6}",
 		"https://www.instagram.com/.*",
 		"https:\\/\\/twitter.com\\/\\w*\\/status\\/\\d{19}",
-		"https:\\/\\/cdn\\.discordapp\\.com\\/attachments\\/\\d{18}\\/\\d{18}\\/.+\\.[a-zA-Z0-9]{2,4}"
+		"https:\\/\\/cdn\\.discordapp\\.com\\/attachments\\/\\d{18,22}\\/\\d{18,22}\\/.+\\.[a-zA-Z0-9]{2,4}"
 	]
 }

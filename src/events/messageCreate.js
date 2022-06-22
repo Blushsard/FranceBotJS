@@ -20,6 +20,7 @@ async function execute( message, client ) {
 	const salon = await client.db.channelsManager.fetchChannel( message.channelId );
 
 	await client.modules.get( 'levels' ).ajouterExperienceMessage( message, salon );
+	await client.modules.get( 'memes' ).ajouterMessageMeme( message, salon, 0 );
 }
 
 
