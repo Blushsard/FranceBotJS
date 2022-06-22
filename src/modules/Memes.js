@@ -57,8 +57,17 @@ class Memes
 		await message.react( process.env.EMOJI_REPOST );
 	}
 
-	removeMessage( message ) {
+	/**
+	 * Supprime un message et ses memes de la base de données.
+	 * @param {string} messageId Le message à supprimer.
+	 * @param {object|null} salon Les données de la base de données du salon dans lequel le message a été envoyé.
+	 */
+	async supprimerMessageMeme( messageId, salon ) {
+		if ( !salon ) return;
+		if ( !salon["b_memes"] ) return;
+		if ( !this._active ) return;
 
+		await this.db.messagesManager.supprimerMessage( messageId );
 	}
 
 	updateCountEmoji( emoji, incrementValue ) {

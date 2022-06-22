@@ -1,8 +1,7 @@
 /**
  * @author Benjamin Guirlet
  * @file
- *		Handler pour l'évènement messageCreate.
- *		Cet évènement est utilisé dans de multiples modules.
+ *		Handler pour l'évènement messageDelete.
  */
 
 const { Client, Message } = require( "discord.js" );
@@ -12,16 +11,15 @@ const { Client, Message } = require( "discord.js" );
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
 /**
- * Handler pour l'évènement 'messageCreate'.
- * @param {Message} message Le message qui vient d'être créé.
+ * Handler de l'évènement.
+ * @param {Message} message Le message qui vient d'être supprimé.
  * @param {Client} client Le client du bot.
  */
 async function execute( message, client ) {
 	// Il faut récupérer le salon dans la base de données.
 	const salon = await client.db.channelsManager.fetchChannel( message.channelId );
 
-	await client.modules.get( 'levels' ).ajouterExperienceMessage( message, salon );
-	await client.modules.get( 'memes' ).ajouterMessageMeme( message, salon, 0 );
+	await client.modules.get( 'memes' ).supprimerMessageMeme( message.id, salon );
 }
 
 
@@ -29,6 +27,6 @@ async function execute( message, client ) {
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
 module.exports = {
-	name: "messageCreate",
+	name: "messageDelete",
 	execute
 }

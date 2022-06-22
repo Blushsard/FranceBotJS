@@ -12,7 +12,7 @@ const { CommandInteraction, Client } = require( "discord.js" );
 /**
  * Handler pour l'évènement 'interactionCreate'.
  * @param {CommandInteraction} interaction L'interaction qui a déclenché l'évènement.
- * @param {Client} client Le client qui a créé l'interaction.
+ * @param {Client} client Le client du bot.
  */
 function execute( interaction, client ) {
 	if ( interaction.isCommand() )

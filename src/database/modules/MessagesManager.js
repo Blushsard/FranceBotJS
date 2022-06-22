@@ -54,17 +54,19 @@ class MessagesManager
 	}
 
 	/**
-	 * Récupère un user depuis la base de données.
-	 * @param {string} userId L'identifiant de l'user.
-	 * @returns {Promise<object|null>} Un objet contenant les données de l'user ou null.
+	 * Supprime un message et ses memes de la base de données.
+	 * @param {string} messageId L'identifiant du message.
 	 */
-	async fetchUser( userId ) {
-		const row = await this.db.query(
-			"SELECT *, (SELECT COUNT(*) FROM users) AS total_users FROM " +
-			"(SELECT *, ROW_NUMBER() OVER (ORDER BY n_xp DESC) AS rang FROM users) AS u WHERE u.pk_user_id=?;",
-			[ userId ]
+	async supprimerMessage( messageId ) {
+		await this.db.query(
+			"DELETE FROM messages WHERE pk_msg_id=?",
+			[ messageId ]
 		);
-		return row.length ? row[0] : null;
+
+		await this.db.query(
+			"DELETE FROM attachments WHERE pk_msg_id=?",
+			[ messageId ]
+		);
 	}
 }
 
