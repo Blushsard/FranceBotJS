@@ -11,7 +11,7 @@ const { Client, Message } = require( "discord.js" );
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
 /**
- * Handler de l'évènement.
+ * Handler pour l'évènement.
  * @param {Message} message Le message qui vient d'être supprimé.
  * @param {Client} client Le client du bot.
  */

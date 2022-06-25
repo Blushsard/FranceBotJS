@@ -12,7 +12,7 @@ const { Client, Message } = require( "discord.js" );
 /* FUNCTIONS                                       */
 /* ----------------------------------------------- */
 /**
- * Handler pour l'évènement 'messageCreate'.
+ * Handler pour l'évènement.
  * @param {Message} message Le message qui vient d'être créé.
  * @param {Client} client Le client du bot.
  */

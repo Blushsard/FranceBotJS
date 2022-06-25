@@ -68,6 +68,20 @@ class MessagesManager
 			[ messageId ]
 		);
 	}
+
+	/**
+	 * Modifie le nombre de likes sur un message.
+	 * @param {string} messageId L'identifiant du message.
+	 * @param {int} likes Le nombre de likes du message.
+	 * @returns {Promise<boolean>} Un booléen indiquant si une ligne a été modifiée dans la table.
+	 */
+	async updateLikesCount( messageId, likes ) {
+		const result = await this.db.query(
+			"UPDATE messages SET n_likes=? WHERE pk_msg_id=?",
+			[ likes, messageId ]
+		);
+		return !!result["changedRows"];
+	}
 }
 
 

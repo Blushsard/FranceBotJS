@@ -13,7 +13,8 @@
  *     futures si besoin.
  */
 
-const { Message } = require( "discord.js" );
+const { Message, MessageReaction, User } = require( "discord.js" );
+const { Collection } = require( "@discordjs/collection" );
 const { WEBSITES } = require( `${process.cwd()}/data/config.json` );
 
 
@@ -50,8 +51,8 @@ class Memes
 		message.attachments.forEach(value => {
 			memes.push( value );
 		});
-
 		await this.db.messagesManager.ajouterMessage( message, memes, likes );
+
 
 		await message.react( process.env.EMOJI_LIKE );
 		await message.react( process.env.EMOJI_REPOST );
@@ -70,25 +71,40 @@ class Memes
 		await this.db.messagesManager.supprimerMessage( messageId );
 	}
 
-	updateCountEmoji( emoji, incrementValue ) {
-
-	}
-
 	/**
-	 * Ajouter les attachments à la base de données.
-	 * @param Message
+	 * Modifie le compte de likes sur un meme.
+	 * @param {MessageReaction} reaction La reaction qui a été ajoutée sur le message.
+	 * @param {object|null} salon L'objet contenant les données de la bdd du salon.
+	 * @param {User} user L'utilisateur qui a ajouté la réaction.
 	 */
-	addAttachments( Message ) {
+	async updateLikeCount( reaction, salon, user ) {
+		if ( !salon ) return;
+		if ( !salon["b_memes"] ) return;
+		if ( !this._active ) return;
+		if ( user.id === this.client.user.id ) return;
+		if ( reaction.emoji.name !== process.env.EMOJI_LIKE ) return;
 
+		if ( reaction.partial )
+			await reaction.fetch();
+
+		let likes = this.getCountLikes( reaction.message.reactions.cache );
+		const msgDb = await this.db.messagesManager.updateLikesCount( reaction.message.id, likes );
+		if ( msgDb ) return;
+
+		// Ajout du message dans la base de données si il n'est pas dedans.
+		const channel = this.client.channels.cache.get( salon["pk_id_channel"] );
+		const message = await channel.messages.fetch( reaction.message.id );
+		likes = this.getCountLikes( message.reactions.cache );
+		await this.ajouterMessageMeme( message, salon, likes );
 	}
 
 
 	/**
 	 * Met à jour le message (voir si il faut faire des fonctions séparées pour update le texte ou les attachments).
-	 * @param message
+	 * @param {Message} message
 	 */
 	updateMessage( message ) {
-
+		// TODO à faire pour plus tard.
 	}
 
 	/**
@@ -126,6 +142,20 @@ class Memes
 			}
 		}
 		return linksArray;
+	}
+
+	/**
+	 * Récupère le nombre de likes sur un message.
+	 * @param {Collection} reactionsCache Une Collection contenant les réactions du message.
+	 * @return {int} Le nombre de likes.
+	 */
+	getCountLikes( reactionsCache ) {
+		let likes = 0;
+		reactionsCache.forEach( reaction => {
+			if ( reaction.emoji.name === process.env.EMOJI_LIKE )
+				likes = reaction.count - 1;
+		});
+		return likes ? likes : 0;
 	}
 }
 

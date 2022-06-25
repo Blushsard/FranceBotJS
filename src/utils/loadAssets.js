@@ -98,11 +98,15 @@ async function loadCommandsToGuild( client, guildId ) {
 	});
 
 	await client.application.commands.set( commandsArray );
+
+	client.guilds.cache.forEach( (value, key) => {
+		loadCommandsToGuild( client, key )
+			.then();
+	});
 	console.log(
 		"Commandes chargées ! Il peut y avoir un délai d'une heure avant que les commands soient disponible " +
 		"sur toutes les guilds."
 	);
-
 }*/
 
 
