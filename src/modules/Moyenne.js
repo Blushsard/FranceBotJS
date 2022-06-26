@@ -23,7 +23,7 @@ class Moyenne
 	set active( active ) { this._active = active; }
 	get active() { return this._active; }
 
-	get moyenne() { return this._moyenne; }
+	getMoyenne() { return this._moyenne; }
 
 	/**
 	 * Calcule la moyenne toutes les X millisecondes.
