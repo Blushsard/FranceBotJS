@@ -80,7 +80,7 @@ class MessagesManager
 			"UPDATE messages SET n_likes=? WHERE pk_msg_id=?",
 			[ likes, messageId ]
 		);
-		return !!result["changedRows"];
+		return !!result["affectedRows"];
 	}
 }
 
