@@ -19,6 +19,7 @@ const { Client, MessageReaction, User } = require( "discord.js" );
 async function execute( reaction, user, client ) {
 	const salon = await client.db.channelsManager.fetchChannel( reaction.message.channelId );
 	await client.modules.get( "memes" ).updateLikeCount( reaction, salon, user );
+	await client.modules.get( "reposts" ).checkRepost( reaction, salon, user );
 }
 
 
