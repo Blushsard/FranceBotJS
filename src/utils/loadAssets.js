@@ -10,6 +10,7 @@ const { Client } = require( "discord.js" );
 const { Levels } = require( `${process.cwd()}/modules/Levels` );
 const { Memes } = require( `${process.cwd()}/modules/Memes` );
 const { Moyenne } = require( `${process.cwd()}/modules/Moyenne` );
+const { Reposts } = require( `${process.cwd()}/modules.Reposts` );
 const fs = require( "fs" );
 
 
@@ -27,6 +28,7 @@ async function loadModules( client ) {
 	client.modules.set( 'levels', new Levels( client, modules['levels'] ) );
 	client.modules.set( 'memes', new Memes( client, modules['memes'] ) );
 	client.modules.set( 'moyenne', new Moyenne( client, modules['memes'] ) );
+	client.modules.set( 'reposts', new Reposts( client, modules['reposts'] ) );
 }
 
 
