@@ -65,7 +65,7 @@ class Database
 		this.currentRequests++;
 		const cnx = await this._getConnection();
 
-		const [ rows ] = await cnx.execute( req, params);
+		const [ rows ] = await cnx.execute( req, params );
 		await cnx.commit();
 		await cnx.end();
 

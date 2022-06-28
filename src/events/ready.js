@@ -12,6 +12,7 @@
 async function execute( client ) {
 	console.log( `${client.user.username} is connected!` );
 	await client.modules.get( "moyenne" ).calcMoyenne( 60_000 );
+	await client.modules.get( "feed" ).feed( 60_000);
 }
 
 

@@ -25,7 +25,7 @@ class MessagesManager
 	 */
 	async ajouterMessage( message, memes, likes ) {
 		await this.db.query(
-			"INSERT INTO messages VALUES (?,?,?,?,?,?,?,?,?)",
+			"INSERT INTO messages VALUES (?,?,?,?,?,?,?,?,?,?)",
 			[
 				message.id,
 				message.author.id,
@@ -35,20 +35,19 @@ class MessagesManager
 				false,
 				false,
 				false,
-				getMonthlyIntDate()
+				getMonthlyIntDate(),
+				message.url
 			]
 		);
 
-		let queryParams;
 		for ( let element of memes ) {
-			if ( typeof element === "string" )
-				queryParams = [ message.id, "lien", "lien", element ];
-			else
-				queryParams = [ message.id, element.contentType.split( "/" )[0], element.name, element.url ];
-
 			await this.db.query(
-				"INSERT INTO attachments VALUES (?,?,?,?);",
-				queryParams
+				"INSERT INTO attachments VALUES (?,?,?);",
+				[
+					message.id,
+					typeof element === "string" ? "lien" : "attachment",
+					typeof element === "string" ? element : element.url
+				]
 			)
 		}
 	}
@@ -81,6 +80,19 @@ class MessagesManager
 			[ likes, messageId ]
 		);
 		return !!result["affectedRows"];
+	}
+
+	/**
+	 * Met à jour un message avec la valeur spécifiée pour le colonne.
+	 * @param {string} messageId L'identifiant du message à mettre à jour.
+	 * @param {string} columnName Le nom de la colonne à mettre à jour.
+	 * @param {string} value La nouvelle valeur de la colonne.
+	 */
+	async updateMessage( messageId, columnName, value ) {
+		await this.db.query(
+			`UPDATE messages SET ${columnName}=? WHERE pk_msg_id=?`,
+			[ value, messageId ]
+		);
 	}
 }
 
