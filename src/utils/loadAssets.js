@@ -12,6 +12,7 @@ const { Memes } = require( `${process.cwd()}/modules/Memes` );
 const { Moyenne } = require( `${process.cwd()}/modules/Moyenne` );
 const { Reposts } = require( `${process.cwd()}/modules/Reposts` );
 const { Feed } = require( `${process.cwd()}/modules/Feed` );
+const { Threads } = require( `${process.cwd()}/modules/Threads` );
 const fs = require( "fs" );
 
 
@@ -31,6 +32,7 @@ async function loadModules( client ) {
 	client.modules.set( 'moyenne', new Moyenne( client, modules['memes'] ) );
 	client.modules.set( 'reposts', new Reposts( client, modules['reposts'] ) );
 	client.modules.set( 'feed', new Feed( client, modules['feed'] ) );
+	client.modules.set( 'threads', new Threads( client, modules['threads'] ) );
 }
 
 

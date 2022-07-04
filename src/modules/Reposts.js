@@ -31,9 +31,9 @@ class Reposts
 	 * @param {User} user L'utilisateur qui a ajouté la réaction.
 	 */
 	async checkRepost( reaction, salon, user ) {
+		if ( !this._active ) return;
 		if ( !salon ) return;
 		if ( !salon["b_reposts"] ) return;
-		if ( !this._active ) return;
 		if ( user.id === this.client.user.id ) return;
 		if ( reaction.emoji.name !== process.env.EMOJI_REPOST ) return;
 

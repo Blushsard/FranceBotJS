@@ -2,5 +2,6 @@
 	"levels": true,
 	"memes": true,
 	"reposts": true,
-	"feed": true
+	"feed": true,
+	"threads": true
 }

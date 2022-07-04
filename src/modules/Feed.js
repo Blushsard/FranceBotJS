@@ -100,6 +100,9 @@ class Feed
 				msgContent += meme["s_url"] + "\n";
 		}
 
+		// Addition d'un espace pour éviter d'avoir une chaîne vide ce qui cause une erreur.
+		msgContent += " ";
+
 		await feedChannel.send({ content: msgContent, files: memesURL });
 	}
 

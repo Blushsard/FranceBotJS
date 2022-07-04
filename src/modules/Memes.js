@@ -44,7 +44,8 @@ class Memes
 		if ( !salon ) return;
 		if ( !salon["b_memes"] ) return;
 		if ( !this._active ) return;
-		if ( !this.hasMeme( message ) ) return;
+		if ( !Memes.hasMeme( message ) ) return;
+		if ( message.author.id === this.client.id ) return;
 
 		// Récupération des memes du message (liens puis pièce-jointes).
 		let memes = await this.getMemesLinks( message );
@@ -80,9 +81,8 @@ class Memes
 	 * @param {User} user L'utilisateur qui a ajouté la réaction.
 	 */
 	async updateLikeCount( reaction, salon, user ) {
-		if ( !salon ) return;
-		if ( !salon["b_memes"] ) return;
 		if ( !this._active ) return;
+		if ( !salon && !salon["b_memes"] ) return;
 		if ( user.id === this.client.user.id ) return;
 		if ( reaction.emoji.name !== process.env.EMOJI_LIKE ) return;
 
@@ -114,7 +114,7 @@ class Memes
 	 * @param {Message} message Le message à vérifier.
 	 * @returns {boolean} Vrai si le message contient au moins un meme.
 	 */
-	hasMeme( message ) {
+	static hasMeme( message ) {
 		// On vérifie si le message à du texte pour éviter une erreur.
 		if ( !!message.content ) {
 			for ( let wb of WEBSITES ) {
