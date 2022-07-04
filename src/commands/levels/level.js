@@ -40,9 +40,14 @@ async function execute(interaction) {
 		.addField( 'Level', `${userLevel['n_level']} (${progress.toFixed( 2 )}%)`, true )
 		.addField( 'XP', `\`${userLevel['n_xp']}\` au total`, true );
 
-    return interaction.reply({
-        embeds: [embed],
-    });
+	try {
+		return interaction.reply({
+			embeds: [embed],
+		});
+	}
+	catch ( err ) {
+		console.log( "Interaction inconnue: level.js:44" );
+	}
 }
 
 // EXPORTS

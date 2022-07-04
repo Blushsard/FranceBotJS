@@ -53,9 +53,14 @@ async function execute(interaction) {
 		.setFooter({text:interaction.guild.name, iconURL:interaction.guild.iconURL()})
 		.setTimestamp();
 
-    return interaction.reply({
-        embeds: [embed],
-    });
+	try {
+		return interaction.reply({
+			embeds: [embed],
+		});
+	}
+	catch ( err ) {
+		console.log( "Interaction inconnue: leaderboard.js:57" );
+	}
 }
 
 // EXPORTS

@@ -33,7 +33,7 @@ class Feed
 			// Récupération du salon du feed si il existe.
 			const feedChannelID = await this.db.channelsManager.fetchChannelByValue( "b_feed", true );
 			if ( !feedChannelID.length ) return;
-			const feedChannel = this.client.channels.cache.get( feedChannelID[0]["pk_id_channel"] );
+			const feedChannel = await this.client.channels.fetch( feedChannelID[0]["pk_id_channel"] );
 
 			// Récupération de la moyenne et des messages de la base de données.
 			const moyenne = this.client.modules.get( "moyenne" ).getMoyenne();
@@ -62,7 +62,7 @@ class Feed
 
 				await this.db.messagesManager.updateMessage( msg["pk_msg_id"], "b_stf", true );
 			}
-		}, 5_000 );
+		}, delay );
 	}
 
 	/**

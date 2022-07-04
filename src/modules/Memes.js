@@ -54,8 +54,10 @@ class Memes
 		await this.db.messagesManager.ajouterMessage( message, memes, likes );
 
 
-		await message.react( process.env.EMOJI_LIKE );
-		await message.react( process.env.EMOJI_REPOST );
+		try {
+			await message.react( process.env.EMOJI_LIKE );
+			await message.react( process.env.EMOJI_REPOST );
+		} catch ( err ) {}
 	}
 
 	/**

@@ -50,7 +50,12 @@ async function execute( interaction ) {
 		interaction.options.get( "etat" ).value
 	);
 
-	await interaction.reply( { content: "Changement pris en compte!", ephemeral: true } );
+	try {
+		await interaction.reply( { content: "Changement pris en compte!", ephemeral: true } );
+	}
+	catch ( err ) {
+		console.log( "Interaction inconnue: module.js:54" );
+	}
 }
 
 

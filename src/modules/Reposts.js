@@ -37,6 +37,10 @@ class Reposts
 		if ( user.id === this.client.user.id ) return;
 		if ( reaction.emoji.name !== process.env.EMOJI_REPOST ) return;
 
+		// Protection pour éviter d'avoir des réactions "null" ou "undefined".
+		// Cette erreur est présente dans FranceBotV3, l'appel de l'api ne contient pas les données de l'objet.
+		if ( !reaction ) return;
+
 		if ( reaction.partial )
 			await reaction.fetch();
 

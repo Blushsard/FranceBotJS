@@ -110,8 +110,12 @@ async function execute( interaction ) {
 			iconURL: interaction.user.avatarURL()
 		});
 
-
-	await interaction.reply( { embeds: [ embed ], ephemeral: true } );
+	try {
+		await interaction.reply( { embeds: [ embed ], ephemeral: true } );
+	}
+	catch ( err ) {
+		console.log( "Interaction inconnue: set.js:114" );
+	}
 }
 
 

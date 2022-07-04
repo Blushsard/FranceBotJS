@@ -49,10 +49,15 @@ async function execute( interaction ) {
 			await rlManager.ajouterRoleLevel( options.getRole( 'role_palier' ).id, interaction.guildId, niveau );
 	}
 
-	await interaction.reply({
-		content: `Le rôle ${options.getRole( "role_palier" )} a bien été défini comme palier pour le niveau ${niveau}!`,
-		ephemeral: true
-	});
+	try {
+		await interaction.reply({
+			content: `Le rôle ${options.getRole( "role_palier" )} a bien été défini comme palier pour le niveau ${niveau}!`,
+			ephemeral: true
+		});
+	}
+	catch ( err ) {
+		console.log( "Interaction inconnue: set_role.js:53" );
+	}
 }
 
 

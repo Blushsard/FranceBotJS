@@ -29,10 +29,16 @@ async function execute( interaction ) {
 	const member = interaction.member;
 	const userDB = await interaction.client.db.usersManager.fetchUser( member.id );
 	await interaction.client.modules.get( "levels" ).refreshUser( member, userDB );
-	await interaction.reply({
-		content: "Votre niveau et vos rôles ont été mis à jour.",
-		ephemeral: true
-	})
+
+	try {
+		await interaction.reply({
+			content: "Votre niveau et vos rôles ont été mis à jour.",
+			ephemeral: true
+		})
+	}
+	catch ( err ) {
+		console.log( "Interaction inconnue: refresh.js:34" );
+	}
 }
 
 
