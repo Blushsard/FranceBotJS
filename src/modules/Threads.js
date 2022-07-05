@@ -51,7 +51,8 @@ class Threads
 
 		await message.startThread({
 			name: `Réponse | ${message.author.username} (${message.author.id})`,
-			autoArchiveDuration: 1440
+			autoArchiveDuration: 1440,
+			rateLimitPerUser: 60
 		});
 		return true;
 	}

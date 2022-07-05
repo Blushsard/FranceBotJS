@@ -52,7 +52,6 @@ class Feed
 
 				const author = this.client.users.cache.get( msg["s_author_id"] );
 				if ( !author ) continue;
-				console.log( msg["s_channel_id"])
 				const memeChannel = this.client.channels.cache.get( msg["s_channel_id"] );
 
 				const headerMessage = await this.sendHeaderMessage( author, memes.length, msg, memeChannel, feedChannel );

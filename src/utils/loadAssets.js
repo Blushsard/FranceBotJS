@@ -5,14 +5,16 @@
  * 		lesquelles le client se trouve.
  */
 
-
+const baseModDir = `${process.cwd()}/modules`;
 const { Client } = require( "discord.js" );
-const { Levels } = require( `${process.cwd()}/modules/Levels` );
-const { Memes } = require( `${process.cwd()}/modules/Memes` );
-const { Moyenne } = require( `${process.cwd()}/modules/Moyenne` );
-const { Reposts } = require( `${process.cwd()}/modules/Reposts` );
-const { Feed } = require( `${process.cwd()}/modules/Feed` );
-const { Threads } = require( `${process.cwd()}/modules/Threads` );
+const { Levels } = require( `${baseModDir}/Levels` );
+const { Memes } = require( `${baseModDir}/Memes` );
+const { Moyenne } = require( `${baseModDir}/Moyenne` );
+const { Reposts } = require( `${baseModDir}/Reposts` );
+const { Threads } = require( `${baseModDir}/Threads` );
+const { Feed } = require( `${baseModDir}/Feed` );
+const { Reddit } = require( `${baseModDir}/Reddit` );
+const { Twitter } = require( `${baseModDir}/Twitter` );
 const fs = require( "fs" );
 
 
@@ -31,8 +33,10 @@ async function loadModules( client ) {
 	client.modules.set( 'memes', new Memes( client, modules['memes'] ) );
 	client.modules.set( 'moyenne', new Moyenne( client, modules['memes'] ) );
 	client.modules.set( 'reposts', new Reposts( client, modules['reposts'] ) );
-	client.modules.set( 'feed', new Feed( client, modules['feed'] ) );
 	client.modules.set( 'threads', new Threads( client, modules['threads'] ) );
+	client.modules.set( 'feed', new Feed( client, modules['feed'] ) );
+	client.modules.set( 'reddit', new Reddit( client, modules['reddit'] ) );
+	client.modules.set( 'twitter', new Twitter( client, modules['twitter'] ) );
 }
 
 

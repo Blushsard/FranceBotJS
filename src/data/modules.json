@@ -3,5 +3,7 @@
 	"memes": true,
 	"reposts": true,
 	"feed": true,
-	"threads": true
+	"threads": true,
+	"reddit": true,
+	"twitter": true
 }
