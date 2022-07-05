@@ -30,23 +30,29 @@ class Moyenne
 	 * @param {number} delay Le délai entre chaque calcul de la moyenne en ms.
 	 */
 	async calcMoyenne( delay ) {
+		await this.calculerValeurMoyenne();
 		setInterval( async () => {
-			const queryResult = (await this.db.query(
-				"SELECT * FROM moyenne_data;"
-			))[0];
+			await this.calculerValeurMoyenne();
+		}, delay );
+	}
 
-			// Récupération de la somme des likes et du nombre de memes dans la moyenne.
-			const nbLikesMsg = (await this.db.query(
-				`SELECT sum(n_likes) AS sommeLikes, count(pk_msg_id) as nbMsg 
+	async calculerValeurMoyenne() {
+		const queryResult = (await this.db.query(
+			"SELECT * FROM moyenne_data;"
+		))[0];
+
+		// Récupération de la somme des likes et du nombre de memes dans la moyenne.
+		const nbLikesMsg = (await this.db.query(
+			`SELECT sum(n_likes) AS sommeLikes, count(pk_msg_id) as nbMsg 
 			FROM messages ORDER BY n_likes LIMIT ${queryResult["n_nb_msg_moyenne"]}`
-			))[0];
+		))[0];
 
-			// Dans le cas ou le nombre de messages est à 0, on met la moyenne à 1 car elle est inutile tant qu'il n'y a pas
-			// de messages. De plus, il y aura toujours des messages.
-			this._moyenne = nbLikesMsg["sommeLikes"] != null
-				? (nbLikesMsg["sommeLikes"] / nbLikesMsg["nbMsg"])
-				: 1;
-		}, delay);
+		// Dans le cas ou le nombre de messages est à 0, on met la moyenne à 1 car elle est inutile tant qu'il n'y a pas
+		// de messages. De plus, il y aura toujours des messages.
+		this._moyenne = nbLikesMsg["sommeLikes"] != null
+			? (nbLikesMsg["sommeLikes"] / nbLikesMsg["nbMsg"])
+			: 1;
+		if ( !this._moyenne ) this._moyenne = 1;
 	}
 }
 

@@ -45,7 +45,7 @@ class MessagesManager
 				"INSERT INTO attachments VALUES (?,?,?);",
 				[
 					message.id,
-					typeof element === "string" ? "lien" : "attachment",
+					typeof element === "string" ? "lien" : element.contentType.split( "/" )[0],
 					typeof element === "string" ? element : element.url
 				]
 			)

@@ -52,72 +52,60 @@ class Feed
 
 				const author = this.client.users.cache.get( msg["s_author_id"] );
 				if ( !author ) continue;
+
 				const memeChannel = this.client.channels.cache.get( msg["s_channel_id"] );
-
-				const headerMessage = await this.sendHeaderMessage( author, memes.length, msg, memeChannel, feedChannel );
-				await this.sendMemesMessage( memes, feedChannel );
-
-				await this.sendMessageToAuthor( author, headerMessage );
-
+				const firstEmbed = await this.sendMemesEmbeds( memes, feedChannel, author, memeChannel, msg['s_jump_url'] );
+				await this.sendMessageToAuthor( author, firstEmbed );
 				await this.db.messagesManager.updateMessage( msg["pk_msg_id"], "b_stf", true );
 			}
 		}, delay );
 	}
 
 	/**
-	 * Envoi l'embed indiquant combien de memes sont envoyés pour un message.
-	 * @param {User} author L'utilisateur qui a envoyé le message contenant les memes.
-	 * @param {int} nbMemes Le nombre de memes dans le message.
-	 * @param {object} msg L'objet du message contenant les données de la bdd.
-	 * @param {TextChannel} memeChannel Le salon dans lequel le message a été envoyé.
-	 * @param {TextChannel} feedChannel Le salon du feed.
-	 * @return {Message} Le message contenant l'embed qui a été envoyé dans le feed.
-	 */
-	async sendHeaderMessage( author, nbMemes, msg, memeChannel, feedChannel ) {
-		const firstEmbed = new MessageEmbed()
-			.setAuthor({ name: `| ${author.username}`, iconURL: author.avatarURL() })
-			.setTitle( `${nbMemes} meme(s) envoyé(s)!` )
-			.addField( "Lien du message", `[Accès au message](${msg["s_jump_url"]})`  )
-			.addField( "Dans", `<#${memeChannel.id}> de la catégorie: ${memeChannel.parent.name}` )
-			.setColor( "#2bcaff" );
-
-		return await feedChannel.send({ embeds: [ firstEmbed ] });
-	}
-
-	/**
 	 * Envoi le message contenant les memes dans le feed.
 	 * @param {array} memes La liste contenant les memes.
 	 * @param {TextChannel} feedChannel Le salon du feed.
+	 * @param {User} author L'auteur du message contenant les memes.
+	 * @param {TextChannel} memeChannel Le salon dans lequel a été envoyé le message contenant les memes.
+	 * @param {string} jumpUrl L'url du message contenant les memes.
+	 * @return {Message} Le premier embed qui a été envoyé.
 	 */
-	async sendMemesMessage( memes, feedChannel ) {
-		let memesURL = [];
-		let msgContent = "";
+	async sendMemesEmbeds( memes, feedChannel, author, memeChannel, jumpUrl ) {
+		let firstEmbed = null;
+		let embed;
 		for ( let meme of memes ) {
-			if ( meme["s_type"] === "attachment" )
-				memesURL.push( meme["s_url"] );
-			else
-				msgContent += meme["s_url"] + "\n";
+			embed = new MessageEmbed()
+				.setAuthor({ name: `| ${author.username}`, iconURL: author.avatarURL() })
+				.addField( "Lien du message", `[Accès au message](${jumpUrl})` )
+				.addField( "Dans", `${memeChannel} de la catégorie: ${memeChannel.parent.name}` )
+				.setColor( "#2bcaff" );
+
+			if ( meme["s_type"] === "image" )
+				embed.setImage( meme["s_url"] );
+			else if ( meme["s_type"] === "video" )
+				embed.setURL( jumpUrl ).setTitle( "Lien de la vidéo" );
+			else if ( meme["s_type"] === "lien" )
+				embed.setURL( meme["s_url"] ).setTitle( "Lien du meme" );
+
+			let msg = await feedChannel.send({ embeds: [ embed ] });
+			if ( !firstEmbed ) firstEmbed = msg;
 		}
-
-		// Addition d'un espace pour éviter d'avoir une chaîne vide ce qui cause une erreur.
-		msgContent += " ";
-
-		await feedChannel.send({ content: msgContent, files: memesURL });
+		return firstEmbed;
 	}
 
 	/**
 	 * Envoi un message à l'utilisateur ayant envoyé les memes pour le prévenir que son message a été envoyé
 	 * dans le feed.
 	 * @param {User} author L'utilisateur ayant envoyé le message contenant les memes.
-	 * @param {Message} headerMessage Le message contenant l'embed indiquant le début des memes d'un message.
+	 * @param {Message} firstEmbed Le premier embed envoyé pour les memes du message.
 	 */
-	async sendMessageToAuthor( author, headerMessage ) {
+	async sendMessageToAuthor( author, firstEmbed ) {
 		try {
 			await author.send({ embeds: [
 					new MessageEmbed()
 						.setColor( "#2bcaff" )
 						.setTitle( "Un de vos meme a été envoyé dans le feed!" )
-						.setURL( headerMessage.url )
+						.setURL( firstEmbed.url )
 				]});
 		}
 		catch ( err ) {}
