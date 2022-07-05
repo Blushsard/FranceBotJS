@@ -54,7 +54,7 @@ async function execute( interaction ) {
 		await interaction.reply( { content: "Changement pris en compte!", ephemeral: true } );
 	}
 	catch ( err ) {
-		console.log( "Interaction inconnue: module.js:54" );
+		console.log( "Interaction inconnue: commands/admin/module.js:54" );
 	}
 }
 

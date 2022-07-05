@@ -56,7 +56,7 @@ async function execute( interaction ) {
 		});
 	}
 	catch ( err ) {
-		console.log( "Interaction inconnue: set_role.js:53" );
+		console.log( "Interaction inconnue: commands/admin/set_role.js:53" );
 	}
 }
 

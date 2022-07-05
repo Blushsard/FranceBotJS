@@ -59,7 +59,7 @@ async function execute(interaction) {
 		});
 	}
 	catch ( err ) {
-		console.log( "Interaction inconnue: leaderboard.js:57" );
+		console.log( "Interaction inconnue: commands/level/leaderboard.js:57" );
 	}
 }
 

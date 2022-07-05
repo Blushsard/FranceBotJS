@@ -114,7 +114,7 @@ async function execute( interaction ) {
 		await interaction.reply( { embeds: [ embed ], ephemeral: true } );
 	}
 	catch ( err ) {
-		console.log( "Interaction inconnue: set.js:114" );
+		console.log( "Interaction inconnue: commands/admin/set.js:114" );
 	}
 }
 

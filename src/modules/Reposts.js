@@ -49,7 +49,7 @@ class Reposts
 		// Récupération du nombre de reposts sur le message.
 		let countReposts = 0;
 		reaction.message.reactions.cache.forEach( reaction => {
-			if ( reaction.emoji.name === process.env.EMOJI_LIKE )
+			if ( reaction.emoji.name === process.env.EMOJI_REPOST )
 				countReposts = reaction.count - 1;
 		});
 
