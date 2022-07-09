@@ -44,11 +44,7 @@ class Feed
 
 			// Traitement et envoi des messages dans le feed.
 			for ( let msg of messages ) {
-				// récupération des informations du message.
-				const memes = await this.db.query(
-					"SELECT * FROM attachments WHERE pk_msg_id=?",
-					[ msg["pk_msg_id"] ]
-				);
+				const memes = await this.db.messagesManager.getMessageAttachments( msg["pk_msg_id"] );
 
 				const author = this.client.users.cache.get( msg["s_author_id"] );
 				if ( !author ) continue;
@@ -80,12 +76,12 @@ class Feed
 				.addField( "Dans", `${memeChannel} de la catégorie: ${memeChannel.parent.name}` )
 				.setColor( "#2bcaff" );
 
-			if ( meme["s_type"] === "image" )
-				embed.setImage( meme["s_url"] );
-			else if ( meme["s_type"] === "video" )
-				embed.setURL( jumpUrl ).setTitle( "Lien de la vidéo" );
-			else if ( meme["s_type"] === "lien" )
+			if ( meme["s_type"] === "lien" )
 				embed.setURL( meme["s_url"] ).setTitle( "Lien du meme" );
+			else if ( meme["s_type"].split( "/" )[0] === "image" )
+				embed.setImage( meme["s_url"] );
+			else if ( meme["s_type"].split( "/" )[0] === "video" )
+				embed.setURL( jumpUrl ).setTitle( "Lien de la vidéo" );
 
 			let msg = await feedChannel.send({ embeds: [ embed ] });
 			if ( !firstEmbed ) firstEmbed = msg;

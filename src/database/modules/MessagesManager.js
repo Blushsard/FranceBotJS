@@ -25,7 +25,7 @@ class MessagesManager
 	 */
 	async ajouterMessage( message, memes, likes ) {
 		await this.db.query(
-			"INSERT INTO messages VALUES (?,?,?,?,?,?,?,?,?,?)",
+			"INSERT INTO messages VALUES (?,?,?,?,?,?,?,?,?,?,?)",
 			[
 				message.id,
 				message.author.id,
@@ -36,7 +36,8 @@ class MessagesManager
 				false,
 				false,
 				getMonthlyIntDate(),
-				message.url
+				message.url,
+				message.content
 			]
 		);
 
@@ -45,7 +46,7 @@ class MessagesManager
 				"INSERT INTO attachments VALUES (?,?,?);",
 				[
 					message.id,
-					typeof element === "string" ? "lien" : element.contentType.split( "/" )[0],
+					typeof element === "string" ? "lien" : element.contentType,
 					typeof element === "string" ? element : element.url
 				]
 			)
@@ -69,10 +70,22 @@ class MessagesManager
 	}
 
 	/**
+	 * Récupère tout les attachments d'un message.
+	 * @param {string} messageId L'identifiant du message.
+	 * @returns {Promise<array>} Une Promise complétée avec une liste contenant les attachments.
+	 */
+	async getMessageAttachments( messageId ) {
+		return await this.db.query(
+			"SELECT * FROM attachments WHERE pk_msg_id=?",
+			[ messageId ]
+		);
+	}
+
+	/**
 	 * Modifie le nombre de likes sur un message.
 	 * @param {string} messageId L'identifiant du message.
 	 * @param {int} likes Le nombre de likes du message.
-	 * @returns {Promise<boolean>} Un booléen indiquant si une ligne a été modifiée dans la table.
+	 * @returns {Promise<boolean>} Une Promise complétée avec un booléen indiquant si une ligne a été modifiée dans la table.
 	 */
 	async updateLikesCount( messageId, likes ) {
 		const result = await this.db.query(

@@ -56,7 +56,7 @@ class Memes
 
 
 		try {
-			await message.react( process.env.EMOJI_LIKE );
+			await message.react( process.env.EMOJI_LIKE_ID );
 			await message.react( process.env.EMOJI_REPOST );
 		} catch ( err ) {
 			console.error( "Emoji inconnue: modules/Memes.js:62" );
@@ -86,8 +86,7 @@ class Memes
 		if ( !this._active ) return;
 		if ( !salon && !salon["b_memes"] ) return;
 		if ( user.id === this.client.user.id ) return;
-		if ( reaction.emoji.id !== process.env.EMOJI_LIKE ) return;
-		// TODO ajouter une réaction custom pour que cette condition fonctionne en dev.
+		if ( reaction.emoji.id !== process.env.EMOJI_LIKE_ID ) return;
 
 		if ( reaction.partial )
 			await reaction.fetch();
@@ -157,7 +156,7 @@ class Memes
 	getCountLikes( reactionsCache ) {
 		let likes = 0;
 		reactionsCache.forEach( reaction => {
-			if ( reaction.emoji.id === process.env.EMOJI_LIKE )
+			if ( reaction.emoji.id === process.env.EMOJI_LIKE_ID )
 				likes = reaction.count - 1;
 		});
 		return likes ? likes : 0;

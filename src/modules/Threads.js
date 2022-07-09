@@ -38,7 +38,7 @@ class Threads
 	async ajouterThread( message, salon ) {
 		if ( !this._active ) return;
 		if ( !salon ) return;
-		if ( !salon["b_threads"] ) return;
+		if ( !salon["b_threads"] ) return true;
 		if ( message.author.id === this.client.id ) return;
 
 		const author = await (await this.client.guilds.fetch( message.guildId )).members.fetch( message.author.id );

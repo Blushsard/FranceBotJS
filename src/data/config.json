@@ -10,18 +10,6 @@
 	"REPOST_EMOJI": "♻️",
 	"REPOST_EMOJI_MENTION": "♻️",
 
-	"FORMATS": [
-		"image/png",
-		"image/png",
-		"image/jpeg",
-		"image/tiff",
-		"image/webp",
-		"image/bmp",
-		"video/webm",
-		"video/quicktime",
-		"video/mp4",
-		"video/mkv"
-	],
 	"WEBSITES": [
 		"https:\\/\\/www\\.youtube\\.com\\/watch\\?v=\\S{11}",
 		"https://youtu.be/.{6,20}",

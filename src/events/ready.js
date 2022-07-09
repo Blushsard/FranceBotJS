@@ -28,8 +28,7 @@ async function execute( client ) {
 	const connEmbed = new MessageEmbed()
 		.setTitle( "Bot connecté!" )
 		.setDescription( date.toString() );
-	// await recipient.send( { embeds: [ connEmbed ] } );
-	// TODO décommenter la ligne précédente.
+	await recipient.send( { embeds: [ connEmbed ] } );
 
 	// Exécuter une seule fois la fonction ci-dessous.
 	// await applyRateLimitPerUserOnThread( client );
