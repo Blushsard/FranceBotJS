@@ -4,7 +4,8 @@
  *      Le module gérant l'upload des memes sur Twitter.
  */
 
-const { TwitterApi} = require( "twitter-api-v2" );
+const { TwitterApi } = require( "twitter-api-v2" );
+const { GuildMember } = require( "discord.js" );
 const request = require( "request" );
 
 
@@ -41,9 +42,12 @@ class Twitter
 				[]
 			);
 
+			const guild = await this.client.guilds.fetch( process.env.GUILD_ID );
+
 			// On itère sur chacun des messages.
 			for ( let msg of messages ) {
 				const attachments = await this.db.messagesManager.getMessageAttachments( msg["pk_msg_id"] );
+				const author = await guild.members.fetch( msg["s_author_id"] );
 
 				// Puis on itère sur les attachments pour les envoyer un par un.
 				for ( let attachment of attachments ) {
@@ -51,7 +55,7 @@ class Twitter
 					if ( !this.verifyFileType( attachment["s_type"] ) )
 						continue;
 
-					await this.sendPostToTwitter( msg, attachment );
+					await this.sendPostToTwitter( msg, attachment, author );
 				}
 				await this.db.messagesManager.updateMessage( msg["pk_msg_id"], "b_stt", true );
 			}
@@ -64,12 +68,13 @@ class Twitter
 	 * Cela permet de ne pas stocker le fichier sur la machine exécutant le bot.
 	 * @param {object} message Les données du message de la bdd.
 	 * @param {object} attachment Les données de l'attachment de la bdd.
+	 * @param {GuildMember} author L'auteur du message qui contient le meme.
 	 */
-	async sendPostToTwitter( message, attachment ) {
-		request.head( attachment["s_url"], async (error, response) => {
+	async sendPostToTwitter( message, attachment, author ) {
+		request.head( attachment["s_url"], null, async (error, response) => {
 			if ( !error && response.statusCode === 200 ) {
 				let data = [];
-				request.get( attachment["s_url"] )
+				request.get( attachment["s_url"], null, null )
 					.on( "data", chunk => {
 						data.push( chunk );
 					})
@@ -79,7 +84,7 @@ class Twitter
 							mimeType: attachment["s_type"]
 						});
 						await this.twitterApi.v2.tweet({
-							text: message["s_msg_content"],
+							text: this.prepareTextForPost( message["s_msg_content"], author ),
 							media: {
 								media_ids: [ mediaId ]
 							}
@@ -87,6 +92,27 @@ class Twitter
 					});
 			}
 		});
+	}
+
+	/**
+	 * Met en forme le texte pour un post twitter en enlevant les emojis et ajouter la phrase de fin.
+	 * @param {string} text Le texte qui va être préparé.
+	 * @param {GuildMember} author L'auteur du message contenant le meme.
+	 * @return {string} Le texte préparé.
+	 */
+	prepareTextForPost( text, author ) {
+		if ( text === "" ) return `Par ${author.user.username} sur #francememes`;
+
+		const matches = text.match( "<a?:.{1,32}:\\d{18,24}>" );
+		console.log(matches)
+		if ( matches ) {
+			for ( let match of matches ) {
+				console.log(match)
+				text = text.replace( match, ":" + text.split( ":" )[1] + ":" );
+			}
+		}
+
+		return text + `\nPar ${author.displayName} sur #francememes`;
 	}
 
 	/**
