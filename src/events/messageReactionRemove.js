@@ -17,6 +17,8 @@ const { Client, MessageReaction, User } = require( "discord.js" );
  * @param {Client} client Le client qui a émit l'évènement.
  */
 async function execute( reaction, user, client ) {
+	if ( !reaction || !user ) return;
+
 	const salon = await client.db.channelsManager.fetchChannel( reaction.message.channelId );
 	await client.modules.get( "memes" ).updateLikeCount( reaction, salon, user );
 }

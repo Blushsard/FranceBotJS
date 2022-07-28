@@ -15,6 +15,8 @@ const { Client, GuildMember } = require( "discord.js" );
  * @param {Client} client Le client du bot.
  */
 async function execute( member, client ) {
+	if ( !member ) return;
+	
 	let userDb = await client.db.usersManager.fetchUser( member.id );
 	if ( !userDb ) {
 		await client.db.usersManager.addUser( member.id );

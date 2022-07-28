@@ -15,6 +15,8 @@ const { RateLimitData } = require( "discord.js" );
  * @param {RateLimitData} rateLimit
  */
 async function execute( rateLimit ) {
+	if ( !rateLimit ) return;
+
 	if ( rateLimit.timeout > 1000 ) {
 		console.log( "\033[31mRATE LIMIT\033[0m\nTimeout            : " + rateLimit.timeout + "ms" );
 		console.log( `Route de la requête: ${rateLimit.route}` );

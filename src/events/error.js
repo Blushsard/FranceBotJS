@@ -12,6 +12,7 @@
  * @param {Error} error L'erreur envoyée par l'API.
  */
 async function execute( error ) {
+	if ( !error ) return;
 	console.log( error );
 }
 

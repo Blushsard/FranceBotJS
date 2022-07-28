@@ -17,6 +17,8 @@ const { Client, Message } = require( "discord.js" );
  * @param {Client} client Le client du bot.
  */
 async function execute( message, client ) {
+	if ( !message ) return;
+
 	// Il faut récupérer le salon dans la base de données.
 	const salon = await client.db.channelsManager.fetchChannel( message.channelId );
 
