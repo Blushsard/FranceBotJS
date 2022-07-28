@@ -15,6 +15,8 @@ const { CommandInteraction, Client } = require( "discord.js" );
  * @param {Client} client Le client du bot.
  */
 function execute( interaction, client ) {
+	if ( !interaction ) return;
+
 	if ( interaction.isCommand() )
 		client.commands.get( interaction.commandName ).execute( interaction );
 }
