@@ -64,6 +64,14 @@ class UsersManager
 		);
 	}
 
+	/**
+	 * Supprime un utilisateur de la base de données.
+	 * @param {string} userId L'identifiant de l'utilisateur.
+	 */
+	async removeUser( userId ) {
+
+	}
+
 
 	/**
 	 * Met à jour une colonne de l'user.
