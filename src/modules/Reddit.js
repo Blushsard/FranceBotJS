@@ -20,11 +20,11 @@ class Reddit
 		this._active = active;
 
 		this.redditApi = new RedditApi({
-			username: 'FranceBot',
-			password: '7&htOV?&dKF?bW',
-			appId: '4yer1fMp0pkLA6jXhbGClg',
-			appSecret: 'ZoQxnE627_oP0XAnpbMMhv2YuJmNCg',
-			userAgent: 'windows:FranceBot:v4 (by u/FranceBot)'
+			username: process.env.REDDIT_USERNAME,
+			password: process.env.REDDIT_PASSWORD,
+			appId: process.env.REDDIT_APP_ID,
+			appSecret: process.env.REDDIT_APP_SECRET,
+			userAgent: process.env.REDDIT_USER_AGENT
 		});
 	}
 
@@ -45,13 +45,37 @@ class Reddit
 				[]
 			);
 
+			const guild = await this.client.guilds.fetch( process.env.GUILD_ID );
+
 			for ( let msg of messages ) {
+				const author = await guild.members.fetch( msg["s_author_id"] );
+				if ( !author ) continue;
+
 				const attachments = await this.db.query(
 					"SELECT * FROM attachments WHERE pk_msg_id=?",
 					[ msg["pk_msg_id"] ]
 				);
+
+				for ( let attachment of attachments )
+					await this.sendMeme( attachment["s_url"], author.nickname ?? author.user.username );
+				await this.db.messagesManager.updateMessage( msg["pk_msg_id"], "b_str", true );
 			}
 		}, delay );
+	}
+
+	/**
+	 * Envoi le meme sur le subreddit francememes_.
+	 * @param {string} memeUrl Le lien discord du meme.
+	 * @param {string} authorName Le nom de l'auteur du meme.
+	 */
+	async sendMeme( memeUrl, authorName ) {
+		await this.redditApi.post( "/api/submit", {
+			sr: "francememes_",
+			kind: "link",
+			resubmit: true,
+			title: `Par ${authorName}`,
+			url: memeUrl
+		});
 	}
 }
 

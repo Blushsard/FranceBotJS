@@ -48,6 +48,7 @@ class Twitter
 			for ( let msg of messages ) {
 				const attachments = await this.db.messagesManager.getMessageAttachments( msg["pk_msg_id"] );
 				const author = await guild.members.fetch( msg["s_author_id"] );
+				if ( !author ) continue;
 
 				// Puis on itère sur les attachments pour les envoyer un par un.
 				for ( let attachment of attachments ) {
@@ -101,7 +102,7 @@ class Twitter
 	 * @return {string} Le texte préparé.
 	 */
 	prepareTextForPost( text, author ) {
-		if ( text === "" ) return `Par ${author.user.username} sur #francememes`;
+		if ( text === "" ) return `Par ${author.nickname ?? author.user.username} sur #francememes`;
 
 		const matches = text.match( "<a?:.{1,32}:\\d{18,24}>" );
 		console.log(matches)
