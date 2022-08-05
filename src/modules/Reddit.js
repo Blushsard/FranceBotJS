@@ -4,7 +4,7 @@
  *      Le module gérant l'upload des memes sur Reddit.
  */
 
-const RedditApi = require( "reddit" );
+const { exec } = require( "child_process" );
 
 
 class Reddit
@@ -18,14 +18,6 @@ class Reddit
 		this.client = client;
 		this.db = this.client.db;
 		this._active = active;
-
-		this.redditApi = new RedditApi({
-			username: process.env.REDDIT_USERNAME,
-			password: process.env.REDDIT_PASSWORD,
-			appId: process.env.REDDIT_APP_ID,
-			appSecret: process.env.REDDIT_APP_SECRET,
-			userAgent: process.env.REDDIT_USER_AGENT
-		});
 	}
 
 	set active( active ) { this._active = active; }
@@ -57,25 +49,13 @@ class Reddit
 				);
 
 				for ( let attachment of attachments )
-					await this.sendMeme( attachment["s_url"], author.nickname ?? author.user.username );
+					// Ajout du titre du post et du lien de l'image dans la liste des paramètres du script python.
+					console.log( "temp" );
 				await this.db.messagesManager.updateMessage( msg["pk_msg_id"], "b_str", true );
 			}
-		}, delay );
-	}
 
-	/**
-	 * Envoi le meme sur le subreddit francememes_.
-	 * @param {string} memeUrl Le lien discord du meme.
-	 * @param {string} authorName Le nom de l'auteur du meme.
-	 */
-	async sendMeme( memeUrl, authorName ) {
-		await this.redditApi.post( "/api/submit", {
-			sr: "francememes_",
-			kind: "link",
-			resubmit: true,
-			title: `Par ${authorName}`,
-			url: memeUrl
-		});
+			// Exécution du script python.
+		}, delay );
 	}
 }
 
