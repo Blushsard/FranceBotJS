@@ -40,8 +40,7 @@ class Levels
 	 * @param {object|null} channel Le salon de la base de données dans lequel le message a été envoyé.
 	 */
 	async ajouterExperienceMessage( message, channel ) {
-		if ( !channel) return;
-		if ( channel['b_exp'] ) return;
+		if ( channel && channel['b_exp'] ) return;
 		if ( !this._active || message.author.bot ) return;
 		if ( message.channel instanceof DMChannel ) return;	// On empêche les gens de gagner de l'xp avec les DM du bot.
 
