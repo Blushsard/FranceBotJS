@@ -49,8 +49,6 @@ class Reddit
 				);
 
 				for ( let attachment of attachments ) {
-					// TODO ajouter la gestion des vidéos et liens tel youtube.
-					// Voir si on peut upload des vidéos de discord comme des vidéos de youtube.
 					exec(`python ${process.cwd()}/python_scripts/memes_to_reddit.py "By ${author.displayName}" ${attachment['s_url']} ${attachment['s_type']}`,
 					(error, stdout, stderr) => {
 						if (error) {
