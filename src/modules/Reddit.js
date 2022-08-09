@@ -48,13 +48,22 @@ class Reddit
 					[ msg["pk_msg_id"] ]
 				);
 
-				for ( let attachment of attachments )
-					// Ajout du titre du post et du lien de l'image dans la liste des paramètres du script python.
-					console.log( "temp" );
+				for ( let attachment of attachments ) {
+					// TODO ajouter la gestion des vidéos et liens tel youtube.
+					// Voir si on peut upload des vidéos de discord comme des vidéos de youtube.
+					exec(`python ${process.cwd()}/python_scripts/memes_to_reddit.py "By ${author.displayName}" ${attachment['s_url']}`,
+					(error, stdout, stderr) => {
+						if (error) {
+							console.log(error);
+							return;
+						}
+						console.log(stdout)
+						console.log(stderr)
+					});
+				}
+
 				await this.db.messagesManager.updateMessage( msg["pk_msg_id"], "b_str", true );
 			}
-
-			// Exécution du script python.
 		}, delay );
 	}
 }
