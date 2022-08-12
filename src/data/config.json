@@ -5,11 +5,6 @@
 		"268078126179942410"
 	],
 
-	"LIKE_EMOJI": "\uD83D\uDC4D",
-	"LIKE_EMOJI_MENTION": "\uD83D\uDC4D",
-	"REPOST_EMOJI": "♻️",
-	"REPOST_EMOJI_MENTION": "♻️",
-
 	"WEBSITES": [
 		"https:\\/\\/www\\.youtube\\.com\\/watch\\?v=\\S{11}",
 		"https://youtu.be/.{6,20}",

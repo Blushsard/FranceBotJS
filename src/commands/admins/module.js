@@ -21,7 +21,15 @@ const slashCommand = new SlashCommandBuilder()
 			.setName( "nom_module" )
 			.setDescription( "Le nom du module à activer/désactiver." )
 			.setRequired( true )
-			.addChoice( "Levels", 'levels' )
+			.addChoices([
+				[ "Levels", 'levels' ],
+				[ "Memes", 'memes' ],
+				[ "Feed", 'feed' ],
+				[ "Reposts", 'reposts' ],
+				[ "Threads", 'threads' ],
+				[ "Twitter", 'twitter' ],
+				[ "Reddit", 'reddit' ],
+			])
 	)
 	.addBooleanOption( option =>
 		option
