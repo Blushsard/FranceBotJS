@@ -2,6 +2,7 @@
  * @author Benjamin Guirlet
  * @description
  *      Le module gérant la moyenne des likes du bot.
+ *      La moyenne est toujours calculée et ne peut être désactivée.
  */
 
 
@@ -15,13 +16,9 @@ class Moyenne
 	constructor( client, active ) {
 		this.client = client;
 		this.db = this.client.db;
-		this._active = active;
 
 		this._moyenne = 0;
 	}
-
-	set active( active ) { this._active = active; }
-	get active() { return this._active; }
 
 	getMoyenne() { return this._moyenne; }
 
