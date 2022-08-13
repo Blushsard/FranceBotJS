@@ -54,9 +54,8 @@ async function execute( interaction ) {
 	fs.writeFileSync( `${process.cwd()}/data/modules.json`, JSON.stringify( modules ) );
 
 	// Update du module dans le client.
-	interaction.client.modules.get( interaction.options.get( "nom_module" ).value ).setActive(
-		interaction.options.get( "etat" ).value
-	);
+	interaction.client.modules.get( interaction.options.get( "nom_module" ).value )
+		.active = interaction.options.get( "etat" ).value;
 
 	try {
 		await interaction.reply( { content: "Changement pris en compte!", ephemeral: true } );
