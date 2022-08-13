@@ -51,7 +51,7 @@ async function execute( interaction ) {
 	// Update du fichier modules.json.
 	let modules = JSON.parse( fs.readFileSync( `${process.cwd()}/data/modules.json` ) );
 	modules[interaction.options.get( "nom_module" ).value] = interaction.options.get( "etat" ).value;
-	fs.writeFileSync( `${process.cwd()}/data/modules.json`, modules );
+	fs.writeFileSync( `${process.cwd()}/data/modules.json`, JSON.stringify( modules ) );
 
 	// Update du module dans le client.
 	interaction.client.modules.get( interaction.options.get( "nom_module" ).value ).setActive(
