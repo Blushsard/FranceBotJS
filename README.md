@@ -1,8 +1,8 @@
-# FranceBot
+![logo](https://user-images.githubusercontent.com/49253492/184919620-49b4ffd3-983d-4aa3-baef-1542c66ff9b6.png)
 
-Bot du serveur France Memes.
-Ce bot est la première version en JavaScript et la 4ème version au total.
+**Bot du serveur <a href="https://francememes.com">FRANCE MEMES</a> gérant les algorithmes de memes, le feed et sa liaison aux différents réseaux sociaux du petit doggo.**
 
-Cette version apporte de nouvelles fonctionnalités et une transition totale dans les bases de données ainsi que l'utilisation des SlashCommands.
+Ce bot est la première version en JavaScript et la 4ème version au total. Elle apporte de nouvelles fonctionnalités, une transition totale dans les bases de données et l'utilisation des SlashCommands.
 
-Il est pour le moment en cours de développement.
+**Documentation à venir en français seulement...** <br/>
+*(En effet notre communauté étant principalement française, nous préférons rester dans le même language.)*
