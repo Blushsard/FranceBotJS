@@ -56,6 +56,11 @@ const slashCommand = new SlashCommandBuilder()
 	)
 	.addBooleanOption( option =>
 		option
+			.setName( "memes" )
+			.setDescription( "Definir un salon de memes." )
+	)
+	.addBooleanOption( option =>
+		option
 			.setName( "all" )
 			.setDescription( "Définir toutes les fonctionnalités du salon." )
 	)
@@ -91,6 +96,11 @@ async function execute( interaction ) {
 		await sManager.updateChannel( interaction.channelId, "b_stats", options.get( "stats" ).value );
 	if ( options.get ( "exp" ) )
 		await sManager.updateChannel( interaction.channelId, "b_exp", options.get( "exp" ).value );
+	if ( options.get( "memes" ) ) {
+		await sManager.updateChannel( interaction.channelId, "b_likes", options.get( "memes" ).value );
+		await sManager.updateChannel( interaction.channelId, "b_reposts", options.get( "memes" ).value );
+		await sManager.updateChannel( interaction.channelId, "b_threads", options.get( "memes" ).value );
+	}
 	if ( options.get( "all" ) )
 		await changeAllValues( interaction.channelId, options.get( "all" ).value, sManager );
 
