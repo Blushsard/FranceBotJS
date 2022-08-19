@@ -97,13 +97,13 @@ async function execute( interaction ) {
 	const channel = await sManager.fetchChannel( interaction.channelId );
 	const embed = new MessageEmbed()
 		.setDescription(
-			`**Memes :** ${channel["b_memes"]}\n` +
-			`**Reposts :** ${channel["b_reposts"]}\n` +
-			`**Threads :** ${channel["b_threads"]}\n` +
-			`**Feed :** ${channel["b_feed"]}\n` +
-			`**Logs :** ${channel["b_logs"]}\n` +
-			`**Stats :** ${channel["b_stats"]}\n` +
-			`**Exp: ** ${channel["b_exp"]}`
+			`**Memes :** ${convertIntToBoolean( channel["b_memes"] )}\n` +
+			`**Reposts :** ${convertIntToBoolean( channel["b_reposts"] )}\n` +
+			`**Threads :** ${convertIntToBoolean( channel["b_threads"] )}\n` +
+			`**Feed :** ${convertIntToBoolean( channel["b_feed"] )}\n` +
+			`**Logs :** ${convertIntToBoolean( channel["b_logs"] )}\n` +
+			`**Stats :** ${convertIntToBoolean( channel["b_stats"] )}\n` +
+			`**Exp: ** ${convertIntToBoolean( channel["b_exp"] )}`
 		)
 		.setAuthor({
 			name: "| Fonctionnalités du salon",
@@ -116,6 +116,11 @@ async function execute( interaction ) {
 	catch ( err ) {
 		console.log( "Interaction inconnue: commands/admin/set.js:114" );
 	}
+}
+
+
+function convertIntToBoolean( intBoolean ) {
+	return intBoolean === "0" ? "faux": "vrai";
 }
 
 
