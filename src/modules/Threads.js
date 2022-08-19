@@ -48,8 +48,11 @@ class Threads
 			return true;
 		}
 
+		let titleBegin = `Commentaires | ${message.author.username}`;
+		let titleEnd = "";
+		if ( message.content ) titleEnd = ": " + message.content;
 		await message.startThread({
-			name: `Réponse | ${message.author.username} (${message.author.id})`,
+			name: `Commentaires | ${message.author.username}: ${message.content})`,
 			autoArchiveDuration: 1440,
 			rateLimitPerUser: 60
 		});
