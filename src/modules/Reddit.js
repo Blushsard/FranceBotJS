@@ -49,7 +49,7 @@ class Reddit
 				);
 
 				for ( let attachment of attachments ) {
-					exec(`python ${process.cwd()}/python_scripts/memes_to_reddit.py "By ${author.displayName}" ${attachment['s_url']} ${attachment['s_type']}`,
+					exec(`python3 ${process.cwd()}/python_scripts/memes_to_reddit.py "By ${author.displayName}" ${attachment['s_url']} ${attachment['s_type']}`,
 					(error, stdout, stderr) => {
 						if ( error ) {
 							console.error(error);
