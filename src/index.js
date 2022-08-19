@@ -39,7 +39,6 @@ client.db = new Database();
 
 	await client.login( process.env.TOKEN );
 
-
 	// Dé-commenter les lignes suivantes pour charger dans le serveur de dev de nouvelles commands ou les mise à jour
 	// sur les commands.
 	const { loadCommandsToGuild } = require( "./utils/loadAssets" );
