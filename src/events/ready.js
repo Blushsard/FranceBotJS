@@ -20,8 +20,8 @@ async function execute( client ) {
 	console.log( `${client.user.username} is connected at ${date}!` );
 	await client.modules.get( "moyenne" ).calcMoyenne( 10_000 );
 	await client.modules.get( "feed" ).feed( 1_000 );
-	await client.modules.get( "reddit" ).reddit( 1_000 );
-	await client.modules.get( "twitter" ).twitter( 1_000 );
+	await client.modules.get( "reddit" ).reddit( 60_000 * 30 );
+	await client.modules.get( "twitter" ).twitter( 60_000 * 30 );
 
 	// Envoi du message de connexion en pm.
 	const recipient = await client.users.fetch( process.env.RECIPIENT_CONN_MSG );
