@@ -120,7 +120,7 @@ async function execute( interaction ) {
 
 
 function convertIntToBoolean( intBoolean ) {
-	return intBoolean === 0 ? "faux": "vrai";
+	return intBoolean === 0 ? "Inactif": "Actif";
 }
 
 
