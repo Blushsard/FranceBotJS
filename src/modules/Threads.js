@@ -49,7 +49,8 @@ class Threads
 		}
 
 		let embedTitle = `Commentaires | ${message.author.username}`;
-		if ( message.content ) embedTitle += ": " + message.content.substring( 0, 100 - 2 - embedTitle.length );
+		if ( message.content ) embedTitle += " • " + message.content.substring( 0, 100 - 3 - embedTitle.length );
+		console.log( embedTitle )
 		await message.startThread({
 			name: embedTitle,
 			autoArchiveDuration: 1440,
