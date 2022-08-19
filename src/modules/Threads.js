@@ -48,7 +48,7 @@ class Threads
 			return true;
 		}
 
-		let embedTitle = `Commentaires | ${message.author.username}`;
+		let embedTitle = `Commentaires ┃ ${message.author.username}`;
 		if ( message.content ) embedTitle += " • " + message.content.substring( 0, 100 - 3 - embedTitle.length );
 		await message.startThread({
 			name: embedTitle,
