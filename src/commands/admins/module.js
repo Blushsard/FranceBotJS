@@ -23,7 +23,7 @@ const slashCommand = new SlashCommandBuilder()
 			.setRequired( true )
 			.addChoices([
 				[ "Levels", 'levels' ],
-				[ "Memes", 'memes' ],
+				[ "Likes", 'likes' ],
 				[ "Feed", 'feed' ],
 				[ "Reposts", 'reposts' ],
 				[ "Threads", 'threads' ],

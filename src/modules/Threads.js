@@ -10,7 +10,6 @@
 
 const { Message } = require( "discord.js" );
 const { Memes } = require( `${process.cwd()}/modules/Memes` );
-const { ADMINISTRATORS } = require( `${process.cwd()}/data/config.json` );
 
 
 class Threads
@@ -33,7 +32,7 @@ class Threads
 	 * Ajoute un thread au message si il contient un ou des memes. Sinon le message est supprimé.
 	 * @param {Message} message L'objet du message.
 	 * @param {object} salon L'objet du salon contenant les données de la bdd.
-	 * @return {boolean} Un booléen indiquant si un thread a été démarré.
+	 * @return {boolean} Un booléen indiquant si le message a été supprimé.
 	 */
 	async ajouterThread( message, salon ) {
 		if ( !this._active ) return;
@@ -42,11 +41,11 @@ class Threads
 		if ( message.author.id === this.client.id ) return;
 
 		const author = await (await this.client.guilds.fetch( message.guildId )).members.fetch( message.author.id );
-		if ( Threads.isUserAdmin( author ) ) return true;
+		if ( Threads.isUserAdmin( author ) ) return;
 
 		if ( !Memes.hasMeme( message ) ) {
 			await message.delete();
-			return false;
+			return true;
 		}
 
 		await message.startThread({
@@ -54,11 +53,10 @@ class Threads
 			autoArchiveDuration: 1440,
 			rateLimitPerUser: 60
 		});
-		return true;
 	}
 
 	static isUserAdmin( member ) {
-		return member.permissions.has( "MANAGE_MESSAGES", true ) || ADMINISTRATORS.includes( member.id );
+		return member.permissions.has( "MANAGE_MESSAGES", true ) || member.permissions.has( "ADMINISTRATOR", true );
 	}
 }
 

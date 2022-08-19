@@ -18,7 +18,7 @@ const { Collection } = require( "@discordjs/collection" );
 const { WEBSITES } = require( `${process.cwd()}/data/config.json` );
 
 
-class Memes
+class Likes
 {
 	/**
 	 * Le constructeur du module.
@@ -44,7 +44,7 @@ class Memes
 		if ( !salon ) return;
 		if ( !salon["b_memes"] ) return;
 		if ( !this._active ) return;
-		if ( !Memes.hasMeme( message ) ) return;
+		if ( !Likes.hasMeme( message ) ) return;
 		if ( message.author.id === this.client.id ) return;
 
 		// Récupération des memes du message (liens puis pièce-jointes).
@@ -59,7 +59,7 @@ class Memes
 			await message.react( process.env.EMOJI_LIKE_ID );
 			await message.react( process.env.EMOJI_REPOST );
 		} catch ( err ) {
-			console.error( "Emoji inconnue: modules/Memes.js:62" );
+			console.error( "Emoji inconnue: modules/Likes.js:62" );
 		}
 	}
 
@@ -165,5 +165,5 @@ class Memes
 
 
 module.exports = {
-	Memes
+	Memes: Likes
 }
