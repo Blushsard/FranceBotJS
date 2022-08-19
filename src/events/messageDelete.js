@@ -21,7 +21,7 @@ async function execute( message, client ) {
 	// Il faut récupérer le salon dans la base de données.
 	const salon = await client.db.channelsManager.fetchChannel( message.channelId );
 
-	await client.modules.get( 'memes' ).supprimerMessageMeme( message.id, salon );
+	await client.modules.get( 'likes' ).supprimerMessageMeme( message.id, salon );
 }
 
 
