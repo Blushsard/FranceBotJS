@@ -100,7 +100,7 @@ class Feed
 			await author.send({ embeds: [
 					new MessageEmbed()
 						.setColor( "#2bcaff" )
-						.setTitle( "Un de vos meme a été envoyé dans le feed!" )
+						.setTitle( "Un de vos memes a été envoyé dans le feed !" )
 						.setURL( firstEmbed.url )
 				]});
 		}
