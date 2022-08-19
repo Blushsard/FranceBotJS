@@ -21,43 +21,43 @@ const slashCommand = new SlashCommandBuilder()
 	.setDefaultPermission( false )
 	.addBooleanOption( option =>
 		option
-			.setName( "memes" )
-			.setDescription( "Activation/désactivation d'un salon de memes." )
+			.setName( "likes" )
+			.setDescription( "Définir un salon de likes." )
 	)
 	.addBooleanOption( option =>
 		option
 			.setName( "reposts" )
-			.setDescription( "Activation/désactivation d'un salon de reposts." )
+			.setDescription( "Définir un salon de reposts." )
 	)
 	.addBooleanOption( option =>
 		option
 			.setName( "threads" )
-			.setDescription( "Activation/désactivation des threads dans un salon (bloque les messages)." )
+			.setDescription( "Définir les threads dans un salon (bloque les messages)." )
 	)
 	.addBooleanOption( option =>
 		option
 			.setName( "feed" )
-			.setDescription( "Activation/désactivation du salon du feed." )
+			.setDescription( "Définir un salon du feed." )
 	)
 	.addBooleanOption( option =>
 		option
 			.setName( "stats" )
-			.setDescription( "Activation/désactivation du salon des stats mensuelles." )
+			.setDescription( "Définir un salon des stats mensuelles." )
 	)
 	.addBooleanOption( option =>
 		option
 			.setName( "logs" )
-			.setDescription( "Activation/désactivation du salon des logs." )
+			.setDescription( "Définir un salon des logs." )
 	)
 	.addBooleanOption( option =>
 		option
 			.setName( "exp" )
-			.setDescription( "Activation/désactivation du système de l'expérience." )
+			.setDescription( "Définir un salon blacklisté pour l'exp." )
 	)
 	.addBooleanOption( option =>
 		option
 			.setName( "all" )
-			.setDescription( "Désactive/active toutes les fonctionnalités du salon." )
+			.setDescription( "Définir toutes les fonctionnalités du salon." )
 	)
 	.setDefaultPermission(false);
 
@@ -77,8 +77,8 @@ async function execute( interaction ) {
 	}
 
 	const sManager = interaction.client.db.channelsManager;
-	if ( options.get ( "memes" ) )
-		await sManager.updateChannel( interaction.channelId, "b_memes", options.get( "memes" ).value );
+	if ( options.get ( "likes" ) )
+		await sManager.updateChannel( interaction.channelId, "b_likes", options.get( "likes" ).value );
 	if ( options.get ( "reposts" ) )
 		await sManager.updateChannel( interaction.channelId, "b_reposts", options.get( "reposts" ).value );
 	if ( options.get ( "threads" ) )
@@ -97,7 +97,7 @@ async function execute( interaction ) {
 	const channel = await sManager.fetchChannel( interaction.channelId );
 	const embed = new MessageEmbed()
 		.setDescription(
-			`**Memes :** ${convertIntToBoolean( channel["b_memes"] )}\n` +
+			`**Likes :** ${convertIntToBoolean( channel["b_likes"] )}\n` +
 			`**Reposts :** ${convertIntToBoolean( channel["b_reposts"] )}\n` +
 			`**Threads :** ${convertIntToBoolean( channel["b_threads"] )}\n` +
 			`**Feed :** ${convertIntToBoolean( channel["b_feed"] )}\n` +
@@ -120,7 +120,7 @@ async function execute( interaction ) {
 
 
 function convertIntToBoolean( intBoolean ) {
-	return intBoolean === "0" ? "faux": "vrai";
+	return intBoolean === 0 ? "faux": "vrai";
 }
 
 
@@ -132,7 +132,7 @@ function convertIntToBoolean( intBoolean ) {
  */
 async function changeAllValues( channelId, value, sManager ) {
 	await sManager.updateChannel( channelId, "b_reposts", value );
-	await sManager.updateChannel( channelId, "b_memes", value );
+	await sManager.updateChannel( channelId, "b_likes", value );
 	await sManager.updateChannel( channelId, "b_threads", value );
 	await sManager.updateChannel( channelId, "b_feed", value );
 	await sManager.updateChannel( channelId, "b_logs", value );

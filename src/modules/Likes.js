@@ -42,7 +42,7 @@ class Likes
 	 */
 	async ajouterMessageMeme( message, salon, likes ) {
 		if ( !salon ) return;
-		if ( !salon["b_memes"] ) return;
+		if ( !salon["b_likes"] ) return;
 		if ( !this._active ) return;
 		if ( !Likes.hasMeme( message ) ) return;
 		if ( message.author.id === this.client.id ) return;
@@ -70,7 +70,7 @@ class Likes
 	 */
 	async supprimerMessageMeme( messageId, salon ) {
 		if ( !salon ) return;
-		if ( !salon["b_memes"] ) return;
+		if ( !salon["b_likes"] ) return;
 		if ( !this._active ) return;
 
 		await this.db.messagesManager.supprimerMessage( messageId );
@@ -84,7 +84,7 @@ class Likes
 	 */
 	async updateLikeCount( reaction, salon, user ) {
 		if ( !this._active ) return;
-		if ( !salon && !salon["b_memes"] ) return;
+		if ( !salon && !salon["b_likes"] ) return;
 		if ( user.id === this.client.user.id ) return;
 		if ( reaction.emoji.id !== process.env.EMOJI_LIKE_ID ) return;
 
