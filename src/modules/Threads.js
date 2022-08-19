@@ -39,14 +39,17 @@ class Threads
 		if ( !salon ) return;
 		if ( !salon["b_threads"] ) return true;
 		if ( message.author.id === this.client.id ) return;
+		console.log("test3")
 
 		const author = await (await this.client.guilds.fetch( message.guildId )).members.fetch( message.author.id );
 		if ( Threads.isUserAdmin( author ) ) return;
 
+		console.log("test1")
 		if ( !Memes.hasMeme( message ) ) {
 			await message.delete();
 			return true;
 		}
+		console.log("test2")
 
 		await message.startThread({
 			name: `Réponse | ${message.author.username} (${message.author.id})`,
