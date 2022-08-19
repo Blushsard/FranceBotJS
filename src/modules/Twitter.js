@@ -105,10 +105,8 @@ class Twitter
 		if ( text === "" ) return `Par ${author.nickname ?? author.user.username} sur #francememes`;
 
 		const matches = text.match( "<a?:.{1,32}:\\d{18,24}>" );
-		console.log(matches)
 		if ( matches ) {
 			for ( let match of matches ) {
-				console.log(match)
 				text = text.replace( match, ":" + text.split( ":" )[1] + ":" );
 			}
 		}

@@ -31,9 +31,7 @@ async function execute( interaction ) {
 			ephemeral: true
 		});
 	}
-	catch ( err ) {
-		console.log( "Interaction inconnue: commands/misc/moyenne.js:29" );
-	}
+	catch ( err ) {}
 }
 
 
