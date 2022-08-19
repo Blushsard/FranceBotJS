@@ -9,7 +9,7 @@
  */
 
 const { Message } = require( "discord.js" );
-const { Memes } = require( `${process.cwd()}/modules/Memes` );
+const { Memes } = require( `${process.cwd()}/modules/Likes` );
 
 
 class Threads
