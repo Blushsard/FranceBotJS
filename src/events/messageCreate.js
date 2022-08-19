@@ -26,6 +26,7 @@ async function execute( message, client ) {
 
 	const messageDeleted = await (client.modules.get( 'threads' ).ajouterThread( message, salon ));
 	if ( messageDeleted ) return;
+	console.log( "test1" )
 	await client.modules.get( 'likes' ).ajouterMessageMeme( message, salon, 0 );
 }
 

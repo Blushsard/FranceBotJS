@@ -42,10 +42,15 @@ class Likes
 	 */
 	async ajouterMessageMeme( message, salon, likes ) {
 		if ( !salon ) return;
+		console.log("test2")
 		if ( !salon["b_likes"] ) return;
+		console.log("test3")
 		if ( !this._active ) return;
+		console.log("test4")
 		if ( !Likes.hasMeme( message ) ) return;
+		console.log("test5")
 		if ( message.author.id === this.client.id ) return;
+		console.log("test6")
 
 		// Récupération des memes du message (liens puis pièce-jointes).
 		let memes = await this.getMemesLinks( message );
