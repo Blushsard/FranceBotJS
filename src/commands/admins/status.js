@@ -45,9 +45,11 @@ async function execute( interaction ) {
 			})
 
 		interaction.client.modules.forEach( module => {
-			console.log( module )
+			embedModules.addFields({
+				name: module.constructor.name,
+				value: module.active ? "Actif": "Inactif"
+			})
 		});
-
 		embeds.push( embedModules );
 	}
 
