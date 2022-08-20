@@ -32,6 +32,10 @@ async function execute( interaction ) {
 	let embeds = [];
 	const options = interaction.options;
 
+	if ( options.data.length === 0 ) {
+		return interaction.reply({ content: "Vous devez indiquer au moins un paramètre !", ephemeral: true });
+	}
+
 	if ( options.get( "modules" ) ) {
 		let embedModules = new MessageEmbed()
 			.setTitle( "État des modules" )
@@ -41,7 +45,7 @@ async function execute( interaction ) {
 			})
 
 		for ( let module in interaction.client.modules ) {
-			console.log( module )
+			console.log( module, "test" )
 		}
 
 		embeds.push( embedModules );

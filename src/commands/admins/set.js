@@ -77,8 +77,7 @@ const slashCommand = new SlashCommandBuilder()
 async function execute( interaction ) {
 	const options = interaction.options;
 	if ( options.data.length === 0 ) {
-		await interaction.reply({ content: "Vous devez indiquer au moins un paramètre !", ephemeral: true });
-		return;
+		return interaction.reply({ content: "Vous devez indiquer au moins un paramètre !", ephemeral: true });
 	}
 
 	const sManager = interaction.client.db.channelsManager;
