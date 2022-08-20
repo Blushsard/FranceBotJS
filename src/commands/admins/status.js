@@ -15,7 +15,7 @@ const slashCommand = new SlashCommandBuilder()
 	.setDescription( "Donne le status des modules et/ou des salons avec des fonctionnalités actives." )
 	.addStringOption( option => {
 		option
-			.setName( "Choix des affichages" )
+			.setName( "Choix" )
 			.addChoices([
 				[ "Modules", "modules" ]
 			])
