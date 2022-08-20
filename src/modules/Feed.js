@@ -38,7 +38,7 @@ class Feed
 			// Récupération de la moyenne et des messages de la base de données.
 			const moyenne = this.client.modules.get( "moyenne" ).getMoyenne();
 			let messages = await this.db.query(
-				"SELECT * FROM messages WHERE b_stf=0 AND n_likes>=?",
+				"SELECT * FROM messages WHERE b_stf=0 AND n_likes>=? AND b_removed=0",
 				[ moyenne ]
 			);
 

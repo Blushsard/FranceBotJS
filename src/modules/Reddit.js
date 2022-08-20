@@ -33,7 +33,7 @@ class Reddit
 
 			// Récupération des messages qui peuvent être envoyés sur reddit.
 			const messages = await this.db.query(
-				"SELECT * FROM messages WHERE b_stf=1 AND b_str=0",
+				"SELECT * FROM messages WHERE b_stf=1 AND b_str=0 AND b_removed=0",
 				[]
 			);
 
