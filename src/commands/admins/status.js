@@ -44,9 +44,9 @@ async function execute( interaction ) {
 				iconURL: interaction.user.avatarURL()
 			})
 
-		for ( let module in interaction.client.modules ) {
-			console.log( module, "test" )
-		}
+		interaction.client.modules.forEach( module => {
+			console.log( module )
+		});
 
 		embeds.push( embedModules );
 	}
