@@ -37,20 +37,18 @@ async function execute( interaction ) {
 	}
 
 	if ( options.get( "modules" ) ) {
-		let embedModules = new MessageEmbed()
-			.setTitle( "État des modules" )
-			.setAuthor({
-				name: "| Fonctionnalités du salon",
-				iconURL: interaction.user.avatarURL()
-			})
-
+		let embedDescription = "";
 		interaction.client.modules.forEach( module => {
-			embedModules.addFields({
-				name: module.constructor.name,
-				value: module.active ? "Actif": "Inactif"
-			})
+			embedDescription += `${module.active ? ":green_circle:": ":red_circle:"} ${module.constructor.name}`;
 		});
-		embeds.push( embedModules );
+		embeds.push(
+			new MessageEmbed()
+				.setTitle( "État des modules" )
+				.setAuthor({
+					name: "| Fonctionnalités du salon",
+					iconURL: interaction.user.avatarURL()
+			})
+		);
 	}
 
 	try {
