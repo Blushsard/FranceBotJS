@@ -44,10 +44,11 @@ async function execute( interaction ) {
 		embeds.push(
 			new MessageEmbed()
 				.setTitle( "État des modules" )
+				.setDescription( embedDescription )
 				.setAuthor({
 					name: "| Fonctionnalités du salon",
 					iconURL: interaction.user.avatarURL()
-			})
+				})
 		);
 	}
 
