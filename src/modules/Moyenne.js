@@ -11,16 +11,18 @@ class Moyenne
 	/**
 	 * Le constructeur du module.
 	 * @param {Client} client Le client du bot.
-	 * @param {boolean} active Indique si le client est activé ou non.
 	 */
-	constructor( client, active ) {
+	constructor( client ) {
 		this.client = client;
 		this.db = this.client.db;
 
 		this._moyenne = 0;
+		this._active = true;
 	}
 
+	get active() { return this._active; }
 	getMoyenne() { return this._moyenne; }
+
 
 	/**
 	 * Calcule la moyenne toutes les X millisecondes.
