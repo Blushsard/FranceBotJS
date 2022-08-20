@@ -5,6 +5,8 @@
  *      La moyenne est toujours calculée et ne peut être désactivée.
  */
 
+const { getMonthlyIntDate } = require( `${process.cwd()}/utils/dateUtils` );
+
 
 class Moyenne
 {
@@ -43,7 +45,8 @@ class Moyenne
 		// Récupération de la somme des likes et du nombre de memes dans la moyenne.
 		const nbLikesMsg = (await this.db.query(
 			`SELECT sum(n_likes) AS sommeLikes, count(pk_msg_id) as nbMsg 
-			FROM messages ORDER BY n_likes LIMIT ${queryResult["n_nb_msg_moyenne"]}`
+			FROM messages WHERE n_date>? ORDER BY n_likes LIMIT ${queryResult["n_nb_msg_moyenne"]}`,
+			[ getMonthlyIntDate() - 3 ]
 		))[0];
 
 		// Dans le cas ou le nombre de messages est à 0, on met la moyenne à 1 car elle est inutile tant qu'il n'y a pas
