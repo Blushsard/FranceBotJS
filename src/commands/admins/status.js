@@ -13,11 +13,13 @@ const { CommandInteraction, MessageEmbed } = require( "discord.js" );
 const slashCommand = new SlashCommandBuilder()
 	.setName( "status" )
 	.setDescription( "Donne le status des modules et/ou des salons avec des fonctionnalités actives." )
-	.addBooleanOption( option =>
+	.addStringOption( option => {
 		option
-			.setName( "modules" )
-			.setDescription( "Affiche le status des modules si vrai." )
-	)
+			.setName( "Choix des affichages" )
+			.addChoices([
+				[ "Modules", "modules" ]
+			])
+	})
 	.setDefaultPermission(false);
 
 
