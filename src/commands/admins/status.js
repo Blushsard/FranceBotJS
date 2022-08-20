@@ -39,7 +39,7 @@ async function execute( interaction ) {
 	if ( options.get( "modules" ) ) {
 		let embedDescription = "";
 		interaction.client.modules.forEach( module => {
-			embedDescription += `${module.active ? ":green_circle:": ":red_circle:"} ${module.constructor.name}`;
+			embedDescription += `${module.active ? ":green_circle:": ":red_circle:"} **${module.constructor.name}**\n`;
 		});
 		embeds.push(
 			new MessageEmbed()
