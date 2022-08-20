@@ -64,19 +64,6 @@ class Likes
 	}
 
 	/**
-	 * Supprime un message et ses memes de la base de données.
-	 * @param {string} messageId Le message à supprimer.
-	 * @param {object|null} salon Les données de la base de données du salon dans lequel le message a été envoyé.
-	 */
-	async supprimerMessageMeme( messageId, salon ) {
-		if ( !salon ) return;
-		if ( !salon["b_likes"] ) return;
-		if ( !this._active ) return;
-
-		await this.db.messagesManager.supprimerMessage( messageId );
-	}
-
-	/**
 	 * Modifie le compte de likes sur un meme.
 	 * @param {MessageReaction} reaction La reaction qui a été ajoutée sur le message.
 	 * @param {object|null} salon L'objet contenant les données de la bdd du salon.

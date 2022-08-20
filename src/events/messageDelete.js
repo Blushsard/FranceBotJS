@@ -18,10 +18,8 @@ const { Client, Message } = require( "discord.js" );
 async function execute( message, client ) {
 	if ( !message ) return;
 
-	// Il faut récupérer le salon dans la base de données.
-	const salon = await client.db.channelsManager.fetchChannel( message.channelId );
-
-	await client.modules.get( 'likes' ).supprimerMessageMeme( message.id, salon );
+	const msgManager = client.db.messagesManager;
+	await msgManager.updateMessage( message.id, "b_removed", true );
 }
 
 

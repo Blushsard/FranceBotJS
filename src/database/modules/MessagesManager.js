@@ -25,12 +25,13 @@ class MessagesManager
 	 */
 	async ajouterMessage( message, memes, likes ) {
 		await this.db.query(
-			"INSERT INTO messages VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+			"INSERT INTO messages VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
 			[
 				message.id,
 				message.author.id,
 				message.channel.id,
 				likes,
+				false,
 				false,
 				false,
 				false,
@@ -51,22 +52,6 @@ class MessagesManager
 				]
 			)
 		}
-	}
-
-	/**
-	 * Supprime un message et ses memes de la base de données.
-	 * @param {string} messageId L'identifiant du message.
-	 */
-	async supprimerMessage( messageId ) {
-		await this.db.query(
-			"DELETE FROM messages WHERE pk_msg_id=?",
-			[ messageId ]
-		);
-
-		await this.db.query(
-			"DELETE FROM attachments WHERE pk_msg_id=?",
-			[ messageId ]
-		);
 	}
 
 	/**
