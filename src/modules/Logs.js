@@ -17,9 +17,14 @@ class Logs
 		this.client = client;
 		this.db = this.client.db;
 		this._active = active;
+
+		// TODO Charger l'identifiant du salon des logs.
+		this._logChannelId = null;
 	}
 
 	set active( active ) { this._active = active; }
+	set logChannelId( id ) { this._logChannelId = id; }
+
 	get active() { return this._active; }
 
 	/**
@@ -28,8 +33,7 @@ class Logs
 	 */
 	async messageMemeEnvoye( message ) {
 		if ( !this._active ) return;
-		const logChannelData = await this.db.channelsManager.fetchChannelByValue( "b_logs", true );
-		if ( !logChannelData || logChannelData.length === 0 ) return;
+		if ( !this._logChannelId ) return;
 
 		const embed = new MessageEmbed()
 			.setTitle( "Meme envoyé dans un salon." )
@@ -43,7 +47,7 @@ class Logs
 			.setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() })
 
 		const guild = await this.client.guilds.fetch( message.guildId );
-		const logChannel = await guild.channels.fetch( logChannelData[0]["pk_id_channel"] )
+		const logChannel = await guild.channels.fetch( this._logChannelId )
 		try {
 			await logChannel.send({ embeds: [ embed ] } );
 		}
@@ -55,7 +59,10 @@ class Logs
 	/**
 	 * Log envoyé quand un message dans un salon de memes (likes) est supprimé.
 	 */
-	async memeSupprime() {}
+	async memeSupprime() {
+		if ( !this._active ) return;
+		if ( !this._logChannelId ) return;
+	}
 
 	/**
 	 * Log envoyé quand un message est supprimé par repost.
