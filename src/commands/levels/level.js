@@ -45,7 +45,9 @@ async function execute(interaction) {
 			embeds: [embed],
 		});
 	}
-	catch ( err ) {}
+	catch ( err ) {
+		console.log( err );
+	}
 }
 
 // EXPORTS

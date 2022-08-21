@@ -20,7 +20,7 @@ class Database
 {
 	constructor() {
 		// Limitation du nombre de connexions simultanées.
-		this.limit = 80;
+		this.limit = process.env.MAX_CONCURRENT_DATABASE_REQUESTS;
 		this.currentRequests = 0;
 
 

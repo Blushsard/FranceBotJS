@@ -8,7 +8,8 @@
 const baseModDir = `${process.cwd()}/modules`;
 const { Client } = require( "discord.js" );
 const { Levels } = require( `${baseModDir}/Levels` );
-const { Memes } = require( `${baseModDir}/Likes` );
+const { Likes } = require( `${baseModDir}/Likes` );
+const { Logs } = require( `${baseModDir}/Logs` );
 const { Moyenne } = require( `${baseModDir}/Moyenne` );
 const { Reposts } = require( `${baseModDir}/Reposts` );
 const { Threads } = require( `${baseModDir}/Threads` );
@@ -30,7 +31,8 @@ async function loadModules( client ) {
 
 	// Chargement des modules dans le client.
 	client.modules.set( 'levels', new Levels( client, modules['levels'] ) );
-	client.modules.set( 'likes', new Memes( client, modules['likes'] ) );
+	client.modules.set( 'likes', new Likes( client, modules['likes'] ) );
+	client.modules.set( 'logs', new Logs( client, modules['logs'] ) );
 	client.modules.set( 'moyenne', new Moyenne( client ) );
 	client.modules.set( 'reposts', new Reposts( client, modules['reposts'] ) );
 	client.modules.set( 'threads', new Threads( client, modules['threads'] ) );

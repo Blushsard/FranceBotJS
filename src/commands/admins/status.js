@@ -55,7 +55,9 @@ async function execute( interaction ) {
 	try {
 		await interaction.reply({ embeds: embeds, ephemeral: true });
 	}
-	catch ( err ) {}
+	catch ( err ) {
+		console.log( err );
+	}
 }
 
 

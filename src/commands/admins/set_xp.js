@@ -69,7 +69,9 @@ async function execute( interaction ) {
 			ephemeral: true
 		});
 	}
-	catch ( err ) {}
+	catch ( err ) {
+		console.log( err );
+	}
 }
 
 

@@ -25,13 +25,12 @@ class MessagesManager
 	 */
 	async ajouterMessage( message, memes, likes ) {
 		await this.db.query(
-			"INSERT INTO messages VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+			"INSERT INTO messages VALUES (?,?,?,?,?,?,?,?,?,?,?)",
 			[
 				message.id,
 				message.author.id,
 				message.channel.id,
 				likes,
-				false,
 				false,
 				false,
 				false,

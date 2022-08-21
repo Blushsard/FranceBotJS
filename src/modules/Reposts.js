@@ -67,7 +67,10 @@ class Reposts
 
 			try {
 				await user.send({embeds: [embed]});
-			} catch ( err ) {}
+			}
+			catch ( err ) {
+				console.log( err );
+			}
 		}
 	}
 }

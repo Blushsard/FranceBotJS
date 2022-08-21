@@ -1,6 +1,7 @@
 {
 	"levels": true,
-	"memes": true,
+	"likes": true,
+	"logs": true,
 	"reposts": true,
 	"feed": true,
 	"threads": true,

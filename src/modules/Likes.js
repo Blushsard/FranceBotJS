@@ -41,9 +41,9 @@ class Likes
 	 * @param {int} likes Le nombre de likes du message.
 	 */
 	async ajouterMessageMeme( message, salon, likes ) {
+		if ( !this._active ) return;
 		if ( !salon ) return;
 		if ( !salon["b_likes"] ) return;
-		if ( !this._active ) return;
 		if ( !Likes.hasMeme( message ) ) return;
 		if ( message.author.id === this.client.id ) return;
 
@@ -53,13 +53,15 @@ class Likes
 			memes.push( value );
 		});
 		await this.db.messagesManager.ajouterMessage( message, memes, likes );
+		await this.client.modules.get( "logs" ).messageMemeEnvoye( message );
 
 
 		try {
 			await message.react( process.env.EMOJI_LIKE_ID );
 			await message.react( process.env.EMOJI_REPOST );
-		} catch ( err ) {
-			console.error( "Emoji inconnue: modules/Likes.js:62" );
+		}
+		catch ( err ) {
+			console.log( err );
 		}
 	}
 
@@ -152,5 +154,5 @@ class Likes
 
 
 module.exports = {
-	Memes: Likes
+	Likes
 }

@@ -122,7 +122,9 @@ async function execute( interaction ) {
 	try {
 		await interaction.reply( { embeds: [ embed ], ephemeral: true } );
 	}
-	catch ( err ) {}
+	catch ( err ) {
+		console.log( err );
+	}
 }
 
 

@@ -32,18 +32,18 @@ class Threads
 	 * Ajoute un thread au message si il contient un ou des memes. Sinon le message est supprimé.
 	 * @param {Message} message L'objet du message.
 	 * @param {object} salon L'objet du salon contenant les données de la bdd.
-	 * @return {boolean} Un booléen indiquant si le message a été supprimé.
+	 * @return {Promise<boolean>} Un booléen indiquant si le message a été supprimé.
 	 */
 	async ajouterThread( message, salon ) {
-		if ( !this._active ) return;
-		if ( !salon ) return;
-		if ( !salon["b_threads"] ) return true;
-		if ( message.author.id === this.client.id ) return;
+		if ( !this._active ) return false;
+		if ( !salon ) return false;
+		if ( !salon["b_threads"] ) return false;
+		if ( message.author.id === this.client.id ) return false;
 
 		const author = await (await this.client.guilds.fetch( message.guildId )).members.fetch( message.author.id );
 
 		if ( !Memes.hasMeme( message ) ) {
-			if ( Threads.isUserAdmin( author ) ) return;
+			if ( Threads.isUserAdmin( author ) ) return true;
 			await message.delete();
 			return true;
 		}

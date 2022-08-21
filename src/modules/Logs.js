@@ -3,7 +3,7 @@
  * @description
  *      Module gérant les logs du bot.
  */
-const { MessageEmbed, TextChannel } = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 
 
 class Logs
@@ -24,8 +24,33 @@ class Logs
 
 	/**
 	 * Log envoyé quand un message est envoyé dans un salon de memes (likes).
+	 * @param {Message} message Le message qui vient d'être envoyé.
 	 */
-	async messageMemeEnvoye() {}
+	async messageMemeEnvoye( message ) {
+		if ( !this._active ) return;
+		const logChannelData = await this.db.channelsManager.fetchChannelByValue( "b_logs", true );
+		if ( !logChannelData || logChannelData.length === 0 ) return;
+
+		const embed = new MessageEmbed()
+			.setTitle( "Meme envoyé dans un salon." )
+			.setURL( message.url )
+			.setColor( process.env.COUL_EMBED_MEME )
+			.addFields([
+				{ name: "Salon :", value: `${message.channel}` },
+				{ name: "Lien du message :", value: `[Accès au message](${message.url})` },
+				{ name: "Date :", value: `${new Date()}` }
+			])
+			.setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() })
+
+		const guild = await this.client.guilds.fetch( message.guildId );
+		const logChannel = await guild.channels.fetch( logChannelData[0]["pk_id_channel"] )
+		try {
+			await logChannel.send({ embeds: [ embed ] } );
+		}
+		catch ( err ) {
+			console.log( err );
+		}
+	}
 
 	/**
 	 * Log envoyé quand un message dans un salon de memes (likes) est supprimé.
