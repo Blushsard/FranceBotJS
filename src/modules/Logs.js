@@ -160,8 +160,28 @@ class Logs
 
 	/**
 	 * Log envoyé quand un like ou un repost est ajouté/enlevé d'un message contenant des memes.
+	 * @param {Message} message Le message qui a subit le changement de vote.
+	 * @param {number} lastValue Le nombre d'emoji avant l'ajout.
+	 * @param {number} newValue Le nombre d'emoji après l'ajout.
+	 * @param {string} emoji L'emoji qui a subit le changement.
 	 */
-	async modificationVote() {}
+	async modificationVote( message, lastValue, newValue, emoji ) {
+		if ( !this._active ) return;
+		if ( !this._logChannelId ) return;
+
+		const embed = new MessageEmbed()
+			.setTitle( `Modifications de vote : ${emoji}` )
+			.setURL( message.url )
+			.setColor( process.env.COUL_EMBED_VOTE )
+			.setAuthor( { name: message.author.username, iconURL: message.author.avatarURL() } )
+			.addFields([
+				{ name: "Lien du message :", value: `[Accès au message](${message.url})` },
+				{ name: "Changement de valeur :", value: `${lastValue} -> ${newValue}` },
+				{ name: "Date :", value: `${new Date()}` }
+			]);
+
+		await this.sendEmbed( embed, message.guildId );
+	}
 }
 
 

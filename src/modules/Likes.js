@@ -82,6 +82,12 @@ class Likes
 
 		let likes = this.getCountLikes( reaction.message.reactions.cache );
 		const msgDb = await this.db.messagesManager.updateLikesCount( reaction.message.id, likes );
+		await this.client.modules.get( "logs" ).modificationVote(
+			reaction.message,
+			likes - 1,
+			likes,
+			process.env.EMOJI_LIKE_STRING
+		);
 		if ( msgDb ) return;
 
 		// Ajout du message dans la base de données si il n'est pas dedans.
