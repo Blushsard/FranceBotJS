@@ -90,9 +90,11 @@ async function execute( interaction ) {
 	if ( options.get ( "feed" ) )
 		await sManager.updateChannel( interaction.channelId, "b_feed", options.get( "feed" ).value );
 	if ( options.get ( "logs" ) ) {
-		// TODO Update l'attribut contenant l'identifiant du salon des logs du bot.
-		// TODO Faire en sorte que le bot ne puisse avoir qu'un salon de logs.
-		await sManager.updateChannel(interaction.channelId, "b_logs", options.get("logs").value);
+		await sManager.updateChannel(interaction.channelId, "b_logs", options.get( "logs" ).value);
+		// Mise à jour de la valeur de l'attribut du module Logs qui contient l'ID du salon des logs.
+		options.get( "logs" ).value
+			? interaction.client.modules.get( "logs" ).logChannelId = interaction.channelId
+			: interaction.client.modules.get( "logs" ).logChannelId = null;
 	}
 	if ( options.get ( "stats" ) )
 		await sManager.updateChannel( interaction.channelId, "b_stats", options.get( "stats" ).value );

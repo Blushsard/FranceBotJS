@@ -36,13 +36,14 @@ class ChannelsManager
 
 
 	/**
-	 * Récupère tout les salons avec une valeur ciblée dans une colonne.
+	 * Récupère le premier salon dans la table avec la valeur passée en paramètre.
 	 * @param {string} columnName La colonne ciblée.
 	 * @param {boolean} value La valeur requise.
-	 * @returns {Promise<array[object]>} Une Promesse complétée avec la liste de tous les salons trouvés.
+	 * @returns {Promise<array[object]>} Une Promesse complétée avec l'objet du salon ou null.
 	 */
-	async fetchChannelByValue( columnName, value ) {
-		return await this.db.query( `SELECT * from channels WHERE ${columnName}=?`, [ value ] );
+	async fetchOneChannelByValue(columnName, value ) {
+		const results = await this.db.query( `SELECT * from channels WHERE ${columnName}=?`, [ value ] );
+		return results.length ? results[0]: null;
 	}
 
 
@@ -73,7 +74,7 @@ class ChannelsManager
 
 		if ( [ 'feed', 'logs', 'stats' ].includes( columnName ) && value )
 		{
-			const prevChannelId = await this.fetchChannelByValue( columnName, true );
+			const prevChannelId = await this.fetchOneChannelByValue( columnName, true );
 			await this.db.query( `UPDATE channels SET ${columnName}=0 WHERE pk_id_channel=?`, [ prevChannelId ] );
 		}
 		await this.db.query( `UPDATE channels SET ${columnName}=? WHERE pk_id_channel=?;`, [ value, channelId ] );

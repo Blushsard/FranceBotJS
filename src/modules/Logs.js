@@ -18,8 +18,11 @@ class Logs
 		this.db = this.client.db;
 		this._active = active;
 
-		// TODO Charger l'identifiant du salon des logs.
 		this._logChannelId = null;
+		this.db.channelsManager.fetchOneChannelByValue( "b_logs", true )
+			.then( value => {
+				value ? this._logChannelId = value["pk_id_channel"] : null;
+			});
 	}
 
 	set active( active ) { this._active = active; }
@@ -32,6 +35,7 @@ class Logs
 	 * @param {Message} message Le message qui vient d'être envoyé.
 	 */
 	async messageMemeEnvoye( message ) {
+		console.log( this._logChannelId );
 		if ( !this._active ) return;
 		if ( !this._logChannelId ) return;
 

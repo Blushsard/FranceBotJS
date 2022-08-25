@@ -9,7 +9,7 @@
  */
 
 const { Message } = require( "discord.js" );
-const { Memes } = require( `${process.cwd()}/modules/Likes` );
+const { Likes } = require( `${process.cwd()}/modules/Likes` );
 
 
 class Threads
@@ -42,7 +42,7 @@ class Threads
 
 		const author = await (await this.client.guilds.fetch( message.guildId )).members.fetch( message.author.id );
 
-		if ( !Memes.hasMeme( message ) ) {
+		if ( !Likes.hasMeme( message ) ) {
 			if ( Threads.isUserAdmin( author ) ) return true;
 			await message.delete();
 			return true;

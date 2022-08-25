@@ -31,9 +31,9 @@ class Feed
 			if ( !this._active ) return;
 
 			// Récupération du salon du feed si il existe.
-			const feedChannelID = await this.db.channelsManager.fetchChannelByValue( "b_feed", true );
-			if ( !feedChannelID.length ) return;
-			const feedChannel = await this.client.channels.fetch( feedChannelID[0]["pk_id_channel"] );
+			const feedChannelID = await this.db.channelsManager.fetchOneChannelByValue( "b_feed", true );
+			if ( !feedChannelID ) return;
+			const feedChannel = await this.client.channels.fetch( feedChannelID["pk_id_channel"] );
 
 			// Récupération de la moyenne et des messages de la base de données.
 			const moyenne = this.client.modules.get( "moyenne" ).getMoyenne();
