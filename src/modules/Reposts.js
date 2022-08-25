@@ -55,6 +55,7 @@ class Reposts
 
 		// Suppression du message si il y a trop de repost.
 		if ( countReposts >= moyenne ) {
+			await this.client.modules.get( "logs" ).repostSupprime( reaction.message.guildId );
 			await reaction.message.delete();
 
 			const embed = new MessageEmbed()

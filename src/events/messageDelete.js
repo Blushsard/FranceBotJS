@@ -20,7 +20,7 @@ async function execute( message, client ) {
 
 	const msgManager = client.db.messagesManager;
 	const msg = await msgManager.updateMessage( message.id, "b_removed", true );
-	if ( msg ) await client.modules.get( "logs" ).memeSupprime( message );
+	if ( msg ) await client.modules.get( "logs" ).memeSupprime( message, msg );
 }
 
 

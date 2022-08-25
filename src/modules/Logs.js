@@ -71,22 +71,30 @@ class Logs
 	/**
 	 * Log envoyé quand un message dans un salon de memes (likes) est supprimé.
 	 * @param {Message} message Le message venant d'être supprimé.
+	 * @param {object} databaseMessage Les données du message contenues dans la bdd.
 	 */
-	async memeSupprime( message ) {
+	async memeSupprime( message, databaseMessage ) {
 		if ( !this._active ) return;
 		if ( !this._logChannelId ) return;
 
 		const embed = new MessageEmbed()
 			.setTitle( "Meme supprimé" )
-			.setColor( process.env.COUL_EMBED_SUPP );
+			.setColor( process.env.COUL_EMBED_SUPP )
+			.addFields([
+				{ name: "Salon :", value: `${message.channel}` }
+			]);
 
-		if ( message.author ) {
+		// Dans le cas ou l'objet de l'auteur est présent dans l'objet du message.
+		if ( message.author )
 			embed
-				.setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() })
-				.addFields([
-					{ name: "Salon :", value: `${message.channel}` }
-				]);
+				.setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() });
+		else {
+			const guild = await this.client.guilds.fetch( process.env.GUILD_ID );
+			const auteur = await guild.members.fetch( databaseMessage["s_author_id"] );
+			embed
+				.setAuthor({ name: auteur.nickname, iconURL: auteur.avatarURL() });
 		}
+
 		embed.addFields([ { name: "Date :", value: `${new Date()}` } ]);
 
 		await this.sendEmbed( embed, message.guildId );
@@ -96,8 +104,19 @@ class Logs
 	 * Log envoyé quand un message est supprimé par repost.
 	 * Ce log est envoyé avant le log de suppression de message. Les informations de ce log sont donc moindre qu'un
 	 * log de suppression de message car le log suivant contiendra les informations nécessaires.
+	 * @param {string} guildId L'identifiant de la guild sur laquelle le message a été supprimé pour repost.
 	 */
-	async repostSupprime() {}
+	async repostSupprime( guildId ) {
+		if ( !this._active ) return;
+		if ( !this._logChannelId ) return;
+
+		const embed = new MessageEmbed()
+			.setTitle( "Meme supprimé pour respost" )
+			.setColor( process.env.COUL_EMBED_REPOST )
+			.setDescription( "Cet embed est complété avec l'embed de suppression de message suivant." );
+
+		await this.sendEmbed( embed, guildId );
+	}
 
 	/**
 	 * Log envoyé quand un message est envoyé dans le feed ou sur reddit ou sur twitter.
