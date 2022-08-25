@@ -120,14 +120,43 @@ class Logs
 
 	/**
 	 * Log envoyé quand un message est envoyé dans le feed ou sur reddit ou sur twitter.
+	 * @param {Message} message L'objet du message qui vient d'être envoyé dans le feed.
+	 * @param {string} feedLink Le lien du premier embed qui a été envoyé dans le feed.
 	 */
-	async memeEnvoye() {}
+	async memeEnvoyeDansFeed( message, feedLink ) {
+		if ( !this._active ) return;
+		if ( !this._logChannelId ) return;
+		if ( !message || !feedLink ) return;
+
+		const embed = new MessageEmbed()
+			.setTitle( "Meme envoyé dans le feed" )
+			.setURL( message.url )
+			.setColor( process.env.COUL_EMBED_FEED )
+			.setAuthor( { name: message.author.username, iconURL: message.author.avatarURL() } )
+			.addFields([
+				{ name: "Lien du feed :", value: `[Accès au message](${feedLink})` },
+				{ name: "Date :", value: `${new Date()}` }
+			]);
+
+		await this.sendEmbed( embed, message.guildId );
+	}
 
 	/**
 	 * Log envoyé quand la boucle de reddit ou twitter fait une itération.
 	 * Le feed n'est pas danc ce log car il tourne toutes les secondes.
+	 * @param {string} moduleName Le nom du module qui vient de faire une intération.
 	 */
-	async iteractionModule() {}
+	async iteractionModule( moduleName ) {
+		if ( !this._active ) return;
+		if ( !this._logChannelId ) return;
+
+		const embed = new MessageEmbed()
+			.setTitle( `Itération de la boucle ${moduleName}` )
+			.setColor( process.env.COUL_EMBED_ITERATION )
+			.setAuthor( { name: this.client.user.name, iconURL: this.client.user.avatarURL() } );
+
+		await this.sendEmbed( embed, process.env.GUILD_ID );
+	}
 
 	/**
 	 * Log envoyé quand un like ou un repost est ajouté/enlevé d'un message contenant des memes.

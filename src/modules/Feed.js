@@ -53,6 +53,11 @@ class Feed
 				const firstEmbed = await this.sendMemesEmbeds( memes, feedChannel, author, memeChannel, msg['s_jump_url'] );
 				await this.sendMessageToAuthor( author, firstEmbed );
 				await this.db.messagesManager.updateMessage( msg["pk_msg_id"], "b_stf", true );
+
+				await this.client.modules.get( "logs" ).memeEnvoyeDansFeed(
+					await memeChannel.messages.fetch( msg["pk_msg_id"] ),
+					firstEmbed.url
+				);
 			}
 		}, delay );
 	}

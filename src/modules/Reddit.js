@@ -62,6 +62,8 @@ class Reddit
 
 				await this.db.messagesManager.updateMessage( msg["pk_msg_id"], "b_str", true );
 			}
+
+			await this.client.modules.get( "logs" ).iteractionModule( "Reddit" );
 		}, delay );
 	}
 }
