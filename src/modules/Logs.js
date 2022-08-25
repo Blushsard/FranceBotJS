@@ -31,26 +31,12 @@ class Logs
 	get active() { return this._active; }
 
 	/**
-	 * Log envoyé quand un message est envoyé dans un salon de memes (likes).
-	 * @param {Message} message Le message qui vient d'être envoyé.
+	 * Envoi l'embed d'un log dans le salon des logs.
+	 * @param {MessageEmbed} embed L'embed du log.
+	 * @param {string} guildId L'identifiant de la guild contenant le salon des logs.
 	 */
-	async messageMemeEnvoye( message ) {
-		console.log( this._logChannelId );
-		if ( !this._active ) return;
-		if ( !this._logChannelId ) return;
-
-		const embed = new MessageEmbed()
-			.setTitle( "Meme envoyé dans un salon." )
-			.setURL( message.url )
-			.setColor( process.env.COUL_EMBED_MEME )
-			.addFields([
-				{ name: "Salon :", value: `${message.channel}` },
-				{ name: "Lien du message :", value: `[Accès au message](${message.url})` },
-				{ name: "Date :", value: `${new Date()}` }
-			])
-			.setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() })
-
-		const guild = await this.client.guilds.fetch( message.guildId );
+	async sendEmbed( embed, guildId ) {
+		const guild = await this.client.guilds.fetch( guildId );
 		const logChannel = await guild.channels.fetch( this._logChannelId )
 		try {
 			await logChannel.send({ embeds: [ embed ] } );
@@ -61,11 +47,49 @@ class Logs
 	}
 
 	/**
-	 * Log envoyé quand un message dans un salon de memes (likes) est supprimé.
+	 * Log envoyé quand un message est envoyé dans un salon de memes (likes).
+	 * @param {Message} message Le message qui vient d'être envoyé.
 	 */
-	async memeSupprime() {
+	async messageMemeEnvoye( message ) {
 		if ( !this._active ) return;
 		if ( !this._logChannelId ) return;
+
+		const embed = new MessageEmbed()
+			.setTitle( "Meme envoyé dans un salon." )
+			.setURL( message.url )
+			.setColor( process.env.COUL_EMBED_MEME )
+			.setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() })
+			.addFields([
+				{ name: "Salon :", value: `${message.channel}` },
+				{ name: "Lien du message :", value: `[Accès au message](${message.url})` },
+				{ name: "Date :", value: `${new Date()}` }
+			])
+
+		await this.sendEmbed( embed, message.guildId );
+	}
+
+	/**
+	 * Log envoyé quand un message dans un salon de memes (likes) est supprimé.
+	 * @param {Message} message Le message venant d'être supprimé.
+	 */
+	async memeSupprime( message ) {
+		if ( !this._active ) return;
+		if ( !this._logChannelId ) return;
+
+		const embed = new MessageEmbed()
+			.setTitle( "Meme supprimé" )
+			.setColor( process.env.COUL_EMBED_SUPP );
+
+		if ( message.author ) {
+			embed
+				.setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() })
+				.addFields([
+					{ name: "Salon :", value: `${message.channel}` }
+				]);
+		}
+		embed.addFields([ { name: "Date :", value: `${new Date()}` } ]);
+
+		await this.sendEmbed( embed, message.guildId );
 	}
 
 	/**

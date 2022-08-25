@@ -84,12 +84,20 @@ class MessagesManager
 	 * @param {string} messageId L'identifiant du message à mettre à jour.
 	 * @param {string} columnName Le nom de la colonne à mettre à jour.
 	 * @param {string} value La nouvelle valeur de la colonne.
+	 * @return {Promise<object>} Une Promise complétée avec un objet contenant les données du message après update.
 	 */
 	async updateMessage( messageId, columnName, value ) {
 		await this.db.query(
 			`UPDATE messages SET ${columnName}=? WHERE pk_msg_id=?`,
 			[ value, messageId ]
 		);
+
+		const result = await this.db.query(
+			`SELECT * FROM messages WHERE pk_msg_id=?`,
+			[ messageId ]
+		);
+
+		return result ? result[0] : null;
 	}
 }
 
