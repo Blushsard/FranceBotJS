@@ -24,32 +24,37 @@ class MessagesManager
 	 * @param {int} likes Le nombre de likes du message.
 	 */
 	async ajouterMessage( message, memes, likes ) {
-		await this.db.query(
-			"INSERT INTO messages VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-			[
-				message.id,
-				message.author.id,
-				message.channel.id,
-				likes,
-				false,
-				false,
-				false,
-				false,
-				getMonthlyIntDate(),
-				message.url,
-				message.content
-			]
-		);
-
-		for ( let element of memes ) {
+		try {
 			await this.db.query(
-				"INSERT INTO attachments VALUES (?,?,?);",
+				"INSERT INTO messages VALUES (?,?,?,?,?,?,?,?,?,?,?)",
 				[
 					message.id,
-					typeof element === "string" ? "lien" : element.contentType,
-					typeof element === "string" ? element : element.url
+					message.author.id,
+					message.channel.id,
+					likes,
+					false,
+					false,
+					false,
+					false,
+					getMonthlyIntDate(),
+					message.url,
+					message.content
 				]
-			)
+			);
+
+			for (let element of memes) {
+				await this.db.query(
+					"INSERT INTO attachments VALUES (?,?,?);",
+					[
+						message.id,
+						typeof element === "string" ? "lien" : element.contentType,
+						typeof element === "string" ? element : element.url
+					]
+				)
+			}
+		}
+		catch( err ) {
+			this.db.client.emit( "error", err );
 		}
 	}
 

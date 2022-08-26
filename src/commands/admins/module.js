@@ -61,7 +61,7 @@ async function execute( interaction ) {
 		await interaction.reply( { content: "Changement pris en compte!", ephemeral: true } );
 	}
 	catch ( err ) {
-		console.log( err );
+		interaction.client.emit( "error", err );
 	}
 }
 

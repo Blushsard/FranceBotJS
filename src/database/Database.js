@@ -18,10 +18,11 @@ const { MessagesManager } = require( `${process.cwd()}/database/modules/Messages
  */
 class Database
 {
-	constructor() {
+	constructor( client ) {
 		// Limitation du nombre de connexions simultanées.
 		this.limit = process.env.MAX_CONCURRENT_DATABASE_REQUESTS;
 		this.currentRequests = 0;
+		this.client = client;
 
 
 		this.usersManager = new UsersManager( this );

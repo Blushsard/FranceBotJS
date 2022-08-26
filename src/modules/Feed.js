@@ -110,7 +110,7 @@ class Feed
 				]});
 		}
 		catch ( err ) {
-			console.log( err );
+			this.client.emit( "error", err );
 		}
 	}
 }

@@ -42,7 +42,7 @@ class Logs
 			await logChannel.send({ embeds: [ embed ] } );
 		}
 		catch ( err ) {
-			console.log( err );
+			this.client.emit( "error", err );
 		}
 	}
 
@@ -50,12 +50,12 @@ class Logs
 	 * Log envoyé quand un message est envoyé dans un salon de memes (likes).
 	 * @param {Message} message Le message qui vient d'être envoyé.
 	 */
-	async messageMemeEnvoye( message ) {
+	async messageMemeAjoute( message ) {
 		if ( !this._active ) return;
 		if ( !this._logChannelId ) return;
 
 		const embed = new MessageEmbed()
-			.setTitle( "Meme envoyé dans un salon." )
+			.setTitle( "Meme ajouté dans la base de données." )
 			.setURL( message.url )
 			.setColor( process.env.COUL_EMBED_MEME )
 			.setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() })
@@ -78,7 +78,7 @@ class Logs
 		if ( !this._logChannelId ) return;
 
 		const embed = new MessageEmbed()
-			.setTitle( "Meme supprimé" )
+			.setTitle( "Meme supprimé." )
 			.setColor( process.env.COUL_EMBED_SUPP )
 			.addFields([
 				{ name: "Salon :", value: `${message.channel}` }
@@ -111,7 +111,7 @@ class Logs
 		if ( !this._logChannelId ) return;
 
 		const embed = new MessageEmbed()
-			.setTitle( "Meme supprimé pour respost" )
+			.setTitle( "Meme supprimé pour respost." )
 			.setColor( process.env.COUL_EMBED_REPOST )
 			.setDescription( "Cet embed est complété avec l'embed de suppression de message suivant." );
 
@@ -129,7 +129,7 @@ class Logs
 		if ( !message || !feedLink ) return;
 
 		const embed = new MessageEmbed()
-			.setTitle( "Meme envoyé dans le feed" )
+			.setTitle( "Meme envoyé dans le feed." )
 			.setURL( message.url )
 			.setColor( process.env.COUL_EMBED_FEED )
 			.setAuthor( { name: message.author.username, iconURL: message.author.avatarURL() } )
@@ -151,7 +151,7 @@ class Logs
 		if ( !this._logChannelId ) return;
 
 		const embed = new MessageEmbed()
-			.setTitle( `Itération de la boucle ${moduleName}` )
+			.setTitle( `Itération de la boucle ${moduleName}.` )
 			.setColor( process.env.COUL_EMBED_ITERATION )
 			.setAuthor( { name: this.client.user.name, iconURL: this.client.user.avatarURL() } );
 

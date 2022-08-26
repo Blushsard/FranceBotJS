@@ -28,7 +28,7 @@ const client = new Client({
 // Chargement des attributs du client.
 client.commands = new Collection();
 client.modules = new Collection();
-client.db = new Database();
+client.db = new Database( client );
 
 
 // Démarrage du client.

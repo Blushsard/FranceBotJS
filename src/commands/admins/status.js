@@ -56,7 +56,7 @@ async function execute( interaction ) {
 		await interaction.reply({ embeds: embeds, ephemeral: true });
 	}
 	catch ( err ) {
-		console.log( err );
+		interaction.client.emit( "error", err );
 	}
 }
 

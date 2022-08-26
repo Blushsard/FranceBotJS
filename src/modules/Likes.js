@@ -52,8 +52,9 @@ class Likes
 		message.attachments.forEach(value => {
 			memes.push( value );
 		});
+
 		await this.db.messagesManager.ajouterMessage( message, memes, likes );
-		await this.client.modules.get( "logs" ).messageMemeEnvoye( message );
+		await this.client.modules.get( "logs" ).messageMemeAjoute( message );
 
 
 		try {
@@ -61,7 +62,7 @@ class Likes
 			await message.react( process.env.EMOJI_REPOST );
 		}
 		catch ( err ) {
-			console.log( err );
+			this.client.emit( "error", err );
 		}
 	}
 
@@ -94,7 +95,10 @@ class Likes
 		const channel = this.client.channels.cache.get( salon["pk_id_channel"] );
 		const message = await channel.messages.fetch( reaction.message.id );
 		likes = this.getCountLikes( message.reactions.cache );
-		await this.ajouterMessageMeme( message, salon, likes );
+		await this.ajouterMessageMeme( message, salon, likes + 1 );
+		// TODO vérifier si le +1 est bien fonctionnel.
+		// Ce +1 est utilisé quand un meme possédant déjà des likes reçoit une emoji mais n'est pas dans la base de données.
+		// Il a alors le bon nombre de like car l'emoji du bot n'est ajouté qu'après le comptage des likes.
 	}
 
 

@@ -32,7 +32,7 @@ async function execute( interaction ) {
 		});
 	}
 	catch ( err ) {
-		console.log( err );
+		interaction.client.emit( "error", err );
 	}
 }
 
