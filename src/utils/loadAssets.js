@@ -16,6 +16,7 @@ const { Threads } = require( `${baseModDir}/Threads` );
 const { Feed } = require( `${baseModDir}/Feed` );
 const { Reddit } = require( `${baseModDir}/Reddit` );
 const { Twitter } = require( `${baseModDir}/Twitter` );
+const { Stats } = require( `${baseModDir}/Stats` );
 const fs = require( "fs" );
 
 
@@ -39,6 +40,7 @@ async function loadModules( client ) {
 	client.modules.set( 'feed', new Feed( client, modules['feed'] ) );
 	client.modules.set( 'reddit', new Reddit( client, modules['reddit'] ) );
 	client.modules.set( 'twitter', new Twitter( client, modules['twitter'] ) );
+	client.modules.set( 'stats', new Stats( client, modules['stats'] ) );
 }
 
 

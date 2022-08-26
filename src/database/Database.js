@@ -9,6 +9,7 @@ const { UsersManager } = require( `${process.cwd()}/database/modules/UsersManage
 const { ChannelsManager } = require( `${process.cwd()}/database/modules/ChannelsManager` );
 const { RolesLevelsManager } = require( `${process.cwd()}/database/modules/RolesLevelsManager` );
 const { MessagesManager } = require( `${process.cwd()}/database/modules/MessagesManager` );
+const { StatsManager } = require( `${process.cwd()}/database/modules/StatsManager` );
 
 
 /**
@@ -29,6 +30,7 @@ class Database
 		this.channelsManager = new ChannelsManager( this );
 		this.rolesLevelsManager = new RolesLevelsManager( this );
 		this.messagesManager = new MessagesManager( this );
+		this.statsManager = new StatsManager( this );
 	}
 
 

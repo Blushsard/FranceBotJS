@@ -17,6 +17,25 @@ function getMonthlyIntDate() {
 }
 
 
+function getMonthName() {
+	return [
+		"Janvier",
+		"Février",
+		"Mars",
+		"Avril",
+		"Mai",
+		"Juin",
+		"Juillet",
+		"Août",
+		"Septembre",
+		"Octobre",
+		"Novembre",
+		"Décembre"
+	][(new Date()).getMonth()];
+}
+
+
 module.exports = {
-	getMonthlyIntDate
+	getMonthlyIntDate,
+	getMonthName
 }
