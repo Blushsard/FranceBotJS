@@ -5,7 +5,7 @@
  *      La moyenne est toujours calculée et ne peut être désactivée.
  */
 
-const { getMonthlyIntDate } = require( `${process.cwd()}/utils/dateUtils` );
+const { getMonthIntDate } = require( `${process.cwd()}/utils/dateUtils` );
 
 
 class Moyenne
@@ -28,13 +28,13 @@ class Moyenne
 
 	/**
 	 * Calcule la moyenne toutes les X millisecondes.
-	 * @param {number} delay Le délai entre chaque calcul de la moyenne en ms.
+	 * @param {string} delay Le délai entre chaque calcul de la moyenne en ms.
 	 */
 	async calcMoyenne( delay ) {
 		await this.calculerValeurMoyenne();
 		setInterval( async () => {
 			await this.calculerValeurMoyenne();
-		}, delay );
+		}, Number( delay ) );
 	}
 
 	async calculerValeurMoyenne() {
@@ -46,7 +46,7 @@ class Moyenne
 		const nbLikesMsg = (await this.db.query(
 			`SELECT sum(n_likes) AS sommeLikes, count(pk_msg_id) as nbMsg 
 			FROM messages WHERE n_date>? ORDER BY n_likes LIMIT ${queryResult["n_nb_msg_moyenne"]}`,
-			[ getMonthlyIntDate() - 3 ]
+			[ getMonthIntDate() - 3 ]
 		))[0];
 
 		// Dans le cas ou le nombre de messages est à 0, on met la moyenne à 1 car elle est inutile tant qu'il n'y a pas

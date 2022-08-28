@@ -5,7 +5,7 @@
  */
 
 const { Message } = require( "discord.js" );
-const { getMonthlyIntDate } = require( `${process.cwd()}/utils/dateUtils` );
+const { getMonthIntDate } = require( `${process.cwd()}/utils/dateUtils` );
 
 
 class MessagesManager
@@ -36,7 +36,7 @@ class MessagesManager
 					false,
 					false,
 					false,
-					getMonthlyIntDate(),
+					getMonthIntDate(),
 					message.url,
 					message.content
 				]

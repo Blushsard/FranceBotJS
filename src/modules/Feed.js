@@ -24,7 +24,7 @@ class Feed
 
 	/**
 	 * Envoit les memes dans le feed toutes les X secondes.
-	 * @param {number} delay Le délai entre chaque intération du feed.
+	 * @param {string} delay Le délai entre chaque intération du feed.
 	 */
 	async feed( delay ) {
 		setInterval( async () => {
@@ -49,6 +49,7 @@ class Feed
 				const author = this.client.users.cache.get( msg["s_author_id"] );
 				if ( !author ) continue;
 
+				// Le premier embed est récupérer pour envoyer le bon lien à l'auteur du message contenant les memes.
 				const memeChannel = this.client.channels.cache.get( msg["s_channel_id"] );
 				const firstEmbed = await this.sendMemesEmbeds( memes, feedChannel, author, memeChannel, msg['s_jump_url'] );
 				await this.sendMessageToAuthor( author, firstEmbed );
@@ -59,7 +60,7 @@ class Feed
 					firstEmbed.url
 				);
 			}
-		}, delay );
+		}, Number( delay ) );
 	}
 
 	/**

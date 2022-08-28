@@ -4,7 +4,7 @@
  *      La classe gérant les stats du bot.
  */
 
-const { getMonthlyIntDate, getMonthName } = require( `${process.cwd()}/utils/dateUtils` );
+const { getMonthIntDate, getMonthName } = require( `${process.cwd()}/utils/dateUtils` );
 
 
 /**
@@ -21,13 +21,14 @@ class StatsManager
 	}
 
 	/**
-	 * Renvoie un objet contenant les données du mois courant si il existe dans la bdd.
-	 * @return {Promise<object>} Une Promesse complétée avec les données du mois actuel ou null.
+	 * Renvoie un objet contenant les données du mois demandé.
+	 * @param {number} monthId L'identifiant du mois généré avec la fonction getMonthIntDate
+	 * @return {Promise<object>} Une promesse complétée avec les données du mois demandé ou null.
 	 */
-	async fetchCurrentMonth() {
+	async fetchMonth( monthId ) {
 		const result = await this.db.query(
 			"SELECT * FROM stats WHERE pk_month_id=?",
-			[ getMonthlyIntDate() ]
+			[ monthId ]
 		);
 		return result.length ? result[0]: null;
 	}
@@ -36,7 +37,7 @@ class StatsManager
 		await this.db.query(
 			"INSERT INTO stats VALUES (?,?,?,?,?,?,?,?,?,?,?)",
 			[
-				getMonthlyIntDate(),
+				getMonthIntDate(),
 				getMonthName(),
 				0, 0, "", 0, "", 0, 0, 0, ""
 			]
