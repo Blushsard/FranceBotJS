@@ -41,9 +41,7 @@ class Logs
 		try {
 			await logChannel.send({ embeds: [ embed ] } );
 		}
-		catch ( err ) {
-			this.client.emit( "error", err );
-		}
+		catch ( err ) { this.client.emit( "error", err ); }
 	}
 
 	/**

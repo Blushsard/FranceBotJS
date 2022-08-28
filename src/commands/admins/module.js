@@ -60,9 +60,7 @@ async function execute( interaction ) {
 	try {
 		await interaction.reply( { content: "Changement pris en compte!", ephemeral: true } );
 	}
-	catch ( err ) {
-		interaction.client.emit( "error", err );
-	}
+	catch ( err ) { interaction.client.emit( "error", err ); }
 }
 
 

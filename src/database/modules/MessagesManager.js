@@ -53,9 +53,7 @@ class MessagesManager
 				)
 			}
 		}
-		catch( err ) {
-			this.db.client.emit( "error", err );
-		}
+		catch( err ) { this.db.client.emit( "error", err ); }
 	}
 
 	/**

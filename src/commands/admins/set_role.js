@@ -55,9 +55,7 @@ async function execute( interaction ) {
 			ephemeral: true
 		});
 	}
-	catch ( err ) {
-		interaction.client.emit( "error", err );
-	}
+	catch ( err ) { interaction.client.emit( "error", err ); }
 }
 
 

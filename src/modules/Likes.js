@@ -61,9 +61,7 @@ class Likes
 			await message.react( process.env.EMOJI_LIKE_ID );
 			await message.react( process.env.EMOJI_REPOST );
 		}
-		catch ( err ) {
-			this.client.emit( "error", err );
-		}
+		catch ( err ) { this.client.emit( "error", err ); }
 	}
 
 	/**
@@ -74,7 +72,8 @@ class Likes
 	 */
 	async updateLikeCount( reaction, salon, user ) {
 		if ( !this._active ) return;
-		if ( !salon && !salon["b_likes"] ) return;
+		if ( !salon ) return;
+		if ( !salon["b_likes"] ) return;
 		if ( user.id === this.client.user.id ) return;
 		if ( reaction.emoji.id !== process.env.EMOJI_LIKE_ID ) return;
 

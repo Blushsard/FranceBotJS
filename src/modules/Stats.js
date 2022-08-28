@@ -2,6 +2,7 @@
  * @author Benjamin Guirlet
  * @description
  *      Module gérant les statistiques mensuelles de France Memes.
+ *      Il gère aussi toutes les statistiques des emojis (classement des emojis).
  */
 const { getMonthIntDate } = require("../utils/dateUtils");
 const { MessageEmbed, Guild } = require( "discord.js" );
@@ -50,11 +51,14 @@ class Stats {
 		const monthBaseData = await this.db.statsManager.fetchMonth( monthId );
 		if ( !monthBaseData ) return;
 
-		// TODO repasser ces lignes pour utiliser les données de monthData.
+		// TODO remplacer ces lignes pour utiliser les données de monthData.
 		// const monthData = await this.getMonthData( monthId, monthBaseData );
 		const monthEmbed = await this.createEmbed( monthBaseData, guild );
 
-		// envoi de l'embed dans cette fonction.
+		try {
+			await statsChannel.send( { embeds: [ monthEmbed ] } );
+		}
+		catch( err ) { this.client.emit( "error", err ); }
 
 		// Enregistrement des données du mois dans la bdd.
 	}
@@ -79,6 +83,9 @@ class Stats {
 	async createEmbed( monthData, guild ) {
 		const auteurRecordLikesMemes = await guild.members.fetch( monthData['s_id_auteur_record_likes'] );
 		const auteurRecordLikesCumules = await guild.members.fetch( monthData['s_id_auteur_record_likes_cumules'] );
+		const mostUsedEmoji = await this.db.query(
+			"SELECT * FROM stats_emojis ORDER BY n_count DESC LIMIT 1"
+		)
 
 		return new MessageEmbed()
 			.setTitle( `Statisques du mois de ${monthData['s_month']}` )
@@ -86,18 +93,13 @@ class Stats {
 			.setAuthor( { name: this.client.user.username, iconURL: this.client.user.avatarURL() } )
 			.addFields([
 				{ name: "Nombre de memes envoyés :", value: `${monthData['n_memes_sent']}` },
-				{ name: "Record de likes sur un meme :", value: `**${monthData['n_record_likes']}** likes par ${auteurRecordLikesMemes}` },
-				{ name: "Record de likes cumulés :", value: `**${monthData['n_record_likes_cumules']}** likes par ${auteurRecordLikesCumules}` },
+				{ name: "Record de likes sur un meme :", value: `**${monthData['n_record_likes']}** likes par ${auteurRecordLikesMemes} !` },
+				{ name: "Record de likes cumulés :", value: `**${monthData['n_record_likes_cumules']}** likes par ${auteurRecordLikesCumules} !` },
 				{ name: "Total de likes :", value: `${monthData['n_total_likes']}` },
 				{ name: "Nombre de reposts :", value: `${monthData['n_count_reposts']}` },
 				{ name: "Nombre de memes envoyés dans le feed :", value: `${monthData['n_memes_feed']}` },
-				{ name: "Emoji la plus utilisée :", value: `${monthData['n_best_emoji']}` }
+				{ name: "Emoji la plus utilisée :", value: `${mostUsedEmoji['pk_emoji']} avec **${mostUsedEmoji['n_count']}** utilisations !` }
 			]);
-
-		// TODO pour les tables pour le classement des emojis :
-		//  une table qui contient le classement du mois actuel (paire emoji/count)
-		//  et une table qui contient l'historique des classements (emoji/count/id_mois)
-		//  Et le classement des emojis intégrés dans les stats.
 	}
 
 	/**
