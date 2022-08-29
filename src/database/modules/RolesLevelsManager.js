@@ -26,7 +26,7 @@ class RolesLevelsManager
 	 * @returns {Promise<object>} Une Promesse complétée avec un objet contenant les données du salon la bdd, sinon null.
 	 */
 	async fetchRoleByLevel( niveau, guildId ) {
-		return await this.db.onResultQuery(
+		return await this.db.oneResultQuery(
 			"SELECT * FROM roles_levels WHERE n_niveau_requis=? AND s_guild_id=?;",
 			[ niveau, guildId ]
 		);
@@ -52,7 +52,7 @@ class RolesLevelsManager
 	 * @returns {Promise<object|null>} Le ou les rôles trouvés ou null si il n'y a pas de rôles pour ce niveau.
 	 */
 	async fetchGuildRoleByLevel( guildId, level ) {
-		return await this.db.onResultQuery(
+		return await this.db.oneResultQuery(
 			"SELECT * FROM roles_levels WHERE s_guild_id=? AND n_niveau_requis=?;",
 			[ guildId, level ]
 		);

@@ -25,7 +25,7 @@ class UsersManager
 	 * @returns {Promise<object|null>} Un objet contenant les données de l'user ou null.
 	 */
 	async fetchUser( userId ) {
-		return await this.db.onResultQuery(
+		return await this.db.oneResultQuery(
 			"SELECT *, (SELECT COUNT(*) FROM users) AS total_users FROM " +
 			"(SELECT *, ROW_NUMBER() OVER (ORDER BY n_xp DESC) AS rang FROM users) AS u WHERE u.pk_user_id=?;",
 			[ userId ]

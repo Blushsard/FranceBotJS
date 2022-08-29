@@ -26,7 +26,7 @@ class ChannelsManager
 	 * 							 la bdd, sinon null.
 	 */
 	async fetchChannel( channelId ) {
-		return await this.db.onResultQuery(
+		return await this.db.oneResultQuery(
 			"SELECT * FROM channels WHERE pk_id_channel=?;",
 			[ channelId ]
 		);
@@ -40,7 +40,7 @@ class ChannelsManager
 	 * @returns {Promise<object>} Une Promesse complétée avec l'objet du salon ou null.
 	 */
 	async fetchOneChannelByValue(columnName, value ) {
-		return await this.db.onResultQuery( `SELECT * from channels WHERE ${columnName}=?`, [ value ] );
+		return await this.db.oneResultQuery( `SELECT * from channels WHERE ${columnName}=?`, [ value ] );
 	}
 
 

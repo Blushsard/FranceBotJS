@@ -95,7 +95,7 @@ class MessagesManager
 			[ value, messageId ]
 		);
 
-		return await this.db.onResultQuery(
+		return await this.db.oneResultQuery(
 			`SELECT * FROM messages WHERE pk_msg_id=?`,
 			[ messageId ]
 		);

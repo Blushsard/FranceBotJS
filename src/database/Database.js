@@ -84,7 +84,7 @@ class Database
 	 * @param {array} [params] - Une liste contenant les paramètres de la requête (optionnel).
 	 * @returns {Promise<object>} Une Promesse complété avec un objet contenant le résultat de la requête ou null.
 	 */
-	async onResultQuery( req, params ) {
+	async oneResultQuery( req, params ) {
 		const result = await this.query( req, params );
 		return result.length ? result[0] : null;
 	}
