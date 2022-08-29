@@ -32,6 +32,7 @@ class Stats {
 			// Si un nouveau mois a été créé, alors on envoi les stats du mois précédent.
 			if ( monthCreated && this._active ) {
 				await this.sendStats( monthCreated["pk_month_id"] - 1 );
+				await this.transferStatsEmojisToHisto( monthCreated["pk_month_id"] - 1 );
 			}
 		}, Number( delay ) );
 	}
@@ -51,9 +52,8 @@ class Stats {
 		const monthBaseData = await this.db.statsManager.fetchMonth( monthId );
 		if ( !monthBaseData ) return;
 
-		// TODO remplacer ces lignes pour utiliser les données de monthData.
-		// const monthData = await this.getMonthData( monthId, monthBaseData );
-		const monthEmbed = await this.createEmbed( monthBaseData, guild );
+		const monthData = await this.getMonthData( monthId, monthBaseData );
+		const monthEmbed = await this.createEmbed( monthData, guild );
 
 		try {
 			await statsChannel.send( { embeds: [ monthEmbed ] } );
@@ -61,6 +61,7 @@ class Stats {
 		catch( err ) { this.client.emit( "error", err ); }
 
 		// Enregistrement des données du mois dans la bdd.
+		await this.db.statsManager.registerMonthStats( monthData );
 	}
 
 
@@ -71,7 +72,40 @@ class Stats {
 	 * @return {Promise<object>} L'objet contenant les données complètes du mois.
 	 */
 	async getMonthData( monthId, monthBaseData ) {
+		monthBaseData['n_memes_sent'] = await this.db.oneResultQuery(
+			"SELECT count(pk_msg_id) as count_memes FROM messages WHERE n_date=?",
+			[ monthBaseData['pk_month_id'] ]
+		);
 
+		const recordLikes = await this.db.oneResultQuery(
+			"SELECT likes, s_author_id FROM messages WHERE n_date=? ORDER BY likes DESC LIMIT 1",
+			[ monthBaseData['pk_month_id'] ]
+		);
+		monthBaseData['n_record_likes'] = recordLikes['n_likes'];
+		monthBaseData['s_id_auteur_record_likes'] = recordLikes['s_author_id'];
+
+		const recordLikesCumules = await this.db.oneResultQuery(
+			"SELECT s_author_id, sum(n_likes) as sum_likes FROM messages WHERE n_date=?" +
+			"GROUP BY s_author_id ORDER BY sum_likes DESC LIMIT 1;",
+			[ monthBaseData['pk_month_id'] ]
+		);
+		monthBaseData['n_record_likes_cumules'] = recordLikesCumules['sum_likes'];
+		monthBaseData['s_id_auteur_record_likes_cumules'] = recordLikesCumules['s_author_id'];
+
+		monthBaseData['n_total_likes'] = await this.db.oneResultQuery(
+			"SELECT sum(likes) as total_likes FROM messages WHERE n_date=?",
+			[ monthBaseData['pk_month_id'] ]
+		);
+
+		monthBaseData['n_memes_feed'] = await this.db.oneResultQuery(
+			"SELECT count(pk_msg_id) as count_reposts FROM messages WHERE n_date=? AND b_str=true"
+		);
+
+		monthBaseData['n_best_emoji'] = await this.db.oneResultQuery(
+			"SELECT pk_emoji FROM stats_emojis ORDER BY n_count DESC LIMIT 1"
+		);
+
+		return monthBaseData;
 	}
 
 	/**
@@ -120,6 +154,40 @@ class Stats {
 			"UPDATE stats SET n_count_reposts=n_count_reposts+1 WHERE pk_month_id=?",
 			[ getMonthIntDate() ]
 		);
+	}
+
+	/**
+	 * Ajoute toutes les emojis de la table 'stats_emojis' à la table 'history_stats_emoji' et vide la table 'stats_emojis'.
+	 * @param {number} month_id L'identifiant du mois qui est lié aux emojis de la table 'stats_emojis'.
+	 */
+	async transferStatsEmojisToHisto( month_id ) {
+		const emojis = await this.db.query( "SELECT * FROM stats_emojis" );
+		for ( let emoji of emojis ) {
+			await this.db.query(
+				"INSERT INTO history_stats_emojis VALUES (?,?,?)",
+				[ emoji["pk_emoji"], emoji["n_count"], month_id ]
+			);
+		}
+
+		await this.db.oneResultQuery( "DELETE FROM stats_emojis" );
+	}
+
+	/**
+	 * Ajoute +1 au compteur de l'emoji dans la table 'stats_emojis'.
+	 * @param {string} emoji La chaine de caractères permettant d'afficher l'emoji dans discord.
+	 */
+	async addEmojiCount( emoji ) {
+		const queryResult = await this.db.oneResultQuery(
+			"UPDATE stats_emojis SET n_count=n_count+1 WHERE pk_emoji=?",
+			[ emoji ]
+		);
+
+		if ( !queryResult["affectedRows"] ) {
+			await this.db.query(
+				"INSERT INTO stats_emojis VALUES (?,?)",
+				[ emoji, 1 ]
+			);
+		}
 	}
 }
 

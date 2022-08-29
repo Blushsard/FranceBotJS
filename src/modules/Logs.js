@@ -171,12 +171,14 @@ class Logs
 			.setTitle( `Modifications de vote : ${emoji}` )
 			.setURL( message.url )
 			.setColor( process.env.COUL_EMBED_VOTE )
-			.setAuthor( { name: message.author.username, iconURL: message.author.avatarURL() } )
 			.addFields([
 				{ name: "Lien du message :", value: `[Accès au message](${message.url})` },
 				{ name: "Changement de valeur :", value: `${lastValue} -> ${newValue}` },
 				{ name: "Date :", value: `${new Date()}` }
 			]);
+
+		if ( message.author )
+			embed.setAuthor( { name: message.author.username, iconURL: message.author.avatarURL() } );
 
 		await this.sendEmbed( embed, message.guildId );
 	}

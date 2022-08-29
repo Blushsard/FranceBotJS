@@ -77,9 +77,6 @@ class Likes
 		if ( user.id === this.client.user.id ) return;
 		if ( reaction.emoji.id !== process.env.EMOJI_LIKE_ID ) return;
 
-		if ( reaction.partial )
-			await reaction.fetch();
-
 		let likes = this.getCountLikes( reaction.message.reactions.cache );
 		const msgDb = await this.db.messagesManager.updateLikesCount( reaction.message.id, likes );
 		await this.client.modules.get( "logs" ).modificationVote(

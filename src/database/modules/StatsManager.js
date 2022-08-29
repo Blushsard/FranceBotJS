@@ -42,6 +42,25 @@ class StatsManager
 			]
 		);
 	}
+
+	/**
+	 * Met à jour les données du mois dans la table.
+	 * @param {object} monthData Un objet contenant les données du mois.
+	 */
+	async registerMonthStats( monthData ) {
+		await this.db.query(
+			`UPDATE stats SET ` +
+			`n_memes_sent=${monthData['n_memes_sent']}, ` +
+			`n_record_likes=${monthData['n_record_likes']}, ` +
+			`s_id_auteur_record_likes=${monthData['s_id_auteur_record_likes']}, ` +
+			`n_record_likes_cumules=${monthData['n_record_likes_cumules']}, ` +
+			`s_id_auteur_record_likes_cumules=${monthData['s_id_auteur_record_likes_cumules']}, ` +
+			`n_total_likes=${monthData['n_total_likes']}, ` +
+			`n_memes_feed=${monthData['n_memes_feed']}, ` +
+			`n_best_emoji=${monthData['n_best_emoji']} ` +
+			`WHERE pk_month_id=${monthData['pk_month_id']}`
+		);
+	}
 }
 
 

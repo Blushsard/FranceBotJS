@@ -41,9 +41,6 @@ class Reposts
 		// Cette erreur est présente dans FranceBotV3, l'appel de l'api ne contient pas les données de l'objet.
 		if ( !reaction ) return;
 
-		if ( reaction.partial )
-			await reaction.fetch();
-
 		const moyenne = this.client.modules.get( "moyenne" ).getMoyenne();
 
 		// Récupération du nombre de reposts sur le message.
