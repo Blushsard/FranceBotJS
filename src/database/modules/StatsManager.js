@@ -26,11 +26,10 @@ class StatsManager
 	 * @return {Promise<object>} Une promesse complétée avec les données du mois demandé ou null.
 	 */
 	async fetchMonth( monthId ) {
-		const result = await this.db.query(
+		return await this.db.onResultQuery(
 			"SELECT * FROM stats WHERE pk_month_id=?",
 			[ monthId ]
 		);
-		return result.length ? result[0]: null;
 	}
 
 	async createNewMonth() {

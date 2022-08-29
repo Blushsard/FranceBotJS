@@ -95,12 +95,10 @@ class MessagesManager
 			[ value, messageId ]
 		);
 
-		const result = await this.db.query(
+		return await this.db.onResultQuery(
 			`SELECT * FROM messages WHERE pk_msg_id=?`,
 			[ messageId ]
 		);
-
-		return result ? result[0] : null;
 	}
 }
 

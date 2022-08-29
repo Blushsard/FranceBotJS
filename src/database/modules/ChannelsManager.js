@@ -22,16 +22,14 @@ class ChannelsManager
 	/**
 	 * Récupère un salon de la base de données.
 	 * @param {string} channelId L'identifiant du salon.
-	 * @returns {Promise<array>} Une Promesse complétée avec un objet contenant les données du salon si il est présent dans
+	 * @returns {Promise<object>} Une Promesse complétée avec un objet contenant les données du salon si il est présent dans
 	 * 							 la bdd, sinon null.
 	 */
 	async fetchChannel( channelId ) {
-		const row = await this.db.query(
+		return await this.db.onResultQuery(
 			"SELECT * FROM channels WHERE pk_id_channel=?;",
 			[ channelId ]
 		);
-
-		return row.length ? row[0] : null;
 	}
 
 
@@ -39,11 +37,10 @@ class ChannelsManager
 	 * Récupère le premier salon dans la table avec la valeur passée en paramètre.
 	 * @param {string} columnName La colonne ciblée.
 	 * @param {boolean} value La valeur requise.
-	 * @returns {Promise<array[object]>} Une Promesse complétée avec l'objet du salon ou null.
+	 * @returns {Promise<object>} Une Promesse complétée avec l'objet du salon ou null.
 	 */
 	async fetchOneChannelByValue(columnName, value ) {
-		const results = await this.db.query( `SELECT * from channels WHERE ${columnName}=?`, [ value ] );
-		return results.length ? results[0]: null;
+		return await this.db.onResultQuery( `SELECT * from channels WHERE ${columnName}=?`, [ value ] );
 	}
 
 
