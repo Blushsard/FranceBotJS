@@ -103,6 +103,17 @@ class UsersManager
 
 		return await this.fetchUser( userId );
 	}
+
+	/**
+	 * Incrémente de 1 le compteur de messages de l'utilisateur.
+	 * @param {string} userId L'id de l'utilisateur ciblé.
+	 */
+	async incrementeCompteurMessagesUser( userId ) {
+		await this.db.query(
+			"UPDATE users SET n_nb_messages=n_nb_messages+1 WHERE pk_user_id=?",
+			[ userId ]
+		);
+	}
 }
 
 

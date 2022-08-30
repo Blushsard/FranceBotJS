@@ -22,8 +22,8 @@ class Levels
 	 * @param {boolean} active Indique si le client est activé ou non.
 	 */
 	constructor( client, active ) {
-		this._active = active;
 		this.client = client;
+		this._active = active;
 
 		// Collection contenant les vérifications des différentes limitations par user.
 		this.limits = new Collection();
@@ -32,6 +32,17 @@ class Levels
 	getActive() { return this._active; }
 	setActive( active ) { this._active = active; }
 
+	/**
+	 * Ajoute de l'expérience à un utilisateur.
+	 * @param {GuildMember} member L'objet du membre qui reçoit de l'expérience.
+	 * @param {TextChannel} channel Le salon dans lequel le membre a reçu de l'expérience.
+	 * @param {number} exp Le nombre d'expérience reçu.
+	 */
+	async ajouterExperienceUtilisateur( member, channel, exp ) {
+		const user = await this.client.db.usersManager.ajouterExperienceUser( member.id, exp );
+		if ( user )
+			await this.levelUpUtilisateur( user, member, channel );
+	}
 
 	/**
 	 * Ajoute de l'expérience à un utilisateur suite à un message envoyé.
@@ -44,24 +55,38 @@ class Levels
 		if ( channel && channel['b_exp'] ) return;
 		if ( message.channel instanceof DMChannel ) return;	// On empêche les gens de gagner de l'xp avec les DM du bot.
 
-		let user = null;
 		const msTime = (new Date()).getTime();
 
 		if ( this.limits.has( message.author.id ) ) {
 			// 1 minute
 			if ( msTime > this.limits.get( message.author.id ) + 60_000 ) {
-				user = await this.client.db.usersManager.ajouterExperienceUser( message.author.id, 8 );
+				await this.ajouterExperienceUtilisateur( message.member, message.channel, Number(process.env.EXP_MSG_ENVOYE) );
 				this.limits.set( message.author.id, msTime );
 			}
 		}
 		else {
 			this.limits.set( message.author.id, msTime );
-			user = await this.client.db.usersManager.ajouterExperienceUser( message.author.id, 8 );
+			await this.ajouterExperienceUtilisateur( message.member, message.channel, Number(process.env.EXP_MSG_ENVOYE) );
 		}
 
-		if ( user ) {
-			await this.levelUpUtilisateur( user, message.member, message.channel );
-		}
+		// Incrémentation du compteur de messages.
+		await this.client.db.usersManager.incrementeCompteurMessagesUser( message.author.id );
+	}
+
+	/**
+	 * Ajoute 1xp à l'auteur d'un meme qui a reçu un like.
+	 * @param {string} auteurId L'id de l'auteur du message qui a reçu le like.
+	 * @param {string} channelId L'id du salon du message.
+	 * @param {string} userId L'id de l'utilisateur qui a ajouté le like.
+	 */
+	async ajouterExperienceLikeRecu( auteurId, channelId, userId ) {
+		if ( !this._active ) return;
+		if ( userId === auteurId ) return;
+
+		const guild = await this.client.guilds.fetch( process.env.GUILD_ID );
+		const channel = await guild.channels.fetch( channelId );
+		const auteur = await guild.members.fetch( auteurId );
+		await this.ajouterExperienceUtilisateur( auteur, channel, Number(process.env.EXP_LIKE_RECU) );
 	}
 
 
@@ -100,7 +125,6 @@ class Levels
 	async levelUpUtilisateur( user, member, salon ) {
 		let userMention = await salon.guild.members.fetch( user["pk_user_id"] );
 		if ( user ) {
-			user["n_nb_messages"]++;
 
 			// Vérification pour le level up.
 			if ( this.getRequiredExpForLevel( user["n_level"] + 1 ) < user["n_xp"] ) {

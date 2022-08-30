@@ -96,6 +96,11 @@ class Likes
 			await this.db.messagesManager.updateLikesCount( reaction.message.id, likes );
 		}
 
+		// Ajout de l'exp pour l'ajout d'un like.
+		if ( upvote ) {
+			await this.client.modules.get( "levels" ).ajouterExperienceLikeRecu( msgDb["s_author_id"], msgDb["s_channel_id"], user.id );
+		}
+
 		await this.client.modules.get( "logs" ).modificationVote(
 			reaction.message,
 			likes,
