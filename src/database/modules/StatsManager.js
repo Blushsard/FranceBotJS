@@ -34,11 +34,11 @@ class StatsManager
 
 	async createNewMonth() {
 		await this.db.query(
-			"INSERT INTO stats VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+			"INSERT INTO stats VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
 			[
 				getMonthIntDate(),
 				getMonthName(),
-				0, 0, "", 0, "", 0, 0, 0, ""
+				0, 0, "", 0, "", 0, 0, 0, "", 0
 			]
 		);
 	}
@@ -57,7 +57,8 @@ class StatsManager
 			`s_id_auteur_record_likes_cumules=${monthData['s_id_auteur_record_likes_cumules']}, ` +
 			`n_total_likes=${monthData['n_total_likes']}, ` +
 			`n_memes_feed=${monthData['n_memes_feed']}, ` +
-			`n_best_emoji=${monthData['n_best_emoji']} ` +
+			`n_best_emoji="${monthData['n_best_emoji']}", ` +
+			`n_count_best_emoji=${monthData['n_count_best_emoji']} ` +
 			`WHERE pk_month_id=${monthData['pk_month_id']}`
 		);
 	}

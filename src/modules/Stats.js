@@ -72,40 +72,45 @@ class Stats {
 	 * @return {Promise<object>} L'objet contenant les données complètes du mois.
 	 */
 	async getMonthData( monthId, monthBaseData ) {
-		monthBaseData['n_memes_sent'] = await this.db.oneResultQuery(
+		let monthData = monthBaseData;
+
+		monthData['n_memes_sent'] = (await this.db.oneResultQuery(
 			"SELECT count(pk_msg_id) as count_memes FROM messages WHERE n_date=?",
-			[ monthBaseData['pk_month_id'] ]
-		);
+			[ monthData['pk_month_id'] ]
+		))["count_memes"];
 
 		const recordLikes = await this.db.oneResultQuery(
-			"SELECT likes, s_author_id FROM messages WHERE n_date=? ORDER BY likes DESC LIMIT 1",
-			[ monthBaseData['pk_month_id'] ]
+			"SELECT n_likes, s_author_id FROM messages WHERE n_date=? ORDER BY n_likes DESC LIMIT 1",
+			[ monthData['pk_month_id'] ]
 		);
-		monthBaseData['n_record_likes'] = recordLikes['n_likes'];
-		monthBaseData['s_id_auteur_record_likes'] = recordLikes['s_author_id'];
+		monthData['n_record_likes'] = recordLikes['n_likes'];
+		monthData['s_id_auteur_record_likes'] = recordLikes['s_author_id'];
 
 		const recordLikesCumules = await this.db.oneResultQuery(
-			"SELECT s_author_id, sum(n_likes) as sum_likes FROM messages WHERE n_date=?" +
+			"SELECT s_author_id, sum(n_likes) as sum_likes FROM messages WHERE n_date=? " +
 			"GROUP BY s_author_id ORDER BY sum_likes DESC LIMIT 1;",
-			[ monthBaseData['pk_month_id'] ]
+			[ monthData['pk_month_id'] ]
 		);
-		monthBaseData['n_record_likes_cumules'] = recordLikesCumules['sum_likes'];
-		monthBaseData['s_id_auteur_record_likes_cumules'] = recordLikesCumules['s_author_id'];
+		monthData['n_record_likes_cumules'] = recordLikesCumules['sum_likes'];
+		monthData['s_id_auteur_record_likes_cumules'] = recordLikesCumules['s_author_id'];
 
-		monthBaseData['n_total_likes'] = await this.db.oneResultQuery(
-			"SELECT sum(likes) as total_likes FROM messages WHERE n_date=?",
-			[ monthBaseData['pk_month_id'] ]
+		monthData['n_total_likes'] = (await this.db.oneResultQuery(
+			"SELECT sum(n_likes) as total_likes FROM messages WHERE n_date=?",
+			[ monthData['pk_month_id'] ]
+		))["total_likes"];
+
+		monthData['n_memes_feed'] = (await this.db.oneResultQuery(
+			"SELECT count(pk_msg_id) as count_feed_memes FROM messages WHERE n_date=? AND b_stf=1",
+			[ monthData['pk_month_id'] ]
+		))["count_feed_memes"];
+
+		const bestEmojiData = await this.db.oneResultQuery(
+			"SELECT pk_emoji, n_count FROM stats_emojis ORDER BY n_count DESC LIMIT 1"
 		);
+		monthData['n_best_emoji'] = bestEmojiData["pk_emoji"];
+		monthData['n_count_best_emoji'] = bestEmojiData["n_count"]
 
-		monthBaseData['n_memes_feed'] = await this.db.oneResultQuery(
-			"SELECT count(pk_msg_id) as count_reposts FROM messages WHERE n_date=? AND b_str=true"
-		);
-
-		monthBaseData['n_best_emoji'] = await this.db.oneResultQuery(
-			"SELECT pk_emoji FROM stats_emojis ORDER BY n_count DESC LIMIT 1"
-		);
-
-		return monthBaseData;
+		return monthData;
 	}
 
 	/**
@@ -117,9 +122,6 @@ class Stats {
 	async createEmbed( monthData, guild ) {
 		const auteurRecordLikesMemes = await guild.members.fetch( monthData['s_id_auteur_record_likes'] );
 		const auteurRecordLikesCumules = await guild.members.fetch( monthData['s_id_auteur_record_likes_cumules'] );
-		const mostUsedEmoji = await this.db.query(
-			"SELECT * FROM stats_emojis ORDER BY n_count DESC LIMIT 1"
-		)
 
 		return new MessageEmbed()
 			.setTitle( `Statisques du mois de ${monthData['s_month']}` )
@@ -132,7 +134,7 @@ class Stats {
 				{ name: "Total de likes :", value: `${monthData['n_total_likes']}` },
 				{ name: "Nombre de reposts :", value: `${monthData['n_count_reposts']}` },
 				{ name: "Nombre de memes envoyés dans le feed :", value: `${monthData['n_memes_feed']}` },
-				{ name: "Emoji la plus utilisée :", value: `${mostUsedEmoji['pk_emoji']} avec **${mostUsedEmoji['n_count']}** utilisations !` }
+				{ name: "Emoji la plus utilisée :", value: `${monthData['n_best_emoji']} avec **${monthData['n_count_best_emoji']}** utilisations !` }
 			]);
 	}
 
