@@ -20,9 +20,10 @@ async function execute( rateLimit, client ) {
 
 	if ( rateLimit.timeout > 1000 ) {
 		const message = "=".repeat( 100 ) + "\n" +
-			"\033[31mRATE LIMIT\033[0m\nTimeout            : " + rateLimit.timeout + "ms\n" +
-			`Route de la requête: ${rateLimit.route}\n` +
-			`Heure du rateLimit: ${(new Date())}\n`;
+			":red_circle: **RATE LIMIT** :red_circle:\n" +
+			`Timeout : ${rateLimit.timeout} ms\n` +
+			`Route de la requête : ${rateLimit.route}\n` +
+			`Heure du rateLimit : ${(new Date())}\n`;
 		const guild = await client.guilds.fetch( process.env.GUILD_ID );
 		let recipient = await guild.members.fetch( "268078126179942410" );
 		try {
