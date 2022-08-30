@@ -179,7 +179,7 @@ class Stats {
 	 * @param {string} emoji La chaine de caractères permettant d'afficher l'emoji dans discord.
 	 */
 	async addEmojiCount( emoji ) {
-		const queryResult = await this.db.oneResultQuery(
+		const queryResult = await this.db.query(
 			"UPDATE stats_emojis SET n_count=n_count+1 WHERE pk_emoji=?",
 			[ emoji ]
 		);

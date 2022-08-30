@@ -86,7 +86,7 @@ class Database
 	 */
 	async oneResultQuery( req, params ) {
 		const result = await this.query( req, params );
-		return result.length ? result[0] : result;
+		return result.length ? result[0] : null;
 	}
 }
 
