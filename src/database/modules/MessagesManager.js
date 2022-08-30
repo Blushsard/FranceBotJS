@@ -57,11 +57,23 @@ class MessagesManager
 	}
 
 	/**
+	 * Récupère un message de la base de données.
+	 * @param {string} msgId L'identifiant du message
+	 * @return {Promise<object>} Une Promesse complétée avec l'objet contenant les données du message ou null.
+	 */
+	async fetchMessage( msgId ) {
+		return await this.db.oneResultQuery(
+			"SELECT * FROM messages WHERE pk_msg_id=?",
+			[ msgId ]
+		);
+	}
+
+	/**
 	 * Récupère tout les attachments d'un message.
 	 * @param {string} messageId L'identifiant du message.
 	 * @returns {Promise<array>} Une Promise complétée avec une liste contenant les attachments.
 	 */
-	async getMessageAttachments( messageId ) {
+	async fetchMessageAttachments( messageId ) {
 		return await this.db.query(
 			"SELECT * FROM attachments WHERE pk_msg_id=?",
 			[ messageId ]

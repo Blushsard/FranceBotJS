@@ -52,8 +52,8 @@ class Reposts
 
 		await this.client.modules.get( "logs" ).modificationVote(
 			reaction.message,
-			countReposts - 1,
 			countReposts,
+			true,
 			process.env.EMOJI_REPOST
 		);
 

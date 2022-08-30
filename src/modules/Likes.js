@@ -69,32 +69,39 @@ class Likes
 	 * @param {MessageReaction} reaction La reaction qui a été ajoutée sur le message.
 	 * @param {object|null} salon L'objet contenant les données de la bdd du salon.
 	 * @param {User} user L'utilisateur qui a ajouté la réaction.
+	 * @param {boolean} upvote Indique si l'event ajoute ou retire une reaction au message.
 	 */
-	async updateLikeCount( reaction, salon, user ) {
+	async updateLikeCount( reaction, salon, user, upvote ) {
 		if ( !this._active ) return;
 		if ( !salon ) return;
 		if ( !salon["b_likes"] ) return;
 		if ( user.id === this.client.user.id ) return;
 		if ( reaction.emoji.id !== process.env.EMOJI_LIKE_ID ) return;
 
-		let likes = this.getCountLikes( reaction.message.reactions.cache );
-		const msgDb = await this.db.messagesManager.updateLikesCount( reaction.message.id, likes );
+		const msgDb = await this.db.messagesManager.fetchMessage( reaction.message.id );
+		let likes;
+
+		if ( msgDb ) {
+			likes = this.getCountLikes( reaction.message.reactions.cache );
+			await this.db.messagesManager.updateLikesCount( reaction.message.id, likes );
+		}
+		else {
+			// On ajoute d'abord le message dans la base de données afin que le bot ajoute les reactions au message.
+			// Cela permet de ne pas fausser le compte des likes.
+			const channel = this.client.channels.cache.get( salon["pk_id_channel"] );
+			const message = await channel.messages.fetch( reaction.message.id );
+			await this.ajouterMessageMeme( message, salon, 0 );
+
+			likes = this.getCountLikes( message.reactions.cache );
+			await this.db.messagesManager.updateLikesCount( reaction.message.id, likes );
+		}
+
 		await this.client.modules.get( "logs" ).modificationVote(
 			reaction.message,
-			likes - 1,
 			likes,
+			upvote,
 			process.env.EMOJI_LIKE_STRING
 		);
-		if ( msgDb ) return;
-
-		// Ajout du message dans la base de données si il n'est pas dedans.
-		const channel = this.client.channels.cache.get( salon["pk_id_channel"] );
-		const message = await channel.messages.fetch( reaction.message.id );
-		likes = this.getCountLikes( message.reactions.cache );
-		await this.ajouterMessageMeme( message, salon, likes + 1 );
-		// TODO vérifier si le +1 est bien fonctionnel.
-		// Ce +1 est utilisé quand un meme possédant déjà des likes reçoit une emoji mais n'est pas dans la base de données.
-		// Il a alors le bon nombre de like car l'emoji du bot n'est ajouté qu'après le comptage des likes.
 	}
 
 
@@ -154,6 +161,7 @@ class Likes
 			if ( reaction.emoji.id === process.env.EMOJI_LIKE_ID )
 				likes = reaction.count - 1;
 		});
+		if ( likes < 0 ) likes = 0;
 		return likes ? likes : 0;
 	}
 }

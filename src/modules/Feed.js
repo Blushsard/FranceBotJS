@@ -44,7 +44,7 @@ class Feed
 
 			// Traitement et envoi des messages dans le feed.
 			for ( let msg of messages ) {
-				const memes = await this.db.messagesManager.getMessageAttachments( msg["pk_msg_id"] );
+				const memes = await this.db.messagesManager.fetchMessageAttachments( msg["pk_msg_id"] );
 
 				const author = this.client.users.cache.get( msg["s_author_id"] );
 				if ( !author ) continue;

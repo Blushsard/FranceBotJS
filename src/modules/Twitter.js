@@ -49,7 +49,7 @@ class Twitter
 
 			// On itère sur chacun des messages.
 			for ( let msg of messages ) {
-				const attachments = await this.db.messagesManager.getMessageAttachments( msg["pk_msg_id"] );
+				const attachments = await this.db.messagesManager.fetchMessageAttachments( msg["pk_msg_id"] );
 				const author = await guild.members.fetch( msg["s_author_id"] );
 				if ( !author ) continue;
 
