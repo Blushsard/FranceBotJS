@@ -159,11 +159,11 @@ class Logs
 	/**
 	 * Log envoyé quand un like ou un repost est ajouté/enlevé d'un message contenant des memes.
 	 * @param {Message} message Le message qui a subit le changement de vote.
-	 * @param {number} lastValue Le nombre d'emoji avant l'ajout.
-	 * @param {number} newValue Le nombre d'emoji après l'ajout.
+	 * @param {number} actualReactions Le nombre d'emoji sur le message.
+	 * @param {boolean} upvote Indique si la reaction a été ajoutée ou retirée au message.
 	 * @param {string} emoji L'emoji qui a subit le changement.
 	 */
-	async modificationVote( message, lastValue, newValue, emoji ) {
+	async modificationVote( message, actualReactions, upvote, emoji ) {
 		if ( !this._active ) return;
 		if ( !this._logChannelId ) return;
 
@@ -173,7 +173,8 @@ class Logs
 			.setColor( process.env.COUL_EMBED_VOTE )
 			.addFields([
 				{ name: "Lien du message :", value: `[Accès au message](${message.url})` },
-				{ name: "Changement de valeur :", value: `${lastValue} -> ${newValue}` },
+				{ name: "Type de vote :", value: upvote ? "Ajout d'une réaction" : "Retrait d'une réaction" },
+				{ name: "Valeur de la réaction :", value: `${actualReactions}` },
 				{ name: "Date :", value: `${new Date()}` }
 			]);
 
