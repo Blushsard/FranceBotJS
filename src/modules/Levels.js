@@ -95,7 +95,7 @@ class Levels
 	}
 
 	/**
-	 * Ajoute 1xp à l'auteur d'un meme qui a reçu un like.
+	 * Ajoute de l'exp à l'auteur d'un meme qui a reçu un like.
 	 * @param {string} auteurId L'id de l'auteur du message qui a reçu le like.
 	 * @param {string} channelId L'id du salon du message.
 	 * @param {string} userId L'id de l'utilisateur qui a ajouté le like.
@@ -110,6 +110,13 @@ class Levels
 		await this.ajouterExperienceUtilisateur( auteur, channel, Number(process.env.EXP_LIKE_RECU) );
 	}
 
+	/**
+	 * Supprime de l'exp à un utilisateur si un de ces messages est supprimé pour repost.
+	 * @param {string} auteurId L'id de l'auteur qui vient de se prendre un repost.
+	 */
+	async supprimerExperienceRepost( auteurId ) {
+		await this.client.db.usersManager.ajouterExperienceUser( auteurId, -Number(process.env.EXP_REPOST) );
+	}
 
 	/**
 	 * Regarde si les rôles et niveau de l'utilisateur sont à jour et les met à jour si besoin.

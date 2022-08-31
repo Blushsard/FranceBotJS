@@ -105,7 +105,8 @@ class Likes
 			reaction.message,
 			likes,
 			upvote,
-			process.env.EMOJI_LIKE_STRING
+			process.env.EMOJI_LIKE_STRING,
+			user
 		);
 	}
 

@@ -159,8 +159,9 @@ class Logs
 	 * @param {number} actualReactions Le nombre d'emoji sur le message.
 	 * @param {boolean} upvote Indique si la reaction a été ajoutée ou retirée au message.
 	 * @param {string} emoji L'emoji qui a subit le changement.
+	 * @param {User} voteur L'utilisateur qui a ajouté le vote.
 	 */
-	async modificationVote( message, actualReactions, upvote, emoji ) {
+	async modificationVote( message, actualReactions, upvote, emoji, voteur ) {
 		if ( !this._active ) return;
 		if ( !this._logChannelId ) return;
 
@@ -168,6 +169,7 @@ class Logs
 			.setTitle( `Modifications de vote : ${emoji}` )
 			.setURL( message.url )
 			.setColor( process.env.COUL_EMBED_VOTE )
+			.setAuthor( { name: voteur.username, iconURL: voteur.avatarURL() } )
 			.addFields([
 				{ name: "Lien du message :", value: `[Accès au message](${message.url})` },
 				{ name: "Type de vote :", value: upvote ? "Ajout d'une réaction" : "Retrait d'une réaction" },
@@ -176,7 +178,7 @@ class Logs
 			]);
 
 		if ( message.author )
-			embed.setAuthor( { name: message.author.username, iconURL: message.author.avatarURL() } );
+			embed.setFooter( { text: message.author.username, iconURL: message.author.avatarURL() } );
 
 		await this.sendEmbed( embed );
 	}

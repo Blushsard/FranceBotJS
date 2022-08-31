@@ -54,13 +54,15 @@ class Reposts
 			reaction.message,
 			countReposts,
 			true,
-			process.env.EMOJI_REPOST
+			process.env.EMOJI_REPOST,
+			user
 		);
 
 		// Suppression du message si il y a trop de repost.
 		if ( countReposts >= moyenne ) {
 			await this.client.modules.get( "logs" ).repostSupprime();
 			await this.client.modules.get( "stats" ).addRepostToStats();
+			await this.client.modules.get( "levels" ).supprimerExperienceRepost( reaction.message.author.id );
 			await reaction.message.delete();
 
 			const embed = new MessageEmbed()
@@ -72,7 +74,7 @@ class Reposts
 				);
 
 			try {
-				await user.send({embeds: [embed]});
+				await reaction.message.author.send({embeds: [embed]});
 			}
 			catch ( err ) { this.client.emit( "error", err ); }
 		}
