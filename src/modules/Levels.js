@@ -27,21 +27,42 @@ class Levels
 
 		// Collection contenant les vérifications des différentes limitations par user.
 		this.limits = new Collection();
+		this.guild = null;
 	}
 
 	getActive() { return this._active; }
 	setActive( active ) { this._active = active; }
 
 	/**
+	 * Permet de charger l'objet de la guild pour ne pas avoir à le fetch à chaque exp ajoutée.
+	 */
+	async loadGuildObject() {
+		this.guild = await this.client.guilds.fetch( process.env.GUILD_ID );
+	}
+
+	/**
 	 * Ajoute de l'expérience à un utilisateur.
 	 * @param {GuildMember} member L'objet du membre qui reçoit de l'expérience.
-	 * @param {TextChannel} channel Le salon dans lequel le membre a reçu de l'expérience.
+	 * @param {TextChannel|DMChannel} channel Le salon dans lequel le membre a reçu de l'expérience.
 	 * @param {number} exp Le nombre d'expérience reçu.
 	 */
 	async ajouterExperienceUtilisateur( member, channel, exp ) {
 		const user = await this.client.db.usersManager.ajouterExperienceUser( member.id, exp );
 		if ( user )
 			await this.levelUpUtilisateur( user, member, channel );
+	}
+
+	/**
+	 * Juste un wrapper pour simplifier le code dans la fonction du feed.
+	 * Le salon n'est pas celui du feed mais le DM de l'auteur pour éviter de polluer le feed avec des messages de
+	 * level up.
+	 * @param {string} auteurId L'id de l'auteur du message qui a été envoyé dans le feed.
+	 */
+	async ajouterExperienceFeed( auteurId ) {
+		if ( !this.guild ) return;
+
+		const member = await this.guild.members.fetch( auteurId );
+		await this.ajouterExperienceUtilisateur( member, await member.user.createDM( true ), Number(process.env.EXP_FEED) );
 	}
 
 	/**
@@ -82,10 +103,10 @@ class Levels
 	async ajouterExperienceLikeRecu( auteurId, channelId, userId ) {
 		if ( !this._active ) return;
 		if ( userId === auteurId ) return;
+		if ( !this.guild ) return;
 
-		const guild = await this.client.guilds.fetch( process.env.GUILD_ID );
-		const channel = await guild.channels.fetch( channelId );
-		const auteur = await guild.members.fetch( auteurId );
+		const channel = await this.guild.channels.fetch( channelId );
+		const auteur = await this.guild.members.fetch( auteurId );
 		await this.ajouterExperienceUtilisateur( auteur, channel, Number(process.env.EXP_LIKE_RECU) );
 	}
 
@@ -123,19 +144,16 @@ class Levels
 	 * @param {TextChannel} salon Le salon dans lequel envoyer le message de level up.
 	 */
 	async levelUpUtilisateur( user, member, salon ) {
-		let userMention = await salon.guild.members.fetch( user["pk_user_id"] );
 		if ( user ) {
-
 			// Vérification pour le level up.
 			if ( this.getRequiredExpForLevel( user["n_level"] + 1 ) < user["n_xp"] ) {
 				// Passage au niveau supérieur.
 				user["n_level"]++;
 				await this.client.db.usersManager.updateUser( user["pk_user_id"], "n_level", user["n_level"] );
-				await salon.send(`Bravo ${userMention}! Tu es passé au niveau **${user['n_level']}**!`);
+				await salon.send(`Bravo ${member.user}! Tu es passé au niveau **${user['n_level']}**!`);
 
 				// Ajout du nouveau rôle si nécessaire.
-				const role = await this.client.db.rolesLevelsManager.fetchGuildRoleByLevel(
-					member.guild.id, user["n_level"] );
+				const role = await this.client.db.rolesLevelsManager.fetchGuildRoleByLevel( member.guild.id, user["n_level"] );
 				if ( role )
 					await member.roles.add( role["pk_role_id"] );
 			}

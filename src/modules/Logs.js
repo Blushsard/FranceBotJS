@@ -33,11 +33,9 @@ class Logs
 	/**
 	 * Envoi l'embed d'un log dans le salon des logs.
 	 * @param {MessageEmbed} embed L'embed du log.
-	 * @param {string} guildId L'identifiant de la guild contenant le salon des logs.
 	 */
-	async sendEmbed( embed, guildId ) {
-		const guild = await this.client.guilds.fetch( guildId );
-		const logChannel = await guild.channels.fetch( this._logChannelId )
+	async sendEmbed( embed ) {
+		const logChannel = await this.client.channels.fetch( this._logChannelId );
 		try {
 			await logChannel.send({ embeds: [ embed ] } );
 		}
@@ -63,7 +61,7 @@ class Logs
 				{ name: "Date :", value: `${new Date()}` }
 			])
 
-		await this.sendEmbed( embed, message.guildId );
+		await this.sendEmbed( embed );
 	}
 
 	/**
@@ -95,16 +93,15 @@ class Logs
 
 		embed.addFields([ { name: "Date :", value: `${new Date()}` } ]);
 
-		await this.sendEmbed( embed, message.guildId );
+		await this.sendEmbed( embed );
 	}
 
 	/**
 	 * Log envoyé quand un message est supprimé par repost.
 	 * Ce log est envoyé avant le log de suppression de message. Les informations de ce log sont donc moindre qu'un
 	 * log de suppression de message car le log suivant contiendra les informations nécessaires.
-	 * @param {string} guildId L'identifiant de la guild sur laquelle le message a été supprimé pour repost.
 	 */
-	async repostSupprime( guildId ) {
+	async repostSupprime() {
 		if ( !this._active ) return;
 		if ( !this._logChannelId ) return;
 
@@ -113,7 +110,7 @@ class Logs
 			.setColor( process.env.COUL_EMBED_REPOST )
 			.setDescription( "Cet embed est complété avec l'embed de suppression de message suivant." );
 
-		await this.sendEmbed( embed, guildId );
+		await this.sendEmbed( embed );
 	}
 
 	/**
@@ -136,7 +133,7 @@ class Logs
 				{ name: "Date :", value: `${new Date()}` }
 			]);
 
-		await this.sendEmbed( embed, message.guildId );
+		await this.sendEmbed( embed );
 	}
 
 	/**
@@ -153,7 +150,7 @@ class Logs
 			.setColor( process.env.COUL_EMBED_ITERATION )
 			.setAuthor( { name: this.client.user.name, iconURL: this.client.user.avatarURL() } );
 
-		await this.sendEmbed( embed, process.env.GUILD_ID );
+		await this.sendEmbed( embed );
 	}
 
 	/**
@@ -181,7 +178,7 @@ class Logs
 		if ( message.author )
 			embed.setAuthor( { name: message.author.username, iconURL: message.author.avatarURL() } );
 
-		await this.sendEmbed( embed, message.guildId );
+		await this.sendEmbed( embed );
 	}
 }
 
