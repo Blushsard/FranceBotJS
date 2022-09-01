@@ -26,6 +26,7 @@ class Levels
 		this._active = active;
 
 		// Collection contenant les vérifications des différentes limitations par user.
+		// Voir la fonction createUserLimitObject pour voir sous quelle forme se présente l'objet contenant les limites.
 		this.limits = new Collection();
 		this.guild = null;
 	}
@@ -38,6 +39,18 @@ class Levels
 	 */
 	async loadGuildObject() {
 		this.guild = await this.client.guilds.fetch( process.env.GUILD_ID );
+	}
+
+	/**
+	 * Créer un objet contenant les limites de l'utilisateur.
+	 * @return {object} Un objet contenant les limites de l'utilisateur.
+	 */
+	createUserLimitObject() {
+		return {
+			"timeMsgLimit": 0,	// Le temps depuis le dernier message envoyé en ms.
+			"likeMsgCount": 0,	// Le nombre de likes ajoutés sur des memes pour le jour courant.
+			"dayLikeMsgCount": (new Date()).getDay()	// Le jour courant pour les likes sur les memes.
+		};
 	}
 
 	/**
@@ -77,21 +90,56 @@ class Levels
 		if ( message.channel instanceof DMChannel ) return;	// On empêche les gens de gagner de l'xp avec les DM du bot.
 
 		const msTime = (new Date()).getTime();
-
 		if ( this.limits.has( message.author.id ) ) {
 			// 1 minute
-			if ( msTime > this.limits.get( message.author.id ) + 60_000 ) {
+			if ( msTime > this.limits.get( message.author.id )["msgLimit"] + 60_000 ) {
 				await this.ajouterExperienceUtilisateur( message.member, message.channel, Number(process.env.EXP_MSG_ENVOYE) );
 				this.limits.set( message.author.id, msTime );
 			}
 		}
 		else {
-			this.limits.set( message.author.id, msTime );
+			this.limits.set( message.author.id, this.createUserLimitObject() );
 			await this.ajouterExperienceUtilisateur( message.member, message.channel, Number(process.env.EXP_MSG_ENVOYE) );
 		}
 
 		// Incrémentation du compteur de messages.
 		await this.client.db.usersManager.incrementeCompteurMessagesUser( message.author.id );
+	}
+
+	/**
+	 * Ajouter de l'exp à un utilisateur ayant ajouté un like à un meme.
+	 * Il est cependant limité à 4xp par jour.
+	 * @param {string} userId L'identifiant de l'utilisateur qui a ajouté le like.
+	 * @param {TextChannel} channel Le salon du message.
+	 */
+	async ajouterExperienceLikeAjoute( userId, channel ) {
+		if ( !this._active ) return;
+		const channelDb = await this.client.db.channelsManager.fetchChannel( channel.id );
+		if ( channelDb && channelDb["b_exp"] ) return;
+
+		let userLimits;
+		if ( this.limits.has( userId ) ) {
+			userLimits = this.limits.get(userId);
+			if ((new Date()).getDay() !== userLimits["dayLikeMsgCount"]) {
+				userLimits["dayLikeMsgCount"] = (new Date()).getDay();
+				userLimits["likeMsgCount"] = 0;
+			}
+			// On quitte la fonction si on a deja atteint la limite de likes pour le jour courant.
+			else if (userLimits["likeMsgCount"] === 3) return;
+
+			userLimits["likeMsgCount"]++;
+		}
+		else {
+			userLimits = this.createUserLimitObject();
+			userLimits["likeMsgCount"]++;
+			this.limits.set( userId, userLimits );
+		}
+
+		await this.client.modules.get( "levels" ).ajouterExperienceUtilisateur(
+			await this.guild.members.fetch( userId ),
+			channel,
+			Number(process.env.EXP_LIKE_AJOUTE)
+		);
 	}
 
 	/**

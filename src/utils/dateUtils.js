@@ -16,7 +16,6 @@ function getMonthIntDate() {
 		( date.getMonth() + 1 );
 }
 
-
 function getMonthName() {
 	return [
 		"Janvier",
