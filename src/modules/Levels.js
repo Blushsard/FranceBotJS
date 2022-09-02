@@ -11,7 +11,15 @@
  *      Liste des actions retirant de l'expérience:
  *      	- meme supprimé pour respost: -10xp
  */
-const { Client, Collection, Message, TextChannel, DMChannel, GuildMember } = require( "discord.js" );
+const {
+	Client,
+	Collection,
+	Message,
+	TextChannel,
+	DMChannel,
+	GuildMember,
+	VoiceState,
+	StageChannel } = require( "discord.js" );
 
 
 class Levels
@@ -49,7 +57,9 @@ class Levels
 		return {
 			"timeMsgLimit": 0,	// Le temps depuis le dernier message envoyé en ms.
 			"likeMsgCount": 0,	// Le nombre de likes ajoutés sur des memes pour le jour courant.
-			"dayLikeMsgCount": (new Date()).getDay()	// Le jour courant pour les likes sur les memes.
+			"dayLikeMsgCount": (new Date()).getDay(),	// Le jour courant pour les likes sur les memes.
+			"startTimeVocal": 0	// Le temps a partir duquel un utilisateur a commence a etre en vocal.
+								// Ce temps est remis a zero quand il se mute (l'exp est tout de meme attribuee).
 		};
 	}
 
@@ -76,6 +86,42 @@ class Levels
 
 		const member = await this.guild.members.fetch( auteurId );
 		await this.ajouterExperienceUtilisateur( member, await member.user.createDM( true ), Number(process.env.EXP_FEED) );
+	}
+
+	/**
+	 * Attribue ou non de l'experience en fonction du changement d'un voiceState d'un utilisateur.
+	 * @param {VoiceState} oldState
+	 * @param {VoiceState} newState
+	 */
+	async ajouterExperienceVocal( oldState, newState ) {
+		if ( !this._active ) return;
+
+		const voiceChannel = oldState.channel ?? newState.channel;
+		if ( voiceChannel instanceof StageChannel || !voiceChannel.speakable ) return;
+
+		let date = new Date();
+		if ( this.limits.has( oldState.member.id ) ) {
+			let userData = this.limits.get( oldState.member.id );
+
+			// User entre dans un salon ou n'est plus muet.
+			if ( (!oldState.channel && !newState.mute) || (oldState.mute && !newState.mute) )
+				userData["startTimeVocal"] = date.getTime();
+
+			// User quitte le salon ou devient muet, on lui donne son exp.
+			else if ( (!newState.channel && (!newState.mute || !oldState.mute)) || (!oldState.mute && newState.mute) ) {
+				const timeDiff = date.getTime() - userData["startTimeVocal"];
+				const xpRecu = parseInt( String((Number(process.env.EXP_VOCAL) * timeDiff) / 60_000_000), 10 );
+				userData["startTimeVocal"] = 0;
+				if ( xpRecu !== 0 )
+					await this.ajouterExperienceUtilisateur( oldState.member, oldState.member.createDM(), xpRecu );
+			}
+		}
+		else {
+			let userData = this.createUserLimitObject();
+			if ( !oldState.channel && !newState.mute )
+				userData["startTimeVocal"] = date.getTime();
+			this.limits.set( oldState.member.id, userData );
+		}
 	}
 
 	/**
