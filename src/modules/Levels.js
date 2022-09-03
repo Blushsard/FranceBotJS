@@ -148,12 +148,10 @@ class Levels
 		if ( channel && channel['b_exp'] ) return;
 		if ( message.channel instanceof DMChannel ) return;	// On empêche les gens de gagner de l'xp avec les DM du bot.
 
-		console.log( this.limits )
 		const msTime = (new Date()).getTime();
 		if ( this.limits.has( message.author.id ) ) {
 			// 1 minute
-			console.log( "Existant", this.limits, this.limits.get(message.author.id)["msgLimit"] + 60000, msTime)
-			if ( msTime > this.limits.get( message.author.id )["msgLimit"] + 60_000 ) {
+			if ( msTime >= this.limits.get( message.author.id )["timeLimitMsg"] + 60_000 ) {
 				await this.ajouterExperienceUtilisateur( message.member, message.channel, this.expMsgEnvoye );
 				this.limits.set( message.author.id, msTime );
 			}
@@ -161,7 +159,6 @@ class Levels
 		else {
 			this.limits.set( message.author.id, this.createUserLimitObject() );
 			await this.ajouterExperienceUtilisateur( message.member, message.channel, this.expMsgEnvoye );
-			console.log( "Non-existant", this.limits)
 		}
 
 		// Incrémentation du compteur de messages.
