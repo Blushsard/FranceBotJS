@@ -29,6 +29,8 @@ const slashCommand = new SlashCommandBuilder()
 				[ "Threads", 'threads' ],
 				[ "Twitter", 'twitter' ],
 				[ "Reddit", 'reddit' ],
+				[ "Stats", 'stats' ],
+				[ "Logs", 'logs' ]
 			])
 	)
 	.addBooleanOption( option =>
