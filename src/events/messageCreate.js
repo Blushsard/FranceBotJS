@@ -22,7 +22,6 @@ async function execute( message, client ) {
 	// Il faut récupérer le salon dans la base de données.
 	const salon = await client.db.channelsManager.fetchChannel( message.channelId );
 
-	console.log( "trace1 " );
 	await client.modules.get( 'levels' ).ajouterExperienceMessage( message, salon );
 
 	const messageDeleted = await client.modules.get( 'threads' ).ajouterThread( message, salon );
