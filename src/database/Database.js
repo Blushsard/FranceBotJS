@@ -22,7 +22,6 @@ class Database
 {
 	constructor( client ) {
 		// Limitation du nombre de connexions simultanées.
-		this.limit = process.env.MAX_CONCURRENT_DATABASE_REQUESTS;
 		this.currentRequests = 0;
 		this.client = client;
 
@@ -63,7 +62,7 @@ class Database
 	 * @returns {Promise<array>} Une Promesse complété avec une liste contenant les résultats de la requête.
 	 */
 	async query( req, params ) {
-		while ( this.limit === this.currentRequests ) {
+		while ( process.env.MAX_CONCURRENT_DATABASE_REQUESTS === this.currentRequests ) {
 			await this.sleep( 20 );
 		}
 

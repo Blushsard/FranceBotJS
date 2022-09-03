@@ -97,11 +97,9 @@ class Likes
 		}
 
 		// Ajout de l'exp pour l'ajout d'un like.
-		if ( upvote ) {
-			const levels = await this.client.modules.get( "levels" );
-			await levels.ajouterExperienceLikeRecu( msgDb["s_author_id"], msgDb["s_channel_id"], user.id );
-			await levels.ajouterExperienceLikeAjoute( user.id, reaction.message.channel );
-		}
+		const levels = await this.client.modules.get( "levels" );
+		await levels.ajouterExperienceLikeRecu( msgDb["s_author_id"], msgDb["s_channel_id"], user.id, upvote );
+		await levels.ajouterExperienceLikeAjoute( user.id, reaction.message.channel, upvote );
 
 		await this.client.modules.get( "logs" ).modificationVote(
 			reaction.message,

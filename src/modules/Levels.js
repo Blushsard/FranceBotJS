@@ -37,6 +37,13 @@ class Levels
 		// Voir la fonction createUserLimitObject pour voir sous quelle forme se présente l'objet contenant les limites.
 		this.limits = new Collection();
 		this.guild = null;
+
+		this.expMsgEnvoye = Number(process.env.EXP_MSG_ENVOYE);
+		this.expLikeRecu = Number(process.env.EXP_LIKE_RECU);
+		this.expFeed = Number(process.env.EXP_FEED);
+		this.expRepost = Number(process.env.EXP_REPOST);
+		this.expLikeAjoute = Number(process.env.EXP_LIKE_AJOUTE);
+		this.expVocal = Number(process.env.EXP_VOCAL);
 	}
 
 	getActive() { return this._active; }
@@ -85,7 +92,7 @@ class Levels
 		if ( !this.guild ) return;
 
 		const member = await this.guild.members.fetch( auteurId );
-		await this.ajouterExperienceUtilisateur( member, await member.user.createDM( true ), Number(process.env.EXP_FEED) );
+		await this.ajouterExperienceUtilisateur( member, await member.user.createDM( true ), this.expFeed );
 	}
 
 	/**
@@ -110,7 +117,7 @@ class Levels
 			// User quitte le salon ou devient muet, on lui donne son exp.
 			else if ( (!newState.channel && (!newState.mute || !oldState.mute)) || (!oldState.mute && newState.mute) ) {
 				const timeDiff = date.getTime() - userData["startTimeVocal"];
-				const xpRecu = parseInt( String((Number(process.env.EXP_VOCAL) * timeDiff) / 60_000_000), 10 );
+				const xpRecu = parseInt( String((this.expVocal * timeDiff) / 60_000_000), 10 );
 				userData["startTimeVocal"] = 0;
 				if ( xpRecu !== 0 )
 					await this.ajouterExperienceUtilisateur( oldState.member, oldState.member.createDM(), xpRecu );
@@ -139,13 +146,13 @@ class Levels
 		if ( this.limits.has( message.author.id ) ) {
 			// 1 minute
 			if ( msTime > this.limits.get( message.author.id )["msgLimit"] + 60_000 ) {
-				await this.ajouterExperienceUtilisateur( message.member, message.channel, Number(process.env.EXP_MSG_ENVOYE) );
+				await this.ajouterExperienceUtilisateur( message.member, message.channel, this.expMsgEnvoye );
 				this.limits.set( message.author.id, msTime );
 			}
 		}
 		else {
 			this.limits.set( message.author.id, this.createUserLimitObject() );
-			await this.ajouterExperienceUtilisateur( message.member, message.channel, Number(process.env.EXP_MSG_ENVOYE) );
+			await this.ajouterExperienceUtilisateur( message.member, message.channel, this.expMsgEnvoye );
 		}
 
 		// Incrémentation du compteur de messages.
@@ -157,8 +164,9 @@ class Levels
 	 * Il est cependant limité à 4xp par jour.
 	 * @param {string} userId L'identifiant de l'utilisateur qui a ajouté le like.
 	 * @param {TextChannel} channel Le salon du message.
+	 * @param {boolean} upvote Indique si c'est un upvote ou downvote.
 	 */
-	async ajouterExperienceLikeAjoute( userId, channel ) {
+	async ajouterExperienceLikeAjoute( userId, channel, upvote ) {
 		if ( !this._active ) return;
 		const channelDb = await this.client.db.channelsManager.fetchChannel( channel.id );
 		if ( channelDb && channelDb["b_exp"] ) return;
@@ -170,21 +178,25 @@ class Levels
 				userLimits["dayLikeMsgCount"] = (new Date()).getDay();
 				userLimits["likeMsgCount"] = 0;
 			}
-			// On quitte la fonction si on a deja atteint la limite de likes pour le jour courant.
-			else if (userLimits["likeMsgCount"] === 3) return;
 
-			userLimits["likeMsgCount"]++;
+			if ( upvote ) {
+				if ( userLimits["likeMsgCount"] === 10 ) return;
+				userLimits["likeMsgCount"]++;
+			}
+			else if ( userLimits["likeMsgCount"] > 0 )
+				userLimits["likeMsgCount"]--;
 		}
 		else {
 			userLimits = this.createUserLimitObject();
-			userLimits["likeMsgCount"]++;
+			if ( upvote )
+				userLimits["likeMsgCount"]++;
 			this.limits.set( userId, userLimits );
 		}
 
 		await this.client.modules.get( "levels" ).ajouterExperienceUtilisateur(
 			await this.guild.members.fetch( userId ),
 			channel,
-			Number(process.env.EXP_LIKE_AJOUTE)
+			upvote ? this.expLikeAjoute : -this.expLikeAjoute
 		);
 	}
 
@@ -193,15 +205,16 @@ class Levels
 	 * @param {string} auteurId L'id de l'auteur du message qui a reçu le like.
 	 * @param {string} channelId L'id du salon du message.
 	 * @param {string} userId L'id de l'utilisateur qui a ajouté le like.
+	 * @param {boolean} upvote Indique si c'est un upvote ou downvote.
 	 */
-	async ajouterExperienceLikeRecu( auteurId, channelId, userId ) {
+	async ajouterExperienceLikeRecu( auteurId, channelId, userId, upvote ) {
 		if ( !this._active ) return;
 		if ( userId === auteurId ) return;
 		if ( !this.guild ) return;
 
 		const channel = await this.guild.channels.fetch( channelId );
 		const auteur = await this.guild.members.fetch( auteurId );
-		await this.ajouterExperienceUtilisateur( auteur, channel, Number(process.env.EXP_LIKE_RECU) );
+		await this.ajouterExperienceUtilisateur( auteur, channel, upvote ? this.expLikeRecu : -this.expLikeRecu );
 	}
 
 	/**
@@ -209,7 +222,7 @@ class Levels
 	 * @param {string} auteurId L'id de l'auteur qui vient de se prendre un repost.
 	 */
 	async supprimerExperienceRepost( auteurId ) {
-		await this.client.db.usersManager.ajouterExperienceUser( auteurId, -Number(process.env.EXP_REPOST) );
+		await this.client.db.usersManager.ajouterExperienceUser( auteurId, -this.expRepost );
 	}
 
 	/**
