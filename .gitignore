@@ -110,3 +110,4 @@ dist
 /src/database/create_db.sql
 /src/database/create_db.beta.sql
 /src/database/connect.bat
+/src/.env.local.beta
