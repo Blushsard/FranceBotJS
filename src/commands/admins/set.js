@@ -115,7 +115,7 @@ async function execute( interaction ) {
 			`**Feed :** ${convertIntToBoolean( channel["b_feed"] )}\n` +
 			`**Logs :** ${convertIntToBoolean( channel["b_logs"] )}\n` +
 			`**Stats :** ${convertIntToBoolean( channel["b_stats"] )}\n` +
-			`**Exp: ** ${convertIntToBoolean( !channel["b_exp"] )}`+
+			`**Exp: ** ${convertIntToBoolean( !channel["b_exp"] )}\n`+
 			`**Vote: ** ${convertIntToBoolean( !channel["b_vote"] )}`
 		)
 		.setAuthor({
