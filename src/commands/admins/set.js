@@ -116,7 +116,7 @@ async function execute( interaction ) {
 			`**Logs :** ${convertIntToBoolean( channel["b_logs"] )}\n` +
 			`**Stats :** ${convertIntToBoolean( channel["b_stats"] )}\n` +
 			`**Exp: ** ${convertIntToBoolean( !channel["b_exp"] )}\n`+
-			`**Vote: ** ${convertIntToBoolean( !channel["b_vote"] )}`
+			`**Vote: ** ${convertIntToBoolean( channel["b_vote"] )}`
 		)
 		.setAuthor({
 			name: "| Fonctionnalités du salon",
