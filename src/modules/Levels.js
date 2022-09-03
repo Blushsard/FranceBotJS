@@ -238,8 +238,8 @@ class Levels
 	async supprimerExperienceRepostAjoute( auteur, channel, upvote ) {
 		const channelDb = await this.client.db.channelsManager.fetchChannel( channel.id );
 		if ( channelDb && channelDb["b_exp"] ) return;
-
-		await this.ajouterExperienceUtilisateur( auteur, channel, upvote ? -this.expLikeRecu : this.expLikeRecu );
+		console.log( "DEBUUUUUUG", -this.expRepostAjoute, this.expRepostAjoute, upvote, upvote ? -this.expRepostAjoute : this.expLikeRecu )
+		await this.ajouterExperienceUtilisateur( auteur, channel, upvote ? -this.expRepostAjoute : this.expLikeRecu );
 	}
 
 
