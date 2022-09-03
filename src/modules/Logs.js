@@ -81,7 +81,7 @@ class Logs
 			]);
 
 		// Dans le cas ou l'objet de l'auteur est présent dans l'objet du message.
-		if ( message.author )
+		if ( message.author && typeof message.author.username === 'string' )
 			embed
 				.setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() });
 		else {
