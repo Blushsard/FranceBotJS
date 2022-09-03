@@ -222,9 +222,12 @@ class Levels
 		const channelDb = await this.client.db.channelsManager.fetchChannel( channelId );
 		if ( channelDb && channelDb["b_exp"] ) return;
 
-		const channel = await this.guild.channels.fetch( channelId );
-		const auteur = await this.guild.members.fetch( auteurId );
-		await this.ajouterExperienceUtilisateur( auteur, channel, upvote ? this.expLikeRecu : -this.expLikeRecu );
+		try {
+			const channel = await this.guild.channels.fetch( channelId );
+			const auteur = await this.guild.members.fetch( auteurId );
+			await this.ajouterExperienceUtilisateur( auteur, channel, upvote ? this.expLikeRecu : -this.expLikeRecu );
+		}
+		catch ( err ) {}
 	}
 
 

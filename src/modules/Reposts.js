@@ -52,7 +52,7 @@ class Reposts
 		});
 
 		const guild = await this.client.guilds.fetch( reaction.message.guildId );
-		const guildMemberAuthor = await guild.members.fetch( reaction.message.author.id );
+		const guildMemberAuthor = await guild.members.fetch( user.id );
 		await this.client.modules.get( "levels" ).supprimerExperienceRepostAjoute(
 			guildMemberAuthor,
 			reaction.message.channel,
@@ -83,7 +83,7 @@ class Reposts
 				}]);
 
 			try {
-				await reaction.message.author.send({embeds: [embed]});
+				await user.send({embeds: [embed]})
 			}
 			catch ( err ) { this.client.emit( "error", err ); }
 		}
