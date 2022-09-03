@@ -10,6 +10,7 @@ const { ChannelsManager } = require( `${process.cwd()}/database/modules/Channels
 const { RolesLevelsManager } = require( `${process.cwd()}/database/modules/RolesLevelsManager` );
 const { MessagesManager } = require( `${process.cwd()}/database/modules/MessagesManager` );
 const { StatsManager } = require( `${process.cwd()}/database/modules/StatsManager` );
+const { FeedManager } = require( `${process.cwd()}/database/modules/FeedManager` );
 
 
 /**
@@ -31,6 +32,7 @@ class Database
 		this.rolesLevelsManager = new RolesLevelsManager( this );
 		this.messagesManager = new MessagesManager( this );
 		this.statsManager = new StatsManager( this );
+		this.feedManager = new FeedManager( this );
 	}
 
 

@@ -18,7 +18,6 @@ class ChannelsManager
 		this.db = db;
 	}
 
-
 	/**
 	 * Récupère un salon de la base de données.
 	 * @param {string} channelId L'identifiant du salon.
@@ -32,6 +31,18 @@ class ChannelsManager
 		);
 	}
 
+	/**
+	 * Récupère tout les salons avec la valeur spécifiée dans la colonne spécifiée.
+	 * @param {string} column Le nom de la colonne contenant la valeur.
+	 * @param {boolean} value La valeur recherchée.
+	 * @return {array[object]} Une liste contenant les objets des salons.
+	 */
+	async fetchChannelsByValue( column, value ) {
+		return await this.db.query(
+			`SELECT * FROM channels WHERE ${column}=?`,
+			[ value ]
+		);
+	}
 
 	/**
 	 * Récupère le premier salon dans la table avec la valeur passée en paramètre.
@@ -42,7 +53,6 @@ class ChannelsManager
 	async fetchOneChannelByValue(columnName, value ) {
 		return await this.db.oneResultQuery( `SELECT * from channels WHERE ${columnName}=?`, [ value ] );
 	}
-
 
 	/**
 	 * Ajoute un salon à la base de données.
@@ -55,7 +65,6 @@ class ChannelsManager
 			[ channelId, false, false, false, false, false, false, false ]
 		);
 	}
-
 
 	/**
 	 * Met à jour un salon dans la base de données. Si le salon n'est pas dans la bdd, alors il est ajouté puis mis-à-jour.
