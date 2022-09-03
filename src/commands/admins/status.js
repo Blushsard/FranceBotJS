@@ -61,7 +61,7 @@ async function execute( interaction ) {
 	const channelData = await interaction.client.db.channelsManager.fetchChannel( interaction.channelId );
 	if ( channelData ) {
 		let embedDescription = "" +
-			(!channelData["b_likes"] ? ":green_circle:" : ":red_circle:") + " **Likes**\n" +
+			(channelData["b_likes"] ? ":green_circle:" : ":red_circle:") + " **Likes**\n" +
 			(channelData["b_reposts"] ? ":green_circle:" : ":red_circle:") + " **Reposts**\n" +
 			(channelData["b_threads"] ? ":green_circle:" : ":red_circle:") + " **Threads**\n" +
 			(channelData["b_feed"] ? ":green_circle:" : ":red_circle:") + " **Feed**\n" +
