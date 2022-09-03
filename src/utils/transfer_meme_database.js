@@ -20,6 +20,14 @@ async function query( cnx, req, params ) {
 }
 
 
+function getType( fileType, attachUrl ) {
+	if ( fileType === "lien" ) return fileType;
+
+	let splittedUrl = attachUrl.split('.');
+	return fileType + "/" + splittedUrl[splittedUrl.length - 1];
+}
+
+
 ( async () => {
 	// Connection à l'ancienne bdd.
 	let cnx = await getConnection({
@@ -29,7 +37,37 @@ async function query( cnx, req, params ) {
 		database: "FMDatabase"
 	});
 
-	let memes = await query( cnx, "SELECT * FROM ListeMemes WHERE stf=1" );
-	console.log( memes.length )
-	console.log( memes )
+	let oldMemes = await query( cnx, "SELECT * FROM ListeMemes WHERE stf=1" );
+	let newMemes = [];
+	let attachments = [];
+	for ( let oldMeme of oldMemes ) {
+		newMemes.push([
+			String(oldMeme["msg_id"]),
+			String(oldMeme["author_id"]),
+			String(oldMeme["channel_id"]),
+			oldMeme["likes"],
+			oldMeme["stf"],
+			oldMeme["stt"],
+			oldMeme["str"],
+			oldMeme["repost"],
+			oldMeme["date_mois"],
+			oldMeme["jump_url"],
+			oldMeme["msg_content"]
+		]);
+		attachments.push([
+			String(oldMeme["msg_id"]),
+			getType( oldMeme["file_type"], oldMeme["attach_url"] ),
+			oldMeme["attach_url"]
+		]);
+	}
+
+	for ( let meme of newMemes ) {
+		await query( cnx, "INSERT INTO messages VALUES (?,?,?,?,?,?,?,?,?,?,?)", meme );
+	}
+
+	for ( let attachment of attachments ) {
+		await query( cnx, "INSERT INTO attachments VALUES (?,?,?)", attachment );
+	}
+
+	console.log( "walaaaaaaaaaaaaaaaaaaa" );
 })();
