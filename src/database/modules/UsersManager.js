@@ -55,12 +55,20 @@ class UsersManager
 	 * @param {int} xp L'expérience totale de l'utilisateur.
 	 * @param {int} nb_msg Le nombre de messages total envoyés par l'utilisateur.
 	 * @param {number} progress Le progrès sur le niveau actuel en pourcentage.
+	 * @return {object} Un objet contenant les données de l'utilisateur.
 	 */
 	async addUser( userId, level=0, xp=0, nb_msg=0, progress=0 ) {
 		await this.db.query(
 			"INSERT INTO users VALUES (?,?,?,?,?);",
 			[ userId, level, xp, nb_msg, progress ]
 		);
+		return {
+			"pk_user_id": userId,
+			"n_level": level,
+			"n_xp": xp,
+			"n_nb_messages": nb_msg,
+			"n_progress": progress
+		};
 	}
 
 	/**
@@ -68,7 +76,10 @@ class UsersManager
 	 * @param {string} userId L'identifiant de l'utilisateur.
 	 */
 	async removeUser( userId ) {
-
+		await this.db.query(
+			"DELETE FROM users WHERE pk_user_id=?",
+			[ userId ]
+		);
 	}
 
 
@@ -93,15 +104,23 @@ class UsersManager
 	 * @return {Promise<object>} L'objet contenant les données de l'user après l'ajout.
 	 */
 	async ajouterExperienceUser( userId, exp ) {
-		if ( !(await this.fetchUser( userId ) ) )
-			await this.addUser( userId );
+		let user = await this.fetchUser( userId );
+		if ( !user ) {
+			user = await this.addUser( userId );
+			exp = exp > 0 ? exp : 0;
+		}
+		else {
+			if ( user["n_xp"] + exp <= 0 )
+				exp = 0;
+		}
 
 		await this.db.query(
-			"UPDATE users SET n_xp=n_xp+? WHERE pk_user_id=?;",
+			"UPDATE users SET n_xp=? WHERE pk_user_id=?;",
 			[ exp, userId ]
 		);
 
-		return await this.fetchUser( userId );
+		user["n_xp"] += exp;
+		return user;
 	}
 
 	/**

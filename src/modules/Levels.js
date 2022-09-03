@@ -42,9 +42,11 @@ class Levels
 		this.expLikeRecu = Number(process.env.EXP_LIKE_RECU);
 		this.expFeed = Number(process.env.EXP_FEED);
 		this.expRepost = Number(process.env.EXP_REPOST);
+		this.expRepostAjoute = Number(process.env.EXP_REPOST_AJOUTE)
 		this.expLikeAjoute = Number(process.env.EXP_LIKE_AJOUTE);
 		this.expVocal = Number(process.env.EXP_VOCAL);
 	}
+
 
 	getActive() { return this._active; }
 	setActive( active ) { this._active = active; }
@@ -55,6 +57,7 @@ class Levels
 	async loadGuildObject() {
 		this.guild = await this.client.guilds.fetch( process.env.GUILD_ID );
 	}
+
 
 	/**
 	 * Créer un objet contenant les limites de l'utilisateur.
@@ -70,6 +73,7 @@ class Levels
 		};
 	}
 
+
 	/**
 	 * Ajoute de l'expérience à un utilisateur.
 	 * @param {GuildMember} member L'objet du membre qui reçoit de l'expérience.
@@ -81,6 +85,7 @@ class Levels
 		if ( user )
 			await this.levelUpUtilisateur( user, member, channel );
 	}
+
 
 	/**
 	 * Juste un wrapper pour simplifier le code dans la fonction du feed.
@@ -94,6 +99,7 @@ class Levels
 		const member = await this.guild.members.fetch( auteurId );
 		await this.ajouterExperienceUtilisateur( member, await member.user.createDM( true ), this.expFeed );
 	}
+
 
 	/**
 	 * Attribue ou non de l'experience en fonction du changement d'un voiceState d'un utilisateur.
@@ -131,6 +137,7 @@ class Levels
 		}
 	}
 
+
 	/**
 	 * Ajoute de l'expérience à un utilisateur suite à un message envoyé.
 	 * Cette fonction doit être placée dans l'event messageCreate.
@@ -158,6 +165,7 @@ class Levels
 		// Incrémentation du compteur de messages.
 		await this.client.db.usersManager.incrementeCompteurMessagesUser( message.author.id );
 	}
+
 
 	/**
 	 * Ajouter de l'exp à un utilisateur ayant ajouté un like à un meme.
@@ -200,6 +208,7 @@ class Levels
 		);
 	}
 
+
 	/**
 	 * Ajoute de l'exp à l'auteur d'un meme qui a reçu un like.
 	 * @param {string} auteurId L'id de l'auteur du message qui a reçu le like.
@@ -211,19 +220,42 @@ class Levels
 		if ( !this._active ) return;
 		if ( userId === auteurId ) return;
 		if ( !this.guild ) return;
+		const channelDb = await this.client.db.channelsManager.fetchChannel( channelId );
+		if ( channelDb && channelDb["b_exp"] ) return;
 
 		const channel = await this.guild.channels.fetch( channelId );
 		const auteur = await this.guild.members.fetch( auteurId );
 		await this.ajouterExperienceUtilisateur( auteur, channel, upvote ? this.expLikeRecu : -this.expLikeRecu );
 	}
 
+
+	/**
+	 * Supprime de l'exp à un utilisateur si il reçoit un repost sur un meme.
+	 * @param {string} auteurId L'id de l'auteur qui vient de se prendre un repost.
+	 * @param {string} channelId L'id du salon contenant le meme.
+	 * @param {boolean} upvote Indique si c'est un upvote ou downvote.
+	 */
+	async supprimerExperienceRepostAjoute( auteurId, channelId, upvote ) {
+		const channelDb = await this.client.db.channelsManager.fetchChannel( channelId );
+		if ( channelDb && channelDb["b_exp"] ) return;
+		await this.client.db.usersManager.ajouterExperienceUser(
+			auteurId,
+			upvote ? -this.expRepostAjoute : this.expRepostAjoute
+		);
+	}
+
+
 	/**
 	 * Supprime de l'exp à un utilisateur si un de ces messages est supprimé pour repost.
 	 * @param {string} auteurId L'id de l'auteur qui vient de se prendre un repost.
+	 * @param {string} channelId L'id du salon contenant le meme.
 	 */
-	async supprimerExperienceRepost( auteurId ) {
+	async supprimerExperienceRepostSupprime( auteurId, channelId ) {
+		const channelDb = await this.client.db.channelsManager.fetchChannel( channelId );
+		if ( channelDb && channelDb["b_exp"] ) return;
 		await this.client.db.usersManager.ajouterExperienceUser( auteurId, -this.expRepost );
 	}
+
 
 	/**
 	 * Regarde si les rôles et niveau de l'utilisateur sont à jour et les met à jour si besoin.

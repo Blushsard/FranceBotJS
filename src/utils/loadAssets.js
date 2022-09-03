@@ -31,16 +31,16 @@ async function loadModules( client ) {
 	let modules = JSON.parse( fs.readFileSync( `${process.cwd()}/data/modules.json` ) );
 
 	// Chargement des modules dans le client.
+	client.modules.set( 'feed', new Feed( client, modules['feed'] ) );
 	client.modules.set( 'levels', new Levels( client, modules['levels'] ) );
 	client.modules.set( 'likes', new Likes( client, modules['likes'] ) );
 	client.modules.set( 'logs', new Logs( client, modules['logs'] ) );
 	client.modules.set( 'moyenne', new Moyenne( client ) );
 	client.modules.set( 'reposts', new Reposts( client, modules['reposts'] ) );
-	client.modules.set( 'threads', new Threads( client, modules['threads'] ) );
-	client.modules.set( 'feed', new Feed( client, modules['feed'] ) );
 	client.modules.set( 'reddit', new Reddit( client, modules['reddit'] ) );
-	client.modules.set( 'twitter', new Twitter( client, modules['twitter'] ) );
 	client.modules.set( 'stats', new Stats( client, modules['stats'] ) );
+	client.modules.set( 'threads', new Threads( client, modules['threads'] ) );
+	client.modules.set( 'twitter', new Twitter( client, modules['twitter'] ) );
 }
 
 

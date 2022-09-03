@@ -29,8 +29,9 @@ class Reposts
 	 * @param {MessageReaction} reaction La reaction qui a été ajoutée sur le message.
 	 * @param {object|null} salon L'objet contenant les données de la bdd du salon.
 	 * @param {User} user L'utilisateur qui a ajouté la réaction.
+	 * @param {boolean} upvote Indique si c'est un upvote ou downvote.
 	 */
-	async checkRepost( reaction, salon, user ) {
+	async checkRepost( reaction, salon, user, upvote ) {
 		if ( !this._active ) return;
 		if ( !salon ) return;
 		if ( !salon["b_reposts"] ) return;
@@ -50,6 +51,11 @@ class Reposts
 				countReposts = reaction.count - 1;
 		});
 
+		await this.client.modules.get( "levels" ).supprimerExperienceRepostAjoute(
+			reaction.message.author.id,
+			reaction.message.channelId,
+			upvote
+		);
 		await this.client.modules.get( "logs" ).modificationVote(
 			reaction.message,
 			countReposts,
@@ -59,10 +65,10 @@ class Reposts
 		);
 
 		// Suppression du message si il y a trop de repost.
-		if ( countReposts >= moyenne ) {
+		if ( countReposts >= moyenne / 2 ) {
 			await this.client.modules.get( "logs" ).repostSupprime();
 			await this.client.modules.get( "stats" ).addRepostToStats();
-			await this.client.modules.get( "levels" ).supprimerExperienceRepost( reaction.message.author.id );
+			await this.client.modules.get( "levels" ).supprimerExperienceRepostSupprime( reaction.message.author.id, reaction.message.channelId );
 			await this.client.modules.get( "feed" ).deleteMessageFromFeed( reaction.message.id );
 			await reaction.message.delete();
 
