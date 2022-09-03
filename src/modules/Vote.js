@@ -32,8 +32,10 @@ class Vote {
 		if ( !salonDb ) return;
 		if ( salonDb && !salonDb["b_vote"] ) return;
 
-		await msg.react( "👍" );
-		await msg.react( "👎" );
+		try {
+			await msg.react( "👍" );
+			await msg.react( "👎" );
+		} catch ( err ) {}
 	}
 }
 
