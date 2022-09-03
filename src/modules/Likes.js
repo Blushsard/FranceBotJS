@@ -78,7 +78,7 @@ class Likes
 		if ( user.id === this.client.user.id ) return;
 		if ( reaction.emoji.id !== process.env.EMOJI_LIKE_ID ) return;
 
-		const msgDb = await this.db.messagesManager.fetchMessage( reaction.message.id );
+		let msgDb = await this.db.messagesManager.fetchMessage( reaction.message.id );
 		let likes;
 
 		if ( msgDb ) {
@@ -94,6 +94,7 @@ class Likes
 
 			likes = this.getCountLikes( message.reactions.cache );
 			await this.db.messagesManager.updateLikesCount( reaction.message.id, likes );
+			msgDb = await this.db.messagesManager.fetchMessage( reaction.message.id );
 		}
 
 		// Ajout de l'exp pour l'ajout d'un like.
