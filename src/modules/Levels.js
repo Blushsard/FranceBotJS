@@ -81,6 +81,7 @@ class Levels
 	 */
 	async ajouterExperienceUtilisateur( member, channel, exp ) {
 		const user = await this.client.db.usersManager.ajouterExperienceUser( member.id, exp );
+		console.log( user )
 		if ( user )
 			await this.levelUpUtilisateur( user, member, channel );
 	}
@@ -148,6 +149,7 @@ class Levels
 		if ( channel && channel['b_exp'] ) return;
 		if ( message.channel instanceof DMChannel ) return;	// On empêche les gens de gagner de l'xp avec les DM du bot.
 
+		console.log("trace2")
 		const msTime = (new Date()).getTime();
 		if ( this.limits.has( message.author.id ) ) {
 			// 1 minute
@@ -160,7 +162,7 @@ class Levels
 			this.limits.set( message.author.id, this.createUserLimitObject() );
 			await this.ajouterExperienceUtilisateur( message.member, message.channel, this.expMsgEnvoye );
 		}
-
+		console.log("traceX")
 		// Incrémentation du compteur de messages.
 		await this.client.db.usersManager.incrementeCompteurMessagesUser( message.author.id );
 	}

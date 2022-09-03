@@ -120,6 +120,7 @@ class UsersManager
 		);
 
 		user["n_xp"] += exp;
+		console.log( user )
 		return user;
 	}
 
