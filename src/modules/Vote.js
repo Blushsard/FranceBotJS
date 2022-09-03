@@ -27,7 +27,7 @@ class Vote {
 	 * @param {Message} msg Le message qui va recevoir les emojis.
 	 */
 	async ajouterEmojiVote( msg ) {
-		if ( this._active ) return;
+		if ( !this._active ) return;
 
 		await msg.react( "👍" );
 		await msg.react( "👎" );
