@@ -45,7 +45,7 @@ async function execute( interaction ) {
 			`${mod.get("feed").active ? ":green_circle:": ":red_circle:"} ${mod.get("feed").constructor.name}\n` +
 			`${mod.get("threads").active ? ":green_circle:": ":red_circle:"} ${mod.get("threads").constructor.name}\n` +
 			"\n**XP :**\n" +
-			`${mod.get("leves").active ? ":green_circle:": ":red_circle:"} ${mod.get("levels").constructor.name}\n` +
+			`${mod.get("levels").active ? ":green_circle:": ":red_circle:"} ${mod.get("levels").constructor.name}\n` +
 			"\n**Social :**\n" +
 			`${mod.get("reddit").active ? ":green_circle:": ":red_circle:"} ${mod.get("reddit").constructor.name}\n` +
 			`${mod.get("twitter").active ? ":green_circle:": ":red_circle:"} ${mod.get("twitter").constructor.name}\n` +
