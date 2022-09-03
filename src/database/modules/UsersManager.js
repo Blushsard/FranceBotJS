@@ -105,6 +105,7 @@ class UsersManager
 	 */
 	async ajouterExperienceUser( userId, exp ) {
 		let user = await this.fetchUser( userId );
+		console.log( "debug3", user )
 		if ( !user ) {
 			user = await this.addUser( userId );
 			exp = exp > 0 ? exp : 0;
@@ -114,8 +115,10 @@ class UsersManager
 				exp = 0;
 		}
 
+		console.log( "debug4", user, exp )
+
 		await this.db.query(
-			"UPDATE users SET n_xp=? WHERE pk_user_id=?;",
+			"UPDATE users SET n_xp=n_xp+? WHERE pk_user_id=?;",
 			[ exp, userId ]
 		);
 
