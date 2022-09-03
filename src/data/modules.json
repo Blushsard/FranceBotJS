@@ -1,1 +1,12 @@
-{"levels":true,"likes":true,"logs":true,"reposts":true,"feed":true,"threads":true,"reddit":false,"twitter":false,"stats":true, "vote": true}
+{
+	"levels": true,
+	"likes": true,
+	"logs": true,
+	"reposts": true,
+	"feed": true,
+	"threads": true,
+	"reddit": false,
+	"twitter": false,
+	"stats": true,
+	"vote": true
+}
