@@ -5,7 +5,7 @@
  */
 
 const { Message } = require( "discord.js" );
-const { getMonthlyIntDate } = require( `${process.cwd()}/utils/dateUtils` );
+const { getMonthIntDate } = require( `${process.cwd()}/utils/dateUtils` );
 
 
 class MessagesManager
@@ -24,48 +24,47 @@ class MessagesManager
 	 * @param {int} likes Le nombre de likes du message.
 	 */
 	async ajouterMessage( message, memes, likes ) {
-		await this.db.query(
-			"INSERT INTO messages VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-			[
-				message.id,
-				message.author.id,
-				message.channel.id,
-				likes,
-				false,
-				false,
-				false,
-				false,
-				getMonthlyIntDate(),
-				message.url,
-				message.content
-			]
-		);
-
-		for ( let element of memes ) {
+		try {
 			await this.db.query(
-				"INSERT INTO attachments VALUES (?,?,?);",
+				"INSERT INTO messages VALUES (?,?,?,?,?,?,?,?,?,?,?)",
 				[
 					message.id,
-					typeof element === "string" ? "lien" : element.contentType,
-					typeof element === "string" ? element : element.url
+					message.author.id,
+					message.channel.id,
+					likes,
+					false,
+					false,
+					false,
+					false,
+					getMonthIntDate(),
+					message.url,
+					message.content
 				]
-			)
+			);
+
+			for (let element of memes) {
+				await this.db.query(
+					"INSERT INTO attachments VALUES (?,?,?);",
+					[
+						message.id,
+						typeof element === "string" ? "lien" : element.contentType,
+						typeof element === "string" ? element : element.url
+					]
+				)
+			}
 		}
+		catch( err ) { this.db.client.emit( "error", err ); }
 	}
 
 	/**
-	 * Supprime un message et ses memes de la base de données.
-	 * @param {string} messageId L'identifiant du message.
+	 * Récupère un message de la base de données.
+	 * @param {string} msgId L'identifiant du message
+	 * @return {Promise<object>} Une Promesse complétée avec l'objet contenant les données du message ou null.
 	 */
-	async supprimerMessage( messageId ) {
-		await this.db.query(
-			"DELETE FROM messages WHERE pk_msg_id=?",
-			[ messageId ]
-		);
-
-		await this.db.query(
-			"DELETE FROM attachments WHERE pk_msg_id=?",
-			[ messageId ]
+	async fetchMessage( msgId ) {
+		return await this.db.oneResultQuery(
+			"SELECT * FROM messages WHERE pk_msg_id=?",
+			[ msgId ]
 		);
 	}
 
@@ -74,7 +73,7 @@ class MessagesManager
 	 * @param {string} messageId L'identifiant du message.
 	 * @returns {Promise<array>} Une Promise complétée avec une liste contenant les attachments.
 	 */
-	async getMessageAttachments( messageId ) {
+	async fetchMessageAttachments( messageId ) {
 		return await this.db.query(
 			"SELECT * FROM attachments WHERE pk_msg_id=?",
 			[ messageId ]
@@ -100,11 +99,17 @@ class MessagesManager
 	 * @param {string} messageId L'identifiant du message à mettre à jour.
 	 * @param {string} columnName Le nom de la colonne à mettre à jour.
 	 * @param {string} value La nouvelle valeur de la colonne.
+	 * @return {Promise<object>} Une Promise complétée avec un objet contenant les données du message après update.
 	 */
 	async updateMessage( messageId, columnName, value ) {
 		await this.db.query(
 			`UPDATE messages SET ${columnName}=? WHERE pk_msg_id=?`,
 			[ value, messageId ]
+		);
+
+		return await this.db.oneResultQuery(
+			`SELECT * FROM messages WHERE pk_msg_id=?`,
+			[ messageId ]
 		);
 	}
 }

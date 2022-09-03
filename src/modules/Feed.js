@@ -24,37 +24,41 @@ class Feed
 
 	/**
 	 * Envoit les memes dans le feed toutes les X secondes.
-	 * @param {number} delay Le délai entre chaque intération du feed.
+	 * @param {string} delay Le délai entre chaque intération du feed.
 	 */
 	async feed( delay ) {
 		setInterval( async () => {
 			if ( !this._active ) return;
 
 			// Récupération du salon du feed si il existe.
-			const feedChannelID = await this.db.channelsManager.fetchChannelByValue( "b_feed", true );
-			if ( !feedChannelID.length ) return;
-			const feedChannel = await this.client.channels.fetch( feedChannelID[0]["pk_id_channel"] );
+			const feedChannelID = await this.db.channelsManager.fetchOneChannelByValue( "b_feed", true );
+			if ( !feedChannelID ) return;
+			const feedChannel = await this.client.channels.fetch( feedChannelID["pk_id_channel"] );
 
 			// Récupération de la moyenne et des messages de la base de données.
 			const moyenne = this.client.modules.get( "moyenne" ).getMoyenne();
-			let messages = await this.db.query(
-				"SELECT * FROM messages WHERE b_stf=0 AND n_likes>=?",
-				[ moyenne ]
-			);
+			let messages = await this.db.feedManager.fetchFeedQualifyingMessages( moyenne );
 
 			// Traitement et envoi des messages dans le feed.
 			for ( let msg of messages ) {
-				const memes = await this.db.messagesManager.getMessageAttachments( msg["pk_msg_id"] );
+				const memes = await this.db.messagesManager.fetchMessageAttachments( msg["pk_msg_id"] );
 
 				const author = this.client.users.cache.get( msg["s_author_id"] );
 				if ( !author ) continue;
 
+				// Le premier embed est récupérer pour envoyer le bon lien à l'auteur du message contenant les memes.
 				const memeChannel = this.client.channels.cache.get( msg["s_channel_id"] );
-				const firstEmbed = await this.sendMemesEmbeds( memes, feedChannel, author, memeChannel, msg['s_jump_url'] );
+				const firstEmbed = await this.sendMemesEmbeds( memes, feedChannel, author, memeChannel, msg );
 				await this.sendMessageToAuthor( author, firstEmbed );
 				await this.db.messagesManager.updateMessage( msg["pk_msg_id"], "b_stf", true );
+
+				await this.client.modules.get( "levels" ).ajouterExperienceFeed( msg["s_author_id"] );
+				await this.client.modules.get( "logs" ).memeEnvoyeDansFeed(
+					await memeChannel.messages.fetch( msg["pk_msg_id"] ),
+					firstEmbed.url
+				);
 			}
-		}, delay );
+		}, Number( delay ) );
 	}
 
 	/**
@@ -63,16 +67,16 @@ class Feed
 	 * @param {TextChannel} feedChannel Le salon du feed.
 	 * @param {User} author L'auteur du message contenant les memes.
 	 * @param {TextChannel} memeChannel Le salon dans lequel a été envoyé le message contenant les memes.
-	 * @param {string} jumpUrl L'url du message contenant les memes.
+	 * @param {object} msgData Les donnees du msg provenant de la bdd.
 	 * @return {Message} Le premier embed qui a été envoyé.
 	 */
-	async sendMemesEmbeds( memes, feedChannel, author, memeChannel, jumpUrl ) {
+	async sendMemesEmbeds( memes, feedChannel, author, memeChannel, msgData ) {
 		let firstEmbed = null;
 		let embed;
 		for ( let meme of memes ) {
 			embed = new MessageEmbed()
 				.setAuthor({ name: `| ${author.username}`, iconURL: author.avatarURL() })
-				.addField( "Lien du message", `[Accès au message](${jumpUrl})` )
+				.addField( "Lien du message", `[Accès au message](${msgData["jumpUrl"]})` )
 				.addField( "Dans", `${memeChannel} de la catégorie: ${memeChannel.parent.name}` )
 				.setColor( "#2bcaff" );
 
@@ -81,9 +85,13 @@ class Feed
 			else if ( meme["s_type"].split( "/" )[0] === "image" )
 				embed.setImage( meme["s_url"] );
 			else if ( meme["s_type"].split( "/" )[0] === "video" )
-				embed.setURL( jumpUrl ).setTitle( "Lien de la vidéo" );
+				embed.setURL( msgData["jumpUrl"] ).setTitle( "Lien de la vidéo" );
 
 			let msg = await feedChannel.send({ embeds: [ embed ] });
+
+			// Lien entre le message et l'embed du feed dans la base de donnees.
+			await this.db.feedManager.linkFeedToOriginMsg( msg.id, msgData["pk_msg_id"] );
+
 			if ( !firstEmbed ) firstEmbed = msg;
 		}
 		return firstEmbed;
@@ -100,11 +108,33 @@ class Feed
 			await author.send({ embeds: [
 					new MessageEmbed()
 						.setColor( "#2bcaff" )
-						.setTitle( "Un de vos meme a été envoyé dans le feed!" )
+						.setTitle( "Un de vos memes a été envoyé dans le feed !" )
 						.setURL( firstEmbed.url )
 				]});
 		}
-		catch ( err ) {}
+		catch ( err ) { this.client.emit( "error", err ); }
+	}
+
+	/**
+	 * Supprime tout les memes postés dans le feed provenant du message d'origine spécifié.
+	 * @param {string} originMsgId L'id du message d'origine.
+	 */
+	async deleteMessageFromFeed( originMsgId ) {
+		const feedChannelsId = await this.db.channelsManager.fetchChannelsByValue( "b_feed", true );
+
+		// Parcours de tout les salons de feed du bot.
+		for ( let feedChannelId of feedChannelsId ) {
+			const feedChannel = await this.client.channels.fetch( feedChannelId["pk_id_channel"] );
+			const linksFeedMsg = await this.db.feedManager.fetchLinks( "n_msg_id", originMsgId );
+
+			// Suppression de tout les messages envoyés dans le feed actuel.
+			for ( let link of linksFeedMsg ) {
+				try {
+					await feedChannel.messages.delete(link['pk_feed_msg_id']);
+				} catch ( err ) {}
+			}
+			await this.db.feedManager.deleteRows( "n_msg_id", originMsgId );
+		}
 	}
 }
 

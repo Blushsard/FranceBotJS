@@ -10,13 +10,31 @@
  * Calcul: année + mois * 12
  * @returns {number} L'entier généré.
  */
-function getMonthlyIntDate() {
+function getMonthIntDate() {
 	const date = new Date();
 	return date.getFullYear() * 12 +
 		( date.getMonth() + 1 );
 }
 
+function getMonthName() {
+	return [
+		"Janvier",
+		"Février",
+		"Mars",
+		"Avril",
+		"Mai",
+		"Juin",
+		"Juillet",
+		"Août",
+		"Septembre",
+		"Octobre",
+		"Novembre",
+		"Décembre"
+	][(new Date()).getMonth()];
+}
+
 
 module.exports = {
-	getMonthlyIntDate
+	getMonthIntDate,
+	getMonthName
 }

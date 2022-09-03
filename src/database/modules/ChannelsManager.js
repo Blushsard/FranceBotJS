@@ -18,33 +18,41 @@ class ChannelsManager
 		this.db = db;
 	}
 
-
 	/**
 	 * Récupère un salon de la base de données.
 	 * @param {string} channelId L'identifiant du salon.
-	 * @returns {Promise<array>} Une Promesse complétée avec un objet contenant les données du salon si il est présent dans
+	 * @returns {Promise<object>} Une Promesse complétée avec un objet contenant les données du salon si il est présent dans
 	 * 							 la bdd, sinon null.
 	 */
 	async fetchChannel( channelId ) {
-		const row = await this.db.query(
+		return await this.db.oneResultQuery(
 			"SELECT * FROM channels WHERE pk_id_channel=?;",
 			[ channelId ]
 		);
-
-		return row.length ? row[0] : null;
 	}
-
 
 	/**
-	 * Récupère tout les salons avec une valeur ciblée dans une colonne.
-	 * @param {string} columnName La colonne ciblée.
-	 * @param {boolean} value La valeur requise.
-	 * @returns {Promise<array[object]>} Une Promesse complétée avec la liste de tous les salons trouvés.
+	 * Récupère tout les salons avec la valeur spécifiée dans la colonne spécifiée.
+	 * @param {string} column Le nom de la colonne contenant la valeur.
+	 * @param {boolean} value La valeur recherchée.
+	 * @return {array[object]} Une liste contenant les objets des salons.
 	 */
-	async fetchChannelByValue( columnName, value ) {
-		return await this.db.query( `SELECT * from channels WHERE ${columnName}=?`, [ value ] );
+	async fetchChannelsByValue( column, value ) {
+		return await this.db.query(
+			`SELECT * FROM channels WHERE ${column}=?`,
+			[ value ]
+		);
 	}
 
+	/**
+	 * Récupère le premier salon dans la table avec la valeur passée en paramètre.
+	 * @param {string} columnName La colonne ciblée.
+	 * @param {boolean} value La valeur requise.
+	 * @returns {Promise<object>} Une Promesse complétée avec l'objet du salon ou null.
+	 */
+	async fetchOneChannelByValue(columnName, value ) {
+		return await this.db.oneResultQuery( `SELECT * from channels WHERE ${columnName}=?`, [ value ] );
+	}
 
 	/**
 	 * Ajoute un salon à la base de données.
@@ -57,7 +65,6 @@ class ChannelsManager
 			[ channelId, false, false, false, false, false, false, false ]
 		);
 	}
-
 
 	/**
 	 * Met à jour un salon dans la base de données. Si le salon n'est pas dans la bdd, alors il est ajouté puis mis-à-jour.
@@ -73,7 +80,7 @@ class ChannelsManager
 
 		if ( [ 'feed', 'logs', 'stats' ].includes( columnName ) && value )
 		{
-			const prevChannelId = await this.fetchChannelByValue( columnName, true );
+			const prevChannelId = await this.fetchOneChannelByValue( columnName, true );
 			await this.db.query( `UPDATE channels SET ${columnName}=0 WHERE pk_id_channel=?`, [ prevChannelId ] );
 		}
 		await this.db.query( `UPDATE channels SET ${columnName}=? WHERE pk_id_channel=?;`, [ value, channelId ] );

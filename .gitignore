@@ -1,4 +1,4 @@
-# Logs
+.env.local.dev# Logs
 logs
 *.log
 npm-debug.log*
@@ -106,9 +106,11 @@ dist
 # Manually added files and folders
 /.idea
 /archive/
-/src/.env.local
 /src/database/create_db.sql
+/src/database/create_db.beta.sql
 /src/database/connect.bat
-
-# Confidentials
-src/files/
+/src/.env.local.beta
+/src/.env.local
+/src/.env.local.prod
+/src/database/create_db_beta.sql
+/src/database/create_db_prod.sql

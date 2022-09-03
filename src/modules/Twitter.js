@@ -32,13 +32,16 @@ class Twitter
 	set active( active ) { this._active = active; }
 	get active() { return this._active; }
 
+	/**
+	 * @param {string} delay Le délai entre chaque itération de la boucle.
+	 */
 	async twitter( delay ) {
 		setInterval( async () => {
 			if ( !this._active ) return;
 
 			// Récupération des messages qui peuvent être envoyés sur reddit.
 			const messages = await this.db.query(
-				"SELECT * FROM messages WHERE b_stf=1 AND b_stt=0",
+				"SELECT * FROM messages WHERE b_stf=1 AND b_stt=0 AND b_removed=0",
 				[]
 			);
 
@@ -46,7 +49,7 @@ class Twitter
 
 			// On itère sur chacun des messages.
 			for ( let msg of messages ) {
-				const attachments = await this.db.messagesManager.getMessageAttachments( msg["pk_msg_id"] );
+				const attachments = await this.db.messagesManager.fetchMessageAttachments( msg["pk_msg_id"] );
 				const author = await guild.members.fetch( msg["s_author_id"] );
 				if ( !author ) continue;
 
@@ -60,7 +63,9 @@ class Twitter
 				}
 				await this.db.messagesManager.updateMessage( msg["pk_msg_id"], "b_stt", true );
 			}
-		}, delay );
+
+			await this.client.modules.get( "logs" ).iteractionModule( "Twitter" );
+		}, Number( delay ) );
 	}
 
 	/**
@@ -105,10 +110,8 @@ class Twitter
 		if ( text === "" ) return `Par ${author.nickname ?? author.user.username} sur #francememes`;
 
 		const matches = text.match( "<a?:.{1,32}:\\d{18,24}>" );
-		console.log(matches)
 		if ( matches ) {
 			for ( let match of matches ) {
-				console.log(match)
 				text = text.replace( match, ":" + text.split( ":" )[1] + ":" );
 			}
 		}

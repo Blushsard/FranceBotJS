@@ -16,6 +16,7 @@ const client = new Client({
 		Intents.FLAGS.GUILD_MEMBERS,
 		Intents.FLAGS.GUILD_MESSAGES,
 		Intents.FLAGS.DIRECT_MESSAGES,
+		Intents.FLAGS.GUILD_VOICE_STATES,
 		Intents.FLAGS.GUILD_MESSAGE_REACTIONS
 	],
 	partials: [
@@ -28,7 +29,7 @@ const client = new Client({
 // Chargement des attributs du client.
 client.commands = new Collection();
 client.modules = new Collection();
-client.db = new Database();
+client.db = new Database( client );
 
 
 // Démarrage du client.
@@ -38,7 +39,6 @@ client.db = new Database();
 	await loadModules( client );
 
 	await client.login( process.env.TOKEN );
-
 
 	// Dé-commenter les lignes suivantes pour charger dans le serveur de dev de nouvelles commands ou les mise à jour
 	// sur les commands.

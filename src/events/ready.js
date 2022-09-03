@@ -18,10 +18,15 @@ const { Client, MessageEmbed } = require( "discord.js" );
 async function execute( client ) {
 	const date = new Date();
 	console.log( `${client.user.username} is connected at ${date}!` );
-	await client.modules.get( "moyenne" ).calcMoyenne( 10_000 );
-	await client.modules.get( "feed" ).feed( 60_000 );
-	await client.modules.get( "reddit" ).reddit( 60_000 * 30 );
-	await client.modules.get( "twitter" ).twitter( 60_000 * 30 );
+
+	await client.modules.get( "levels" ).loadGuildObject();
+
+	// Lancement des modules.
+	await client.modules.get( "moyenne" ).calcMoyenne( process.env.DELAY_MOYENNE );
+	await client.modules.get( "feed" ).feed( process.env.DELAY_FEED );
+	await client.modules.get( "reddit" ).reddit( process.env.DELAY_REDDIT );
+	await client.modules.get( "twitter" ).twitter( process.env.DELAY_TWITTER );
+	await client.modules.get( "stats" ).checkMonth( process.env.DELAY_STATS );
 
 	// Envoi du message de connexion en pm.
 	const recipient = await client.users.fetch( process.env.RECIPIENT_CONN_MSG );

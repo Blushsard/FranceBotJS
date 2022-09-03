@@ -29,8 +29,9 @@ class Reposts
 	 * @param {MessageReaction} reaction La reaction qui a été ajoutée sur le message.
 	 * @param {object|null} salon L'objet contenant les données de la bdd du salon.
 	 * @param {User} user L'utilisateur qui a ajouté la réaction.
+	 * @param {boolean} upvote Indique si c'est un upvote ou downvote.
 	 */
-	async checkRepost( reaction, salon, user ) {
+	async checkRepost( reaction, salon, user, upvote ) {
 		if ( !this._active ) return;
 		if ( !salon ) return;
 		if ( !salon["b_reposts"] ) return;
@@ -41,9 +42,6 @@ class Reposts
 		// Cette erreur est présente dans FranceBotV3, l'appel de l'api ne contient pas les données de l'objet.
 		if ( !reaction ) return;
 
-		if ( reaction.partial )
-			await reaction.fetch();
-
 		const moyenne = this.client.modules.get( "moyenne" ).getMoyenne();
 
 		// Récupération du nombre de reposts sur le message.
@@ -53,8 +51,25 @@ class Reposts
 				countReposts = reaction.count - 1;
 		});
 
+		await this.client.modules.get( "levels" ).supprimerExperienceRepostAjoute(
+			reaction.message.author.id,
+			reaction.message.channelId,
+			upvote
+		);
+		await this.client.modules.get( "logs" ).modificationVote(
+			reaction.message,
+			countReposts,
+			true,
+			process.env.EMOJI_REPOST,
+			user
+		);
+
 		// Suppression du message si il y a trop de repost.
-		if ( countReposts >= moyenne ) {
+		if ( countReposts >= moyenne / 2 ) {
+			await this.client.modules.get( "logs" ).repostSupprime();
+			await this.client.modules.get( "stats" ).addRepostToStats();
+			await this.client.modules.get( "levels" ).supprimerExperienceRepostSupprime( reaction.message.author.id, reaction.message.channelId );
+			await this.client.modules.get( "feed" ).deleteMessageFromFeed( reaction.message.id );
 			await reaction.message.delete();
 
 			const embed = new MessageEmbed()
@@ -66,8 +81,9 @@ class Reposts
 				);
 
 			try {
-				await user.send({embeds: [embed]});
-			} catch ( err ) {}
+				await reaction.message.author.send({embeds: [embed]});
+			}
+			catch ( err ) { this.client.emit( "error", err ); }
 		}
 	}
 }

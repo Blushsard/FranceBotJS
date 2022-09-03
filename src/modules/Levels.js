@@ -11,7 +11,15 @@
  *      Liste des actions retirant de l'expérience:
  *      	- meme supprimé pour respost: -10xp
  */
-const { Client, Collection, Message, TextChannel, DMChannel, GuildMember } = require( "discord.js" );
+const {
+	Client,
+	Collection,
+	Message,
+	TextChannel,
+	DMChannel,
+	GuildMember,
+	VoiceState,
+	StageChannel } = require( "discord.js" );
 
 
 class Levels
@@ -22,15 +30,111 @@ class Levels
 	 * @param {boolean} active Indique si le client est activé ou non.
 	 */
 	constructor( client, active ) {
-		this._active = active;
 		this.client = client;
+		this._active = active;
 
 		// Collection contenant les vérifications des différentes limitations par user.
+		// Voir la fonction createUserLimitObject pour voir sous quelle forme se présente l'objet contenant les limites.
 		this.limits = new Collection();
+		this.guild = null;
+
+		this.expMsgEnvoye = Number(process.env.EXP_MSG_ENVOYE);
+		this.expLikeRecu = Number(process.env.EXP_LIKE_RECU);
+		this.expFeed = Number(process.env.EXP_FEED);
+		this.expRepost = Number(process.env.EXP_REPOST);
+		this.expRepostAjoute = Number(process.env.EXP_REPOST_AJOUTE)
+		this.expLikeAjoute = Number(process.env.EXP_LIKE_AJOUTE);
+		this.expVocal = Number(process.env.EXP_VOCAL);
 	}
 
-	getActive() { return this._active; }
-	setActive( active ) { this._active = active; }
+	get active() { return this._active; }
+	set active( active ) { this._active = active; }
+
+	/**
+	 * Permet de charger l'objet de la guild pour ne pas avoir à le fetch à chaque exp ajoutée.
+	 */
+	async loadGuildObject() {
+		this.guild = await this.client.guilds.fetch( process.env.GUILD_ID );
+	}
+
+
+	/**
+	 * Créer un objet contenant les limites de l'utilisateur.
+	 * @return {object} Un objet contenant les limites de l'utilisateur.
+	 */
+	createUserLimitObject() {
+		return {
+			"timeMsgLimit": 0,	// Le temps depuis le dernier message envoyé en ms.
+			"likeMsgCount": 0,	// Le nombre de likes ajoutés sur des memes pour le jour courant.
+			"dayLikeMsgCount": (new Date()).getDay(),	// Le jour courant pour les likes sur les memes.
+			"startTimeVocal": 0	// Le temps a partir duquel un utilisateur a commence a etre en vocal.
+								// Ce temps est remis a zero quand il se mute (l'exp est tout de meme attribuee).
+		};
+	}
+
+
+	/**
+	 * Ajoute de l'expérience à un utilisateur.
+	 * @param {GuildMember} member L'objet du membre qui reçoit de l'expérience.
+	 * @param {TextChannel|DMChannel} channel Le salon dans lequel le membre a reçu de l'expérience.
+	 * @param {number} exp Le nombre d'expérience reçu.
+	 */
+	async ajouterExperienceUtilisateur( member, channel, exp ) {
+		const user = await this.client.db.usersManager.ajouterExperienceUser( member.id, exp );
+		if ( user )
+			await this.levelUpUtilisateur( user, member, channel );
+	}
+
+
+	/**
+	 * Juste un wrapper pour simplifier le code dans la fonction du feed.
+	 * Le salon n'est pas celui du feed mais le DM de l'auteur pour éviter de polluer le feed avec des messages de
+	 * level up.
+	 * @param {string} auteurId L'id de l'auteur du message qui a été envoyé dans le feed.
+	 */
+	async ajouterExperienceFeed( auteurId ) {
+		if ( !this.guild ) return;
+
+		const member = await this.guild.members.fetch( auteurId );
+		await this.ajouterExperienceUtilisateur( member, await member.user.createDM( true ), this.expFeed );
+	}
+
+
+	/**
+	 * Attribue ou non de l'experience en fonction du changement d'un voiceState d'un utilisateur.
+	 * @param {VoiceState} oldState
+	 * @param {VoiceState} newState
+	 */
+	async ajouterExperienceVocal( oldState, newState ) {
+		if ( !this._active ) return;
+
+		const voiceChannel = oldState.channel ?? newState.channel;
+		if ( voiceChannel instanceof StageChannel || !voiceChannel.speakable ) return;
+
+		let date = new Date();
+		if ( this.limits.has( oldState.member.id ) ) {
+			let userData = this.limits.get( oldState.member.id );
+
+			// User entre dans un salon ou n'est plus muet.
+			if ( (!oldState.channel && !newState.mute) || (oldState.mute && !newState.mute) )
+				userData["startTimeVocal"] = date.getTime();
+
+			// User quitte le salon ou devient muet, on lui donne son exp.
+			else if ( (!newState.channel && (!newState.mute || !oldState.mute)) || (!oldState.mute && newState.mute) ) {
+				const timeDiff = date.getTime() - userData["startTimeVocal"];
+				const xpRecu = parseInt( String((this.expVocal * timeDiff) / 60_000_000), 10 );
+				userData["startTimeVocal"] = 0;
+				if ( xpRecu !== 0 )
+					await this.ajouterExperienceUtilisateur( oldState.member, oldState.member.createDM(), xpRecu );
+			}
+		}
+		else {
+			let userData = this.createUserLimitObject();
+			if ( !oldState.channel && !newState.mute )
+				userData["startTimeVocal"] = date.getTime();
+			this.limits.set( oldState.member.id, userData );
+		}
+	}
 
 
 	/**
@@ -40,28 +144,115 @@ class Levels
 	 * @param {object|null} channel Le salon de la base de données dans lequel le message a été envoyé.
 	 */
 	async ajouterExperienceMessage( message, channel ) {
-		if ( channel && channel['b_exp'] ) return;
 		if ( !this._active || message.author.bot ) return;
+		if ( channel && channel['b_exp'] ) return;
 		if ( message.channel instanceof DMChannel ) return;	// On empêche les gens de gagner de l'xp avec les DM du bot.
 
-		let user = null;
 		const msTime = (new Date()).getTime();
-
 		if ( this.limits.has( message.author.id ) ) {
 			// 1 minute
-			if ( msTime > this.limits.get( message.author.id ) + 60_000 ) {
-				user = await this.client.db.usersManager.ajouterExperienceUser( message.author.id, 8 );
+			if ( msTime > this.limits.get( message.author.id )["msgLimit"] + 60_000 ) {
+				await this.ajouterExperienceUtilisateur( message.member, message.channel, this.expMsgEnvoye );
 				this.limits.set( message.author.id, msTime );
 			}
 		}
 		else {
-			this.limits.set( message.author.id, msTime );
-			user = await this.client.db.usersManager.ajouterExperienceUser( message.author.id, 8 );
+			this.limits.set( message.author.id, this.createUserLimitObject() );
+			await this.ajouterExperienceUtilisateur( message.member, message.channel, this.expMsgEnvoye );
 		}
 
-		if ( user ) {
-			await this.levelUpUtilisateur( user, message.member, message.channel );
+		// Incrémentation du compteur de messages.
+		await this.client.db.usersManager.incrementeCompteurMessagesUser( message.author.id );
+	}
+
+
+	/**
+	 * Ajouter de l'exp à un utilisateur ayant ajouté un like à un meme.
+	 * Il est cependant limité à 4xp par jour.
+	 * @param {string} userId L'identifiant de l'utilisateur qui a ajouté le like.
+	 * @param {TextChannel} channel Le salon du message.
+	 * @param {boolean} upvote Indique si c'est un upvote ou downvote.
+	 */
+	async ajouterExperienceLikeAjoute( userId, channel, upvote ) {
+		if ( !this._active ) return;
+		const channelDb = await this.client.db.channelsManager.fetchChannel( channel.id );
+		if ( channelDb && channelDb["b_exp"] ) return;
+
+		let userLimits;
+		if ( this.limits.has( userId ) ) {
+			userLimits = this.limits.get(userId);
+			if ((new Date()).getDay() !== userLimits["dayLikeMsgCount"]) {
+				userLimits["dayLikeMsgCount"] = (new Date()).getDay();
+				userLimits["likeMsgCount"] = 0;
+			}
+
+			if ( upvote ) {
+				if ( userLimits["likeMsgCount"] === 10 ) return;
+				userLimits["likeMsgCount"]++;
+			}
+			else if ( userLimits["likeMsgCount"] > 0 )
+				userLimits["likeMsgCount"]--;
 		}
+		else {
+			userLimits = this.createUserLimitObject();
+			if ( upvote )
+				userLimits["likeMsgCount"]++;
+			this.limits.set( userId, userLimits );
+		}
+
+		await this.client.modules.get( "levels" ).ajouterExperienceUtilisateur(
+			await this.guild.members.fetch( userId ),
+			channel,
+			upvote ? this.expLikeAjoute : -this.expLikeAjoute
+		);
+	}
+
+
+	/**
+	 * Ajoute de l'exp à l'auteur d'un meme qui a reçu un like.
+	 * @param {string} auteurId L'id de l'auteur du message qui a reçu le like.
+	 * @param {string} channelId L'id du salon du message.
+	 * @param {string} userId L'id de l'utilisateur qui a ajouté le like.
+	 * @param {boolean} upvote Indique si c'est un upvote ou downvote.
+	 */
+	async ajouterExperienceLikeRecu( auteurId, channelId, userId, upvote ) {
+		if ( !this._active ) return;
+		if ( userId === auteurId ) return;
+		if ( !this.guild ) return;
+		const channelDb = await this.client.db.channelsManager.fetchChannel( channelId );
+		if ( channelDb && channelDb["b_exp"] ) return;
+
+		const channel = await this.guild.channels.fetch( channelId );
+		const auteur = await this.guild.members.fetch( auteurId );
+		await this.ajouterExperienceUtilisateur( auteur, channel, upvote ? this.expLikeRecu : -this.expLikeRecu );
+	}
+
+
+	/**
+	 * Supprime de l'exp à un utilisateur si il reçoit un repost sur un meme.
+	 * @param {string} auteurId L'id de l'auteur qui vient de se prendre un repost.
+	 * @param {string} channelId L'id du salon contenant le meme.
+	 * @param {boolean} upvote Indique si c'est un upvote ou downvote.
+	 */
+	async supprimerExperienceRepostAjoute( auteurId, channelId, upvote ) {
+		const channelDb = await this.client.db.channelsManager.fetchChannel( channelId );
+		if ( channelDb && channelDb["b_exp"] ) return;
+		await this.client.db.usersManager.ajouterExperienceUser(
+			auteurId,
+			upvote ? -this.expRepostAjoute : this.expRepostAjoute
+		);
+	}
+
+
+	/**
+	 * Supprime de l'exp à un utilisateur si un de ces messages est supprimé pour repost.
+	 * @param {string} auteurId L'id de l'auteur qui vient de se prendre un repost.
+	 * @param {string} channelId L'id du salon contenant le meme.
+	 */
+	async supprimerExperienceRepostSupprime( auteurId, channelId ) {
+		const channelDb = await this.client.db.channelsManager.fetchChannel( channelId );
+		if ( channelDb && channelDb["b_exp"] ) return;
+		await this.client.db.usersManager.ajouterExperienceUser( auteurId, -this.expRepost );
 	}
 
 
@@ -98,20 +289,16 @@ class Levels
 	 * @param {TextChannel} salon Le salon dans lequel envoyer le message de level up.
 	 */
 	async levelUpUtilisateur( user, member, salon ) {
-		let userMention = await salon.guild.members.fetch( user["pk_user_id"] );
 		if ( user ) {
-			user["n_nb_messages"]++;
-
 			// Vérification pour le level up.
 			if ( this.getRequiredExpForLevel( user["n_level"] + 1 ) < user["n_xp"] ) {
 				// Passage au niveau supérieur.
 				user["n_level"]++;
 				await this.client.db.usersManager.updateUser( user["pk_user_id"], "n_level", user["n_level"] );
-				await salon.send(`Bravo ${userMention}! Tu es passé au niveau **${user['n_level']}**!`);
+				await salon.send(`Bravo ${member.user}! Tu es passé au niveau **${user['n_level']}**!`);
 
 				// Ajout du nouveau rôle si nécessaire.
-				const role = await this.client.db.rolesLevelsManager.fetchGuildRoleByLevel(
-					member.guild.id, user["n_level"] );
+				const role = await this.client.db.rolesLevelsManager.fetchGuildRoleByLevel( member.guild.id, user["n_level"] );
 				if ( role )
 					await member.roles.add( role["pk_role_id"] );
 			}

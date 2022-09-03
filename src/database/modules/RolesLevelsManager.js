@@ -23,16 +23,13 @@ class RolesLevelsManager
 	 * Récupère un role_levels par le niveau de la base de données.
 	 * @param {int} niveau Le niveau recherché.
 	 * @param {string} guildId L'identifiant discord de la guild concernée.
-	 * @returns {Promise<array>} Une Promesse complétée avec un objet contenant les données du salon si il est présent dans
-	 * 							 la bdd, sinon null.
+	 * @returns {Promise<object>} Une Promesse complétée avec un objet contenant les données du salon la bdd, sinon null.
 	 */
 	async fetchRoleByLevel( niveau, guildId ) {
-		const row = await this.db.query(
+		return await this.db.oneResultQuery(
 			"SELECT * FROM roles_levels WHERE n_niveau_requis=? AND s_guild_id=?;",
 			[ niveau, guildId ]
 		);
-
-		return row.length ? row[0] : null;
 	}
 
 
@@ -55,11 +52,10 @@ class RolesLevelsManager
 	 * @returns {Promise<object|null>} Le ou les rôles trouvés ou null si il n'y a pas de rôles pour ce niveau.
 	 */
 	async fetchGuildRoleByLevel( guildId, level ) {
-		const row = await this.db.query(
+		return await this.db.oneResultQuery(
 			"SELECT * FROM roles_levels WHERE s_guild_id=? AND n_niveau_requis=?;",
 			[ guildId, level ]
 		);
-		return row.length ? row[0]: null;
 	}
 
 

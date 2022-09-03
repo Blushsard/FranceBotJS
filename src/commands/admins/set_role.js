@@ -55,9 +55,7 @@ async function execute( interaction ) {
 			ephemeral: true
 		});
 	}
-	catch ( err ) {
-		console.log( "Interaction inconnue: commands/admin/set_role.js:53" );
-	}
+	catch ( err ) { interaction.client.emit( "error", err ); }
 }
 
 

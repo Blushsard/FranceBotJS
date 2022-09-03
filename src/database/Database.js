@@ -9,6 +9,8 @@ const { UsersManager } = require( `${process.cwd()}/database/modules/UsersManage
 const { ChannelsManager } = require( `${process.cwd()}/database/modules/ChannelsManager` );
 const { RolesLevelsManager } = require( `${process.cwd()}/database/modules/RolesLevelsManager` );
 const { MessagesManager } = require( `${process.cwd()}/database/modules/MessagesManager` );
+const { StatsManager } = require( `${process.cwd()}/database/modules/StatsManager` );
+const { FeedManager } = require( `${process.cwd()}/database/modules/FeedManager` );
 
 
 /**
@@ -18,16 +20,18 @@ const { MessagesManager } = require( `${process.cwd()}/database/modules/Messages
  */
 class Database
 {
-	constructor() {
+	constructor( client ) {
 		// Limitation du nombre de connexions simultanées.
-		this.limit = 80;
 		this.currentRequests = 0;
+		this.client = client;
 
 
 		this.usersManager = new UsersManager( this );
 		this.channelsManager = new ChannelsManager( this );
 		this.rolesLevelsManager = new RolesLevelsManager( this );
 		this.messagesManager = new MessagesManager( this );
+		this.statsManager = new StatsManager( this );
+		this.feedManager = new FeedManager( this );
 	}
 
 
@@ -58,7 +62,7 @@ class Database
 	 * @returns {Promise<array>} Une Promesse complété avec une liste contenant les résultats de la requête.
 	 */
 	async query( req, params ) {
-		while ( this.limit === this.currentRequests ) {
+		while ( process.env.MAX_CONCURRENT_DATABASE_REQUESTS === this.currentRequests ) {
 			await this.sleep( 20 );
 		}
 
@@ -71,6 +75,19 @@ class Database
 
 		this.currentRequests--;
 		return rows ;
+	}
+
+
+	/**
+	 * Cette fonction est un wrapper pour la fonction query mais elle permet de directement retourner le premier résultat
+	 * de la requête ou null.
+	 * @param {string} req - La requête SQL à exécuter.
+	 * @param {array} [params] - Une liste contenant les paramètres de la requête (optionnel).
+	 * @returns {Promise<object>} Une Promesse complété avec un objet contenant le résultat de la requête ou null.
+	 */
+	async oneResultQuery( req, params ) {
+		const result = await this.query( req, params );
+		return result.length ? result[0] : null;
 	}
 }
 

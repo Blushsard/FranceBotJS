@@ -9,8 +9,7 @@
  */
 
 const { Message } = require( "discord.js" );
-const { Memes } = require( `${process.cwd()}/modules/Memes` );
-const { ADMINISTRATORS } = require( `${process.cwd()}/data/config.json` );
+const { Likes } = require( `${process.cwd()}/modules/Likes` );
 
 
 class Threads
@@ -33,32 +32,33 @@ class Threads
 	 * Ajoute un thread au message si il contient un ou des memes. Sinon le message est supprimé.
 	 * @param {Message} message L'objet du message.
 	 * @param {object} salon L'objet du salon contenant les données de la bdd.
-	 * @return {boolean} Un booléen indiquant si un thread a été démarré.
+	 * @return {Promise<boolean>} Un booléen indiquant si le message a été supprimé.
 	 */
 	async ajouterThread( message, salon ) {
-		if ( !this._active ) return;
-		if ( !salon ) return;
-		if ( !salon["b_threads"] ) return true;
-		if ( message.author.id === this.client.id ) return;
+		if ( !this._active ) return false;
+		if ( !salon ) return false;
+		if ( !salon["b_threads"] ) return false;
+		if ( message.author.id === this.client.id ) return false;
 
 		const author = await (await this.client.guilds.fetch( message.guildId )).members.fetch( message.author.id );
-		if ( Threads.isUserAdmin( author ) ) return true;
 
-		if ( !Memes.hasMeme( message ) ) {
+		if ( !Likes.hasMeme( message ) ) {
+			if ( Threads.isUserAdmin( author ) ) return true;
 			await message.delete();
-			return false;
+			return true;
 		}
 
+		let embedTitle = `Commentaires ┃ ${message.author.username}`;
+		if ( message.content ) embedTitle += " • " + message.content.substring( 0, 100 - 3 - embedTitle.length );
 		await message.startThread({
-			name: `Réponse | ${message.author.username} (${message.author.id})`,
+			name: embedTitle,
 			autoArchiveDuration: 1440,
 			rateLimitPerUser: 60
 		});
-		return true;
 	}
 
 	static isUserAdmin( member ) {
-		return member.permissions.has( "MANAGE_MESSAGES", true ) || ADMINISTRATORS.includes( member.id );
+		return member.permissions.has( "MANAGE_MESSAGES", true ) || member.permissions.has( "ADMINISTRATOR", true );
 	}
 }
 

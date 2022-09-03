@@ -36,9 +36,7 @@ async function execute( interaction ) {
 			ephemeral: true
 		})
 	}
-	catch ( err ) {
-		console.log( "Interaction inconnue: commands/level/refresh.js:34" );
-	}
+	catch ( err ) { interaction.client.emit( "error", err ); }
 }
 
 

@@ -26,10 +26,10 @@ def post_media(post_title: str, media_link: str, media_type: str):
 	subreddit = get_api_connection()
 
 	media_name = download_media(media_link)
-	if not media_name:
+	if not media_name or "gif" in media_type:
 		return
 
-	if "image" in media_type and "gif" not in media_type:
+	if "image" in media_type:
 		subreddit.submit_image(
 			title=post_title,
 			image_path=media_name

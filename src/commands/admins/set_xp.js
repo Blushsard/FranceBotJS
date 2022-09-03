@@ -69,9 +69,7 @@ async function execute( interaction ) {
 			ephemeral: true
 		});
 	}
-	catch ( err ) {
-		console.log( "Interaction inconnue: commands/admin/set_xp.js:51" );
-	}
+	catch ( err ) { interaction.client.emit( "error", err ); }
 }
 
 

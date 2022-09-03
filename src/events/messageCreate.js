@@ -24,9 +24,9 @@ async function execute( message, client ) {
 
 	await client.modules.get( 'levels' ).ajouterExperienceMessage( message, salon );
 
-	const threadCreer = await (client.modules.get( 'threads' ).ajouterThread( message, salon ));
-	if ( !threadCreer ) return;
-	await client.modules.get( 'memes' ).ajouterMessageMeme( message, salon, 0 );
+	const messageDeleted = await client.modules.get( 'threads' ).ajouterThread( message, salon );
+	if ( messageDeleted ) return;
+	await client.modules.get( 'likes' ).ajouterMessageMeme( message, salon, 0 );
 }
 
 

@@ -1,9 +1,11 @@
 {
 	"levels": true,
-	"memes": true,
+	"likes": true,
+	"logs": true,
 	"reposts": true,
 	"feed": true,
 	"threads": true,
 	"reddit": true,
-	"twitter": true
+	"twitter": true,
+	"stats": true
 }

@@ -23,12 +23,14 @@ const slashCommand = new SlashCommandBuilder()
 			.setRequired( true )
 			.addChoices([
 				[ "Levels", 'levels' ],
-				[ "Memes", 'memes' ],
+				[ "Likes", 'likes' ],
 				[ "Feed", 'feed' ],
 				[ "Reposts", 'reposts' ],
 				[ "Threads", 'threads' ],
 				[ "Twitter", 'twitter' ],
 				[ "Reddit", 'reddit' ],
+				[ "Stats", 'stats' ],
+				[ "Logs", 'logs' ]
 			])
 	)
 	.addBooleanOption( option =>
@@ -51,19 +53,16 @@ async function execute( interaction ) {
 	// Update du fichier modules.json.
 	let modules = JSON.parse( fs.readFileSync( `${process.cwd()}/data/modules.json` ) );
 	modules[interaction.options.get( "nom_module" ).value] = interaction.options.get( "etat" ).value;
-	fs.writeFileSync( `${process.cwd()}/data/modules.json`, modules );
+	fs.writeFileSync( `${process.cwd()}/data/modules.json`, JSON.stringify( modules ) );
 
 	// Update du module dans le client.
-	interaction.client.modules.get( interaction.options.get( "nom_module" ).value ).setActive(
-		interaction.options.get( "etat" ).value
-	);
+	interaction.client.modules.get( interaction.options.get( "nom_module" ).value )
+		.active = interaction.options.get( "etat" ).value;
 
 	try {
 		await interaction.reply( { content: "Changement pris en compte!", ephemeral: true } );
 	}
-	catch ( err ) {
-		console.log( "Interaction inconnue: commands/admin/module.js:54" );
-	}
+	catch ( err ) { interaction.client.emit( "error", err ); }
 }
 
 

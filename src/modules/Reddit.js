@@ -25,7 +25,7 @@ class Reddit
 
 	/**
 	 * Envoit les memes sur reddit.
-	 * @param {number} delay Le délai entre chaque intération de l'envoi des memes sur reddit.
+	 * @param {string} delay Le délai entre chaque intération de l'envoi des memes sur reddit.
 	 */
 	async reddit( delay ) {
 		setInterval(async () => {
@@ -33,7 +33,7 @@ class Reddit
 
 			// Récupération des messages qui peuvent être envoyés sur reddit.
 			const messages = await this.db.query(
-				"SELECT * FROM messages WHERE b_stf=1 AND b_str=0",
+				"SELECT * FROM messages WHERE b_stf=1 AND b_str=0 AND b_removed=0",
 				[]
 			);
 
@@ -43,26 +43,24 @@ class Reddit
 				const author = await guild.members.fetch( msg["s_author_id"] );
 				if ( !author ) continue;
 
-				const attachments = await this.db.query(
-					"SELECT * FROM attachments WHERE pk_msg_id=?",
-					[ msg["pk_msg_id"] ]
-				);
-
+				const attachments = await this.db.messagesManager.fetchMessageAttachments( msg['pk_msg_id'] );
 				for ( let attachment of attachments ) {
-					exec(`python ${process.cwd()}/python_scripts/memes_to_reddit.py "By ${author.displayName}" ${attachment['s_url']} ${attachment['s_type']}`,
+					exec(`python3.10 ${process.cwd()}/python_scripts/memes_to_reddit.py "By ${author.displayName}" ${attachment['s_url']} ${attachment['s_type']}`,
 					(error, stdout, stderr) => {
-						if (error) {
-							console.log(error);
+						if ( error ) {
+							console.error(error);
 							return;
 						}
-						console.log(stdout)
-						console.log(stderr)
+						console.log( stdout )
+						console.error( stderr )
 					});
 				}
 
 				await this.db.messagesManager.updateMessage( msg["pk_msg_id"], "b_str", true );
 			}
-		}, delay );
+
+			await this.client.modules.get( "logs" ).iteractionModule( "Reddit" );
+		}, Number( delay ) );
 	}
 }
 

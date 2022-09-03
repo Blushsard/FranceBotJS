@@ -45,9 +45,7 @@ async function execute(interaction) {
 			embeds: [embed],
 		});
 	}
-	catch ( err ) {
-		console.log( "Interaction inconnue: commands/level/level.js:44" );
-	}
+	catch ( err ) { interaction.client.emit( "error", err ); }
 }
 
 // EXPORTS

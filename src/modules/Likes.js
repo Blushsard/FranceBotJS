@@ -18,7 +18,7 @@ const { Collection } = require( "@discordjs/collection" );
 const { WEBSITES } = require( `${process.cwd()}/data/config.json` );
 
 
-class Memes
+class Likes
 {
 	/**
 	 * Le constructeur du module.
@@ -41,10 +41,10 @@ class Memes
 	 * @param {int} likes Le nombre de likes du message.
 	 */
 	async ajouterMessageMeme( message, salon, likes ) {
-		if ( !salon ) return;
-		if ( !salon["b_memes"] ) return;
 		if ( !this._active ) return;
-		if ( !Memes.hasMeme( message ) ) return;
+		if ( !salon ) return;
+		if ( !salon["b_likes"] ) return;
+		if ( !Likes.hasMeme( message ) ) return;
 		if ( message.author.id === this.client.id ) return;
 
 		// Récupération des memes du message (liens puis pièce-jointes).
@@ -52,28 +52,16 @@ class Memes
 		message.attachments.forEach(value => {
 			memes.push( value );
 		});
+
 		await this.db.messagesManager.ajouterMessage( message, memes, likes );
+		await this.client.modules.get( "logs" ).messageMemeAjoute( message );
 
 
 		try {
 			await message.react( process.env.EMOJI_LIKE_ID );
 			await message.react( process.env.EMOJI_REPOST );
-		} catch ( err ) {
-			console.error( "Emoji inconnue: modules/Memes.js:62" );
 		}
-	}
-
-	/**
-	 * Supprime un message et ses memes de la base de données.
-	 * @param {string} messageId Le message à supprimer.
-	 * @param {object|null} salon Les données de la base de données du salon dans lequel le message a été envoyé.
-	 */
-	async supprimerMessageMeme( messageId, salon ) {
-		if ( !salon ) return;
-		if ( !salon["b_memes"] ) return;
-		if ( !this._active ) return;
-
-		await this.db.messagesManager.supprimerMessage( messageId );
+		catch ( err ) { this.client.emit( "error", err ); }
 	}
 
 	/**
@@ -81,25 +69,45 @@ class Memes
 	 * @param {MessageReaction} reaction La reaction qui a été ajoutée sur le message.
 	 * @param {object|null} salon L'objet contenant les données de la bdd du salon.
 	 * @param {User} user L'utilisateur qui a ajouté la réaction.
+	 * @param {boolean} upvote Indique si l'event ajoute ou retire une reaction au message.
 	 */
-	async updateLikeCount( reaction, salon, user ) {
+	async updateLikeCount( reaction, salon, user, upvote ) {
 		if ( !this._active ) return;
-		if ( !salon && !salon["b_memes"] ) return;
+		if ( !salon ) return;
+		if ( !salon["b_likes"] ) return;
 		if ( user.id === this.client.user.id ) return;
 		if ( reaction.emoji.id !== process.env.EMOJI_LIKE_ID ) return;
 
-		if ( reaction.partial )
-			await reaction.fetch();
+		const msgDb = await this.db.messagesManager.fetchMessage( reaction.message.id );
+		let likes;
 
-		let likes = this.getCountLikes( reaction.message.reactions.cache );
-		const msgDb = await this.db.messagesManager.updateLikesCount( reaction.message.id, likes );
-		if ( msgDb ) return;
+		if ( msgDb ) {
+			likes = this.getCountLikes( reaction.message.reactions.cache );
+			await this.db.messagesManager.updateLikesCount( reaction.message.id, likes );
+		}
+		else {
+			// On ajoute d'abord le message dans la base de données afin que le bot ajoute les reactions au message.
+			// Cela permet de ne pas fausser le compte des likes.
+			const channel = this.client.channels.cache.get( salon["pk_id_channel"] );
+			const message = await channel.messages.fetch( reaction.message.id );
+			await this.ajouterMessageMeme( message, salon, 0 );
 
-		// Ajout du message dans la base de données si il n'est pas dedans.
-		const channel = this.client.channels.cache.get( salon["pk_id_channel"] );
-		const message = await channel.messages.fetch( reaction.message.id );
-		likes = this.getCountLikes( message.reactions.cache );
-		await this.ajouterMessageMeme( message, salon, likes );
+			likes = this.getCountLikes( message.reactions.cache );
+			await this.db.messagesManager.updateLikesCount( reaction.message.id, likes );
+		}
+
+		// Ajout de l'exp pour l'ajout d'un like.
+		const levels = await this.client.modules.get( "levels" );
+		await levels.ajouterExperienceLikeRecu( msgDb["s_author_id"], msgDb["s_channel_id"], user.id, upvote );
+		await levels.ajouterExperienceLikeAjoute( user.id, reaction.message.channel, upvote );
+
+		await this.client.modules.get( "logs" ).modificationVote(
+			reaction.message,
+			likes,
+			upvote,
+			process.env.EMOJI_LIKE_STRING,
+			user
+		);
 	}
 
 
@@ -159,11 +167,12 @@ class Memes
 			if ( reaction.emoji.id === process.env.EMOJI_LIKE_ID )
 				likes = reaction.count - 1;
 		});
+		if ( likes < 0 ) likes = 0;
 		return likes ? likes : 0;
 	}
 }
 
 
 module.exports = {
-	Memes
+	Likes
 }

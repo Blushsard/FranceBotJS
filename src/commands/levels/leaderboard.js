@@ -58,9 +58,7 @@ async function execute(interaction) {
 			embeds: [embed],
 		});
 	}
-	catch ( err ) {
-		console.log( "Interaction inconnue: commands/level/leaderboard.js:57" );
-	}
+	catch ( err ) { interaction.client.emit( "error", err ); }
 }
 
 // EXPORTS
