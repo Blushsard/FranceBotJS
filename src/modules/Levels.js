@@ -80,6 +80,7 @@ class Levels
 	 * @param {number} exp Le nombre d'expérience reçu.
 	 */
 	async ajouterExperienceUtilisateur( member, channel, exp ) {
+		console.log( "debug1", exp )
 		const user = await this.client.db.usersManager.ajouterExperienceUser( member.id, exp );
 		if ( user )
 			await this.levelUpUtilisateur( user, member, channel );
@@ -238,7 +239,6 @@ class Levels
 		const channelDb = await this.client.db.channelsManager.fetchChannel( channel.id );
 		if ( channelDb && channelDb["b_exp"] ) return;
 
-		console.log( this.expRepostAjoute, -this.expRepostAjoute );
 		await this.ajouterExperienceUtilisateur( auteur, channel, upvote ? -this.expLikeRecu : this.expLikeRecu );
 	}
 

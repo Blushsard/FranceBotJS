@@ -104,7 +104,11 @@ class UsersManager
 	 * @return {Promise<object>} L'objet contenant les données de l'user après l'ajout.
 	 */
 	async ajouterExperienceUser( userId, exp ) {
+		console.log("debug2", exp)
 		let user = await this.fetchUser( userId );
+		console.log("debug3", exp)
+		console.log("debug4", exp > 0 ? exp : 0)
+		console.log("debug5", user["n_xp"] + exp <= 0)
 		if ( !user ) {
 			user = await this.addUser( userId );
 			exp = exp > 0 ? exp : 0;
@@ -113,6 +117,7 @@ class UsersManager
 			if ( user["n_xp"] + exp <= 0 )
 				exp = 0;
 		}
+		console.log("debug6", exp)
 
 		await this.db.query(
 			"UPDATE users SET n_xp=n_xp+? WHERE pk_user_id=?;",
