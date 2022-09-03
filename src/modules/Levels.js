@@ -47,9 +47,8 @@ class Levels
 		this.expVocal = Number(process.env.EXP_VOCAL);
 	}
 
-
-	getActive() { return this._active; }
-	setActive( active ) { this._active = active; }
+	get active() { return this._active; }
+	set active( active ) { this._active = active; }
 
 	/**
 	 * Permet de charger l'objet de la guild pour ne pas avoir à le fetch à chaque exp ajoutée.

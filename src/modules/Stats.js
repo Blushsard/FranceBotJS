@@ -20,6 +20,9 @@ class Stats {
 		this._active = active;
 	}
 
+	get active() { return this._active; }
+	set active( active ) { this._active = active; }
+
 	/**
 	 * Vérifie si il y a eu un changement de mois, et dans ce cas, créée une nouvelle ligne pour les stats et envoie
 	 * les stats du mois précédent dans le salon des stats.
