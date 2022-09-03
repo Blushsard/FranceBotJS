@@ -75,10 +75,10 @@ class Reposts
 			const embed = new MessageEmbed()
 				.setTitle( "Nous sommes désolés de vous annoncer qu'un de vos memes a dû être supprimé de FRANCE MEMES." )
 				.setColor( "#2bcaff" )
-				.addField(
-					"Ce dernier a été trop de fois signalé pour repost sur le serveur!",
-					"But don’t give up your determination ! ^^"
-				);
+				.addFields( [{
+					name: "Ce dernier a été trop de fois signalé pour repost sur le serveur!",
+					value: "But don’t give up your determination ! ^^"
+				}]);
 
 			try {
 				await reaction.message.author.send({embeds: [embed]});

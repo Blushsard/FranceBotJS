@@ -76,8 +76,10 @@ class Feed
 		for ( let meme of memes ) {
 			embed = new MessageEmbed()
 				.setAuthor({ name: `| ${author.username}`, iconURL: author.avatarURL() })
-				.addField( "Lien du message", `[Accès au message](${msgData["jumpUrl"]})` )
-				.addField( "Dans", `${memeChannel} de la catégorie: ${memeChannel.parent.name}` )
+				.addFields([
+					{name: "Lien du message", value: `[Accès au message](${msgData["jumpUrl"]})`},
+					{name: "Dans", value: `${memeChannel} de la catégorie: ${memeChannel.parent.name}`}
+				])
 				.setColor( "#2bcaff" );
 
 			if ( meme["s_type"] === "lien" )

@@ -49,7 +49,7 @@ async function execute(interaction) {
     const embed = new MessageEmbed()
 		.setColor('#0099ff')
 		.setAuthor({ name: interaction.client.user.username, iconURL: interaction.client.user.avatarURL()})
-		.addField( `Classement sur ${usersLevel[0]['total_users']}`, leaderboard )
+		.addFields( [{name: `Classement sur ${usersLevel[0]['total_users']}`, value: leaderboard}] )
 		.setFooter({text:interaction.guild.name, iconURL:interaction.guild.iconURL()})
 		.setTimestamp();
 
