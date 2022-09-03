@@ -77,7 +77,7 @@ class Feed
 			embed = new MessageEmbed()
 				.setAuthor({ name: `| ${author.username}`, iconURL: author.avatarURL() })
 				.addFields([
-					{name: "Lien du message", value: `[Accès au message](${msgData["jumpUrl"]})`},
+					{name: "Lien du message", value: `[Accès au message](${msgData["s_jump_url"]})`},
 					{name: "Dans", value: `${memeChannel} de la catégorie: ${memeChannel.parent.name}`}
 				])
 				.setColor( "#2bcaff" );
@@ -111,6 +111,7 @@ class Feed
 					new MessageEmbed()
 						.setColor( "#2bcaff" )
 						.setTitle( "Un de vos memes a été envoyé dans le feed !" )
+						.setDescription( "Et vous avez reçu 50XP !" )
 						.setURL( firstEmbed.url )
 				]});
 		}

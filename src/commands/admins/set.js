@@ -8,8 +8,6 @@
 
 const { SlashCommandBuilder } = require( "@discordjs/builders" );
 const { CommandInteraction, MessageEmbed } = require( "discord.js" );
-// Uniquement pour la documentation.
-const { ChannelsManager } = require( `${process.cwd()}/database/modules/ChannelsManager` );
 
 
 /* ----------------------------------------------- */
@@ -19,6 +17,11 @@ const slashCommand = new SlashCommandBuilder()
 	.setName( "set" )
 	.setDescription( "[admin] Permet d'activer/désactiver des fonctionnalités sur un salon." )
 	.setDefaultPermission( false )
+	.addBooleanOption( option =>
+		option
+			.setName( "memes" )
+			.setDescription( "Definir un salon de memes." )
+	)
 	.addBooleanOption( option =>
 		option
 			.setName( "likes" )
@@ -56,13 +59,8 @@ const slashCommand = new SlashCommandBuilder()
 	)
 	.addBooleanOption( option =>
 		option
-			.setName( "memes" )
-			.setDescription( "Definir un salon de memes." )
-	)
-	.addBooleanOption( option =>
-		option
-			.setName( "all" )
-			.setDescription( "Définir toutes les fonctionnalités du salon." )
+			.setName( "vote" )
+			.setDescription( "Active l'ajout d'émoji sur les messages pour des votes.")
 	)
 	.setDefaultPermission(false);
 
@@ -105,8 +103,8 @@ async function execute( interaction ) {
 		await sManager.updateChannel( interaction.channelId, "b_reposts", options.get( "memes" ).value );
 		await sManager.updateChannel( interaction.channelId, "b_threads", options.get( "memes" ).value );
 	}
-	if ( options.get( "all" ) )
-		await changeAllValues( interaction.channelId, options.get( "all" ).value, sManager );
+	if ( options.get( "vote" ) )
+		await sManager.updateChannel( interaction.channelId, "b_vote", options.get( "vote" ).value );
 
 	const channel = await sManager.fetchChannel( interaction.channelId );
 	const embed = new MessageEmbed()
@@ -133,22 +131,6 @@ async function execute( interaction ) {
 
 function convertIntToBoolean( intBoolean ) {
 	return intBoolean === 0 ? "Inactif": "Actif";
-}
-
-
-/**
- * Chande les toutes les fonctionnalités d'un salon en fonction de la valeur passée en paramètre.
- * @param {string} channelId L'identifiant du salon.
- * @param {boolean} value La nouvelle valeur des fonctionnalités du salon.
- * @param {ChannelsManager} sManager Le manager pour les salons de la base de données.
- */
-async function changeAllValues( channelId, value, sManager ) {
-	await sManager.updateChannel( channelId, "b_reposts", value );
-	await sManager.updateChannel( channelId, "b_likes", value );
-	await sManager.updateChannel( channelId, "b_threads", value );
-	await sManager.updateChannel( channelId, "b_feed", value );
-	await sManager.updateChannel( channelId, "b_logs", value );
-	await sManager.updateChannel( channelId, "b_stats", value );
 }
 
 

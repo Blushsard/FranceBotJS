@@ -34,12 +34,13 @@ async function execute( interaction ) {
 
 	if ( options.getBoolean( "modules" ) ) {
 		const mod = interaction.client.modules;
-		let embedDescription = "**Memes :**\n" +
+		let embedDescription = "**Posts :**\n" +
 			`${mod.get("likes").active ? ":green_circle:": ":red_circle:"} ${mod.get("likes").constructor.name}\n` +
 			`${mod.get("reposts").active ? ":green_circle:": ":red_circle:"} ${mod.get("reposts").constructor.name}\n` +
 			`${mod.get("moyenne").active ? ":green_circle:": ":red_circle:"} ${mod.get("moyenne").constructor.name}\n` +
 			`${mod.get("feed").active ? ":green_circle:": ":red_circle:"} ${mod.get("feed").constructor.name}\n` +
 			`${mod.get("threads").active ? ":green_circle:": ":red_circle:"} ${mod.get("threads").constructor.name}\n` +
+			`${mod.get("vote").active ? ":green_circle:": ":red_circle:"} ${mod.get("vote").constructor.name}\n` +
 			"\n**XP :**\n" +
 			`${mod.get("levels").active ? ":green_circle:": ":red_circle:"} ${mod.get("levels").constructor.name}\n` +
 			"\n**Social :**\n" +
@@ -67,7 +68,9 @@ async function execute( interaction ) {
 			(channelData["b_feed"] ? ":green_circle:" : ":red_circle:") + " **Feed**\n" +
 			(channelData["b_stats"] ? ":green_circle:" : ":red_circle:") + " **Stats**\n" +
 			(channelData["b_logs"] ? ":green_circle:" : ":red_circle:") + " **Logs**\n" +
-			(channelData["b_exp"] ? ":red_circle:" : ":green_circle:") + " **Exp**\n";
+			(channelData["b_exp"] ? ":red_circle:" : ":green_circle:") + " **Exp**\n" +
+			(channelData["b_vote"] ? ":red_circle:" : ":green_circle:") + " **Vote**\n";
+
 		embeds.push(
 			new MessageEmbed()
 				.setDescription(embedDescription)

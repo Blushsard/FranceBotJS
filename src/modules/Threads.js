@@ -50,11 +50,14 @@ class Threads
 
 		let embedTitle = `Commentaires ┃ ${message.author.username}`;
 		if ( message.content ) embedTitle += " • " + message.content.substring( 0, 100 - 3 - embedTitle.length );
-		await message.startThread({
-			name: embedTitle,
-			autoArchiveDuration: 1440,
-			rateLimitPerUser: 60
-		});
+
+		try {
+			await message.startThread({
+				name: embedTitle,
+				autoArchiveDuration: 1440,
+				rateLimitPerUser: 60
+			});
+		} catch ( err ) {}
 	}
 
 	static isUserAdmin( member ) {

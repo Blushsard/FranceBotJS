@@ -61,8 +61,8 @@ class ChannelsManager
 	 */
 	async addChannel( channelId ) {
 		await this.db.query(
-			"INSERT INTO channels VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
-			[ channelId, false, false, false, false, false, false, false ]
+			"INSERT INTO channels VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);",
+			[ channelId, false, false, false, false, false, false, false, false ]
 		);
 	}
 

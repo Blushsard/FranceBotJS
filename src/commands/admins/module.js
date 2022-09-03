@@ -30,7 +30,8 @@ const slashCommand = new SlashCommandBuilder()
 				[ "Twitter", 'twitter' ],
 				[ "Reddit", 'reddit' ],
 				[ "Stats", 'stats' ],
-				[ "Logs", 'logs' ]
+				[ "Logs", 'logs' ],
+				[ "Vote", 'vote' ]
 			])
 	)
 	.addBooleanOption( option =>

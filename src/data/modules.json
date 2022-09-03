@@ -1,1 +1,16 @@
+<<<<<<< HEAD
 {"levels":true,"likes":true,"logs":true,"reposts":true,"feed":true,"threads":true,"reddit":false,"twitter":false,"stats":true}
+=======
+{
+	"levels": true,
+	"likes": true,
+	"logs": true,
+	"reposts": true,
+	"feed": true,
+	"threads": true,
+	"reddit": true,
+	"twitter": true,
+	"stats": true,
+	"vote": true
+}
+>>>>>>> 05f20874cd3bc3c2c3ef74c630be55f60388a124
