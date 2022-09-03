@@ -21,6 +21,11 @@ const slashCommand = new SlashCommandBuilder()
 	.setDefaultPermission( false )
 	.addBooleanOption( option =>
 		option
+			.setName( "memes" )
+			.setDescription( "Definir un salon de memes." )
+	)
+	.addBooleanOption( option =>
+		option
 			.setName( "likes" )
 			.setDescription( "Définir un salon de likes." )
 	)
@@ -53,11 +58,6 @@ const slashCommand = new SlashCommandBuilder()
 		option
 			.setName( "exp" )
 			.setDescription( "Définir un salon blacklisté pour l'exp." )
-	)
-	.addBooleanOption( option =>
-		option
-			.setName( "memes" )
-			.setDescription( "Definir un salon de memes." )
 	)
 	.addBooleanOption( option =>
 		option

@@ -22,6 +22,22 @@ const {
 	StageChannel } = require( "discord.js" );
 
 
+/**
+ * Mini classe servant de structure pour enregistrer des donnees utilisateurs.
+ */
+class CreateUserLimitObject {
+	constructor() {
+		this.timeMsgLimit = 0;
+		this.likeMsgCount = 0;
+		this.dayLikeMsgCount = (new Date()).getDay();
+		this.startTimeVocal = 0;
+	}
+}
+
+
+/**
+ * La classe principale du module.
+ */
 class Levels
 {
 	/**
@@ -55,21 +71,6 @@ class Levels
 	 */
 	async loadGuildObject() {
 		this.guild = await this.client.guilds.fetch( process.env.GUILD_ID );
-	}
-
-
-	/**
-	 * Créer un objet contenant les limites de l'utilisateur.
-	 * @return {object} Un objet contenant les limites de l'utilisateur.
-	 */
-	createUserLimitObject() {
-		return {
-			"timeMsgLimit": 0,	// Le temps depuis le dernier message envoyé en ms.
-			"likeMsgCount": 0,	// Le nombre de likes ajoutés sur des memes pour le jour courant.
-			"dayLikeMsgCount": (new Date()).getDay(),	// Le jour courant pour les likes sur les memes.
-			"startTimeVocal": 0	// Le temps a partir duquel un utilisateur a commence a etre en vocal.
-								// Ce temps est remis a zero quand il se mute (l'exp est tout de meme attribuee).
-		};
 	}
 
 
@@ -117,21 +118,21 @@ class Levels
 
 			// User entre dans un salon ou n'est plus muet.
 			if ( (!oldState.channel && !newState.mute) || (oldState.mute && !newState.mute) )
-				userData["startTimeVocal"] = date.getTime();
+				userData.startTimeVocal = date.getTime();
 
 			// User quitte le salon ou devient muet, on lui donne son exp.
 			else if ( (!newState.channel && (!newState.mute || !oldState.mute)) || (!oldState.mute && newState.mute) ) {
-				const timeDiff = date.getTime() - userData["startTimeVocal"];
+				const timeDiff = date.getTime() - userData.startTimeVocal;
 				const xpRecu = parseInt( String((this.expVocal * timeDiff) / 60_000_000), 10 );
-				userData["startTimeVocal"] = 0;
+				userData.startTimeVocal = 0;
 				if ( xpRecu !== 0 )
 					await this.ajouterExperienceUtilisateur( oldState.member, oldState.member.createDM(), xpRecu );
 			}
 		}
 		else {
-			let userData = this.createUserLimitObject();
+			let userData = new CreateUserLimitObject();
 			if ( !oldState.channel && !newState.mute )
-				userData["startTimeVocal"] = date.getTime();
+				userData.startTimeVocal = date.getTime();
 			this.limits.set( oldState.member.id, userData );
 		}
 	}
@@ -151,13 +152,15 @@ class Levels
 		const msTime = (new Date()).getTime();
 		if ( this.limits.has( message.author.id ) ) {
 			// 1 minute
-			if ( msTime >= this.limits.get( message.author.id )["timeLimitMsg"] + 60_000 ) {
+			if ( msTime >= this.limits.get( message.author.id ).timeMsgLimit + 60_000 ) {
 				await this.ajouterExperienceUtilisateur( message.member, message.channel, this.expMsgEnvoye );
-				this.limits.set( message.author.id, msTime );
+				this.limits.get( message.author.id ).timeMsgLimit = msTime;
 			}
 		}
 		else {
-			this.limits.set( message.author.id, this.createUserLimitObject() );
+			const userData = new CreateUserLimitObject();
+			userData.timeMsgLimit = msTime;
+			this.limits.set( message.author.id, userData );
 			await this.ajouterExperienceUtilisateur( message.member, message.channel, this.expMsgEnvoye );
 		}
 
@@ -180,23 +183,23 @@ class Levels
 
 		let userLimits;
 		if ( this.limits.has( userId ) ) {
-			userLimits = this.limits.get(userId);
-			if ((new Date()).getDay() !== userLimits["dayLikeMsgCount"]) {
-				userLimits["dayLikeMsgCount"] = (new Date()).getDay();
-				userLimits["likeMsgCount"] = 0;
+			userLimits = this.limits.get( userId );
+			if ( (new Date()).getDay() !== userLimits.dayLikeMsgCount ) {
+				userLimits.dayLikeMsgCount = (new Date()).getDay();
+				userLimits.likeMsgCount = 0;
 			}
 
 			if ( upvote ) {
-				if ( userLimits["likeMsgCount"] === 10 ) return;
-				userLimits["likeMsgCount"]++;
+				if ( userLimits.likeMsgCount === 10 ) return;
+				userLimits.likeMsgCount++;
 			}
-			else if ( userLimits["likeMsgCount"] > 0 )
-				userLimits["likeMsgCount"]--;
+			else if ( userLimits.likeMsgCount > 0 )
+				userLimits.likeMsgCount--;
 		}
 		else {
-			userLimits = this.createUserLimitObject();
+			userLimits = new CreateUserLimitObject();
 			if ( upvote )
-				userLimits["likeMsgCount"]++;
+				userLimits.likeMsgCount++;
 			this.limits.set( userId, userLimits );
 		}
 
