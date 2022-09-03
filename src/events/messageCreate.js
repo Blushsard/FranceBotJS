@@ -19,11 +19,10 @@ const { Client, Message } = require( "discord.js" );
 async function execute( message, client ) {
 	if ( !message ) return;
 
-	await client.modules.get( "vote" ).ajouterEmojiVote( message );
-
 	// Il faut récupérer le salon dans la base de données.
 	const salon = await client.db.channelsManager.fetchChannel( message.channelId );
 
+	await client.modules.get( "vote" ).ajouterEmojiVote( message, salon );
 	await client.modules.get( 'levels' ).ajouterExperienceMessage( message, salon );
 
 	const messageDeleted = await client.modules.get( 'threads' ).ajouterThread( message, salon );

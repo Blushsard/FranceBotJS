@@ -25,9 +25,12 @@ class Vote {
 	/**
 	 * Ajoute deux emojis sous un message.
 	 * @param {Message} msg Le message qui va recevoir les emojis.
+	 * @param {object} salonDb Les données du salon de la db.
 	 */
-	async ajouterEmojiVote( msg ) {
+	async ajouterEmojiVote( msg, salonDb ) {
 		if ( !this._active ) return;
+		if ( !salonDb ) return;
+		if ( salonDb && !salonDb["b_vote"] ) return;
 
 		await msg.react( "👍" );
 		await msg.react( "👎" );
