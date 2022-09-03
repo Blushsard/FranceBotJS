@@ -21,6 +21,7 @@ async function execute( reaction, user, client ) {
 
 	const salon = await client.db.channelsManager.fetchChannel( reaction.message.channelId );
 	await client.modules.get( "likes" ).updateLikeCount( reaction, salon, user, false );
+	await client.modules.get( "reposts" ).checkRepost( reaction, salon, user, false );
 }
 
 

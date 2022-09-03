@@ -23,7 +23,7 @@ async function execute( reaction, user, client ) {
 
 	const salon = await client.db.channelsManager.fetchChannel( reaction.message.channelId );
 	await client.modules.get( "likes" ).updateLikeCount( reaction, salon, user, true );
-	await client.modules.get( "reposts" ).checkRepost( reaction, salon, user );
+	await client.modules.get( "reposts" ).checkRepost( reaction, salon, user, true );
 	await client.modules.get( "stats" ).addEmojiCount( reaction.emoji.toString() );
 }
 
