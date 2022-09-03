@@ -63,6 +63,7 @@ class Reposts
 			await this.client.modules.get( "logs" ).repostSupprime();
 			await this.client.modules.get( "stats" ).addRepostToStats();
 			await this.client.modules.get( "levels" ).supprimerExperienceRepost( reaction.message.author.id );
+			await this.client.modules.get( "feed" ).deleteMessageFromFeed( reaction.message.id );
 			await reaction.message.delete();
 
 			const embed = new MessageEmbed()
