@@ -59,22 +59,24 @@ async function execute( interaction ) {
 		);
 	}
 	const channelData = await interaction.client.db.channelsManager.fetchChannel( interaction.channelId );
-	let embedDescription = "" +
-		(!channelData["b_likes"] ? ":green_circle:" : ":red_circle:") + " **Likes**\n" +
-		(channelData["b_reposts"] ? ":green_circle:" : ":red_circle:") + " **Reposts**\n" +
-		(channelData["b_threads"] ? ":green_circle:" : ":red_circle:") + " **Threads**\n" +
-		(channelData["b_feed"] ? ":green_circle:" : ":red_circle:") + " **Feed**\n" +
-		(channelData["b_stats"] ? ":green_circle:" : ":red_circle:") + " **Stats**\n" +
-		(channelData["b_logs"] ? ":green_circle:" : ":red_circle:") + " **Logs**\n" +
-		(channelData["b_exp"] ? ":green_circle:" : ":red_circle:") + " **Exp**\n";
-	embeds.push(
-		new MessageEmbed()
-			.setDescription( embedDescription )
-			.setAuthor({
-				name: " | Fonctionnalités du salon",
-				iconURL: interaction.user.avatarURL()
-			})
-	);
+	if ( channelData ) {
+		let embedDescription = "" +
+			(!channelData["b_likes"] ? ":green_circle:" : ":red_circle:") + " **Likes**\n" +
+			(channelData["b_reposts"] ? ":green_circle:" : ":red_circle:") + " **Reposts**\n" +
+			(channelData["b_threads"] ? ":green_circle:" : ":red_circle:") + " **Threads**\n" +
+			(channelData["b_feed"] ? ":green_circle:" : ":red_circle:") + " **Feed**\n" +
+			(channelData["b_stats"] ? ":green_circle:" : ":red_circle:") + " **Stats**\n" +
+			(channelData["b_logs"] ? ":green_circle:" : ":red_circle:") + " **Logs**\n" +
+			(channelData["b_exp"] ? ":green_circle:" : ":red_circle:") + " **Exp**\n";
+		embeds.push(
+			new MessageEmbed()
+				.setDescription(embedDescription)
+				.setAuthor({
+					name: " | Fonctionnalités du salon",
+					iconURL: interaction.user.avatarURL()
+				})
+		);
+	}
 
 	try {
 		await interaction.reply({ embeds: embeds, ephemeral: true });
