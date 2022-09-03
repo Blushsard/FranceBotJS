@@ -32,10 +32,6 @@ async function execute( interaction ) {
 	let embeds = [];
 	const options = interaction.options;
 
-	if ( options.data.length === 0 ) {
-		return interaction.reply({ content: "Vous devez indiquer au moins un paramètre !", ephemeral: true });
-	}
-
 	if ( options.getBoolean( "modules" ) ) {
 		const mod = interaction.client.modules;
 		let embedDescription = "**Memes :**\n" +
@@ -64,13 +60,13 @@ async function execute( interaction ) {
 	}
 	const channelData = await interaction.client.db.channelsManager.fetchChannel( interaction.channelId );
 	let embedDescription = "" +
-		(!channelData["b_exp"] ? ":green_circle:" : ":red_circle:") + " **Likes**" +
-		(channelData["b_reposts"] ? ":green_circle:" : ":red_circle:") + " **Reposts**" +
-		(channelData["b_threads"] ? ":green_circle:" : ":red_circle:") + " **Threads**" +
-		(channelData["b_feed"] ? ":green_circle:" : ":red_circle:") + " **Feed**" +
-		(channelData["b_stats"] ? ":green_circle:" : ":red_circle:") + " **Stats**" +
-		(channelData["b_logs"] ? ":green_circle:" : ":red_circle:") + " **Logs**" +
-		(channelData["b_exp"] ? ":green_circle:" : ":red_circle:") + " **Exp**";
+		(!channelData["b_likes"] ? ":green_circle:" : ":red_circle:") + " **Likes**\n" +
+		(channelData["b_reposts"] ? ":green_circle:" : ":red_circle:") + " **Reposts**\n" +
+		(channelData["b_threads"] ? ":green_circle:" : ":red_circle:") + " **Threads**\n" +
+		(channelData["b_feed"] ? ":green_circle:" : ":red_circle:") + " **Feed**\n" +
+		(channelData["b_stats"] ? ":green_circle:" : ":red_circle:") + " **Stats**\n" +
+		(channelData["b_logs"] ? ":green_circle:" : ":red_circle:") + " **Logs**\n" +
+		(channelData["b_exp"] ? ":green_circle:" : ":red_circle:") + " **Exp**\n";
 	embeds.push(
 		new MessageEmbed()
 			.setDescription( embedDescription )
