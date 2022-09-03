@@ -51,9 +51,11 @@ class Reposts
 				countReposts = reaction.count - 1;
 		});
 
+		const guild = await this.client.guilds.fetch( reaction.message.guildId );
+		const guildMemberAuthor = await guild.members.fetch( reaction.message.author.id );
 		await this.client.modules.get( "levels" ).supprimerExperienceRepostAjoute(
-			reaction.message.author.id,
-			reaction.message.channelId,
+			guildMemberAuthor,
+			reaction.message.channel,
 			upvote
 		);
 		await this.client.modules.get( "logs" ).modificationVote(
@@ -68,7 +70,7 @@ class Reposts
 		if ( countReposts >= moyenne / 2 ) {
 			await this.client.modules.get( "logs" ).repostSupprime();
 			await this.client.modules.get( "stats" ).addRepostToStats();
-			await this.client.modules.get( "levels" ).supprimerExperienceRepostSupprime( reaction.message.author.id, reaction.message.channelId );
+			await this.client.modules.get( "levels" ).supprimerExperienceRepostSupprime( guildMemberAuthor, reaction.message.channel );
 			await this.client.modules.get( "feed" ).deleteMessageFromFeed( reaction.message.id );
 			await reaction.message.delete();
 

@@ -230,29 +230,28 @@ class Levels
 
 	/**
 	 * Supprime de l'exp à un utilisateur si il reçoit un repost sur un meme.
-	 * @param {string} auteurId L'id de l'auteur qui vient de se prendre un repost.
-	 * @param {string} channelId L'id du salon contenant le meme.
+	 * @param {GuildMember} auteur L'id de l'auteur qui vient de se prendre un repost.
+	 * @param {TextChannel} channel L'id du salon contenant le meme.
 	 * @param {boolean} upvote Indique si c'est un upvote ou downvote.
 	 */
-	async supprimerExperienceRepostAjoute( auteurId, channelId, upvote ) {
-		const channelDb = await this.client.db.channelsManager.fetchChannel( channelId );
+	async supprimerExperienceRepostAjoute( auteur, channel, upvote ) {
+		const channelDb = await this.client.db.channelsManager.fetchChannel( channel.id );
 		if ( channelDb && channelDb["b_exp"] ) return;
-		await this.client.db.usersManager.ajouterExperienceUser(
-			auteurId,
-			upvote ? -this.expRepostAjoute : this.expRepostAjoute
-		);
+
+		console.log( this.expRepostAjoute, -this.expRepostAjoute );
+		await this.ajouterExperienceUtilisateur( auteur, channel, upvote ? -this.expLikeRecu : this.expLikeRecu );
 	}
 
 
 	/**
 	 * Supprime de l'exp à un utilisateur si un de ces messages est supprimé pour repost.
-	 * @param {string} auteurId L'id de l'auteur qui vient de se prendre un repost.
-	 * @param {string} channelId L'id du salon contenant le meme.
+	 * @param {GuildMember} auteur L'id de l'auteur qui vient de se prendre un repost.
+	 * @param {TextChannel} channel L'id du salon contenant le meme.
 	 */
-	async supprimerExperienceRepostSupprime( auteurId, channelId ) {
-		const channelDb = await this.client.db.channelsManager.fetchChannel( channelId );
+	async supprimerExperienceRepostSupprime( auteur, channel ) {
+		const channelDb = await this.client.db.channelsManager.fetchChannel( channel.id );
 		if ( channelDb && channelDb["b_exp"] ) return;
-		await this.client.db.usersManager.ajouterExperienceUser( auteurId, -this.expRepost );
+		await this.ajouterExperienceUtilisateur( auteur, channel, -this.expRepost );
 	}
 
 
