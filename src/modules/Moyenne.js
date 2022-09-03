@@ -38,23 +38,25 @@ class Moyenne
 	}
 
 	async calculerValeurMoyenne() {
-		const queryResult = (await this.db.query(
+		const data = (await this.db.query(
 			"SELECT * FROM moyenne_data;"
 		))[0];
 
-		// Récupération de la somme des likes et du nombre de memes dans la moyenne.
-		const nbLikesMsg = (await this.db.query(
-			`SELECT sum(n_likes) AS sommeLikes, count(pk_msg_id) as nbMsg 
-			FROM messages WHERE n_date>? ORDER BY n_likes LIMIT ${queryResult["n_nb_msg_moyenne"]}`,
+		const likes = await this.db.query(
+			`SELECT n_likes FROM messages WHERE n_date>? ORDER BY n_likes DESC LIMIT ${data["n_nb_msg_moyenne"]}`,
 			[ getMonthIntDate() - 3 ]
-		))[0];
+		);
 
-		// Dans le cas ou le nombre de messages est à 0, on met la moyenne à 1 car elle est inutile tant qu'il n'y a pas
-		// de messages. De plus, il y aura toujours des messages.
-		this._moyenne = nbLikesMsg["sommeLikes"] != null
-			? (nbLikesMsg["sommeLikes"] / nbLikesMsg["nbMsg"])
-			: 1;
-		if ( !this._moyenne ) this._moyenne = 1;
+		if ( !likes.length ) {
+			this._moyenne = 50;
+			return;
+		}
+
+		let moyenneTemp = 0;
+		for ( let like of likes )
+			moyenneTemp += like["n_likes"];
+
+		this._moyenne = moyenneTemp / likes.length;
 	}
 }
 
