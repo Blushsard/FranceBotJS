@@ -67,7 +67,7 @@ async function execute( interaction ) {
 			(channelData["b_feed"] ? ":green_circle:" : ":red_circle:") + " **Feed**\n" +
 			(channelData["b_stats"] ? ":green_circle:" : ":red_circle:") + " **Stats**\n" +
 			(channelData["b_logs"] ? ":green_circle:" : ":red_circle:") + " **Logs**\n" +
-			(channelData["b_exp"] ? ":green_circle:" : ":red_circle:") + " **Exp**\n";
+			(channelData["b_exp"] ? ":red_circle:" : ":green_circle:") + " **Exp**\n";
 		embeds.push(
 			new MessageEmbed()
 				.setDescription(embedDescription)
