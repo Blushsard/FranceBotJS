@@ -131,8 +131,7 @@ class Feed
 			for ( let link of linksFeedMsg ) {
 				try {
 					await feedChannel.messages.delete(link['pk_feed_msg_id']);
-				}
-				catch ( err ) {}
+				} catch ( err ) {}
 			}
 			await this.db.feedManager.deleteRows( "n_msg_id", originMsgId );
 		}
