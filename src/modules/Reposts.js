@@ -99,7 +99,7 @@ class Reposts
 				}]);
 
 			try {
-				await user.send({embeds: [embed]})
+				await reaction.message.author.send({embeds: [embed]})
 			}
 			catch ( err ) { this.client.emit( "error", err ); }
 		}
