@@ -118,7 +118,9 @@ class Feed
 						.setURL( firstEmbed.url )
 				]});
 		}
-		catch ( err ) { this.client.emit( "error", err ); }
+		catch ( err ) {
+			console.log( err )
+		}
 	}
 
 	/**

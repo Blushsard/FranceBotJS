@@ -60,7 +60,9 @@ class Stats {
 		try {
 			await statsChannel.send( { embeds: [ monthEmbed ] } );
 		}
-		catch( err ) { this.client.emit( "error", err ); }
+		catch( err ) {
+			console.log( err );
+		}
 
 		// Enregistrement des données du mois dans la bdd.
 		await this.db.statsManager.registerMonthStats( monthData );
