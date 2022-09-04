@@ -47,9 +47,15 @@ async function clearAllBannedFromDatabase( client, guild ) {
 	const bans = await guild.bans.fetch();
 	console.log("Nombre de bans :", bans.size )
 
-	let cpt = 0;
-	bans.forEach( (key, value) => {
-		console.log( key , value );
+	let cpt = 1;
+	bans.forEach( async (ban, userId) => {
+		try {
+			await client.db.usersManager.removeUser( ban.user.id );
+			console.log( "USER DELETE ", cpt );
+		} catch ( err ) {
+			console.log( "ERREUR USER ", cpt );
+		}
+		cpt++;
 	});
 	/*for ( let ban of bans ) {
 		cpt++;
