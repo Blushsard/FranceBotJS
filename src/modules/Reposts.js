@@ -36,7 +36,7 @@ class Reposts
 		try {
 			await message.react( process.env.EMOJI_REPOST );
 		}
-		catch ( err ) { this.client.emit( "error", err ); }
+		catch ( err ) {}
 	}
 
 	/**
