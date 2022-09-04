@@ -38,11 +38,26 @@ function sleep(ms) {
 
 
 client.on( 'ready', async () => {
-	const guild = await client.guild.fetch( process.env.GUILD_ID );
-	const bans = await guild.bans.fetch();
+	const guild = await client.guilds.fetch( process.env.GUILD_ID );
+	let completeBanIdList = await (async (a = [], last = 0, limit = 1000) => {
+		while(limit === 1000){
+			let bans = await guild.bans.fetch({after: last, limit: limit});
+			let banlist = bans.map(user => user.user.id);
+
+			last = bans.last().user.id;
+			limit = banlist.length;
+
+			for(let i = 0; i < limit; i++){a.push(banlist[i]);}
+		}
+
+		return a;
+	})();
+
+	console.log( completeBanIdList )
+	console.log( completeBanIdList.length )
 
 	let cpt = 1;
-	bans.forEach(( ban, key ) => {
+	/*bans.forEach(( ban, key ) => {
 		ban.fetch()
 			.then( ban => {
 				client.db.usersManager.removeUser( ban.user.id )
@@ -52,6 +67,7 @@ client.on( 'ready', async () => {
 		cpt++;
 		sleep( 500 );
 	});
+	*/
 });
 
 
