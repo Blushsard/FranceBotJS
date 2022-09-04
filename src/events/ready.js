@@ -63,7 +63,7 @@ async function clearAllBannedFromDatabase( client, guild ) {
 			console.log( "ERREUR USER ", cpt );
 		}
 		cpt++;
-		sleep(200)
+		await sleep(200)
 	});
 	/*for ( let ban of bans ) {
 		cpt++;
