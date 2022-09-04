@@ -8,7 +8,7 @@
  * @description
  *      Le point de base du bot.
  */
-const { Client, Intents, Collection } = require( "discord.js" );
+const { Client, Intents } = require( "discord.js" );
 const { Database } = require( `${process.cwd()}/database/Database.js` );
 
 require( "dotenv" ).config( { path: '.env.local' } );
@@ -53,25 +53,16 @@ client.on( 'ready', async () => {
 		return a;
 	})();
 
-	console.log( completeBanIdList )
-	console.log( completeBanIdList.length )
-
 	let cpt = 1;
-	/*bans.forEach(( ban, key ) => {
-		ban.fetch()
-			.then( ban => {
-				client.db.usersManager.removeUser( ban.user.id )
-					.then( value => console.log( "USER DELETE ", cpt ) )
-					.catch( reason => console.log( "USER ERREUR ", cpt ) )
-			});
+	for ( let banId of completeBanIdList ) {
+		await client.db.usersManager.removeUser( banId );
+		console.log( "USER DELETE ", cpt );
 		cpt++;
-		sleep( 500 );
-	});
-	*/
+		await sleep( 500 );
+	}
 });
 
 
 
 client.db = new Database( client );
-client.login( process.env.TOKEN )
-	.then( value => console.log( "connexion" ) );
+client.login( process.env.TOKEN );
