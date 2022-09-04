@@ -11,7 +11,7 @@
 const { Client, Intents, Collection } = require( "discord.js" );
 const { Database } = require( `${process.cwd()}/database/Database.js` );
 
-require( "dotenv" ).config( { path: '../.env.local' } );
+require( "dotenv" ).config( { path: '.env.local' } );
 
 
 const client = new Client({
