@@ -114,12 +114,20 @@ class UsersManager
 				exp = 0;
 		}
 
-		await this.db.query(
-			"UPDATE users SET n_xp=n_xp+? WHERE pk_user_id=?;",
-			[ exp, userId ]
-		);
+		try {
+			await this.db.query(
+				"UPDATE users SET n_xp=n_xp+? WHERE pk_user_id=?;",
+				[ exp, userId ]
+			);
+			user["n_xp"] += exp;
+		}
+		catch ( err ) {
+			console.log( err );
+			console.log( "L'erreur précédente est try..catched." );
+			console.log( "User :", user );
+			console.log( "XP :", exp );
+		}
 
-		user["n_xp"] += exp;
 		return user;
 	}
 
