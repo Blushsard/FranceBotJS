@@ -59,7 +59,7 @@ class Likes
 		try {
 			await message.react( process.env.EMOJI_LIKE_ID );
 		}
-		catch ( err ) { this.client.emit( "error", err ); }
+		catch ( err ) {}
 	}
 
 	/**

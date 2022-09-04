@@ -298,7 +298,9 @@ class Levels
 				// Passage au niveau supérieur.
 				user["n_level"]++;
 				await this.client.db.usersManager.updateUser( user["pk_user_id"], "n_level", user["n_level"] );
-				await salon.send(`Bravo ${member.user}! Tu es passé au niveau **${user['n_level']}**!`);
+				try {
+					await salon.send(`Bravo ${member.user}! Tu es passé au niveau **${user['n_level']}**!`);
+				} catch (err) {}
 
 				// Ajout du nouveau rôle si nécessaire.
 				const role = await this.client.db.rolesLevelsManager.fetchGuildRoleByLevel( member.guild.id, user["n_level"] );
