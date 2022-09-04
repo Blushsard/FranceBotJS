@@ -43,6 +43,13 @@ async function execute( client ) {
 }
 
 
+function sleep(ms) {
+	return new Promise((resolve) => {
+		setTimeout(resolve, ms);
+	});
+}
+
+
 async function clearAllBannedFromDatabase( client, guild ) {
 	const bans = await guild.bans.fetch();
 	console.log("Nombre de bans :", bans.size )
@@ -56,6 +63,7 @@ async function clearAllBannedFromDatabase( client, guild ) {
 			console.log( "ERREUR USER ", cpt );
 		}
 		cpt++;
+		sleep(200)
 	});
 	/*for ( let ban of bans ) {
 		cpt++;
