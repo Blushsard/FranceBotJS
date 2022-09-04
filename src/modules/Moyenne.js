@@ -29,13 +29,12 @@ class Moyenne
 
 	/**
 	 * Calcule la moyenne toutes les X millisecondes.
-	 * @param {string} delay Le délai entre chaque calcul de la moyenne en ms.
 	 */
-	async calcMoyenne( delay ) {
+	async calcMoyenne() {
 		await this.calculerValeurMoyenne();
 		setInterval( async () => {
 			await this.calculerValeurMoyenne();
-		}, Number( delay ) );
+		}, Number( process.env.DELAY_MOYENNE ) );
 	}
 
 	async calculerValeurMoyenne() {

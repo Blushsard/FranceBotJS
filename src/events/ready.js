@@ -22,11 +22,12 @@ async function execute( client ) {
 	await client.modules.get( "levels" ).loadGuildObject();
 
 	// Lancement des modules.
-	await client.modules.get( "moyenne" ).calcMoyenne( process.env.DELAY_MOYENNE );
-	await client.modules.get( "feed" ).feed( process.env.DELAY_FEED );
-	await client.modules.get( "reddit" ).reddit( process.env.DELAY_REDDIT );
-	await client.modules.get( "twitter" ).twitter( process.env.DELAY_TWITTER );
-	await client.modules.get( "stats" ).checkMonth( process.env.DELAY_STATS );
+	await client.modules.get( "moyenne" ).calcMoyenne();
+	await client.modules.get( "feed" ).feed();
+	await client.modules.get( "reddit" ).reddit();
+	await client.modules.get( "twitter" ).twitter();
+	await client.modules.get( "stats" ).checkMonth();
+	await client.modules.get( "logs" ).logsDispatcher();
 
 	// Envoi du message de connexion en pm.
 	const recipient = await client.users.fetch( process.env.RECIPIENT_CONN_MSG );

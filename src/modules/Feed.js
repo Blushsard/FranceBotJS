@@ -24,9 +24,8 @@ class Feed
 
 	/**
 	 * Envoit les memes dans le feed toutes les X secondes.
-	 * @param {string} delay Le délai entre chaque intération du feed.
 	 */
-	async feed( delay ) {
+	async feed() {
 		setInterval( async () => {
 			if ( !this._active ) return;
 
@@ -53,12 +52,14 @@ class Feed
 				await this.db.messagesManager.updateMessage( msg["pk_msg_id"], "b_stf", true );
 
 				await this.client.modules.get( "levels" ).ajouterExperienceFeed( msg["s_author_id"] );
-				await this.client.modules.get( "logs" ).memeEnvoyeDansFeed(
-					await memeChannel.messages.fetch( msg["pk_msg_id"] ),
-					firstEmbed.url
-				);
+				try {
+					await this.client.modules.get( "logs" ).memeEnvoyeDansFeed(
+						await memeChannel.messages.fetch( msg["pk_msg_id"] ),
+						firstEmbed.url
+					);
+				} catch ( err ) {}
 			}
-		}, Number( delay ) );
+		}, Number( process.env.DELAY_FEED ) );
 	}
 
 	/**

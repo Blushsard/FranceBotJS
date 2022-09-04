@@ -25,9 +25,8 @@ class Reddit
 
 	/**
 	 * Envoit les memes sur reddit.
-	 * @param {string} delay Le délai entre chaque intération de l'envoi des memes sur reddit.
 	 */
-	async reddit( delay ) {
+	async reddit() {
 		setInterval(async () => {
 			if ( !this._active ) return;
 
@@ -60,7 +59,7 @@ class Reddit
 			}
 
 			await this.client.modules.get( "logs" ).iterationModule( "Reddit" );
-		}, Number( delay ) );
+		}, Number( process.env.DELAY_REDDIT ) );
 	}
 }
 

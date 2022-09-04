@@ -116,7 +116,7 @@ class Likes
 	 * Met à jour le message (voir si il faut faire des fonctions séparées pour update le texte ou les attachments).
 	 * @param {Message} message
 	 */
-	updateMessage( message ) {
+	updateMessageContent( message ) {
 		// TODO à faire pour plus tard.
 	}
 

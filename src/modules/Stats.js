@@ -26,9 +26,8 @@ class Stats {
 	/**
 	 * Vérifie si il y a eu un changement de mois, et dans ce cas, créée une nouvelle ligne pour les stats et envoie
 	 * les stats du mois précédent dans le salon des stats.
-	 * @param {string} delay Le délai entre chaque itération de la boucle en milliseconde.
 	 */
-	async checkMonth( delay ) {
+	async checkMonth() {
 		setInterval( async () => {
 			let monthCreated = await this.checkIfMonthExists();
 
@@ -37,7 +36,7 @@ class Stats {
 				await this.sendStats( monthCreated["pk_month_id"] - 1 );
 				await this.transferStatsEmojisToHisto( monthCreated["pk_month_id"] - 1 );
 			}
-		}, Number( delay ) );
+		}, Number( process.env.DELAY_STATS ) );
 	}
 
 	/**

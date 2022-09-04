@@ -18,6 +18,8 @@ class Logs
 		this.db = this.client.db;
 		this._active = active;
 
+		this.stack = [];
+
 		this._logChannelId = null;
 		this.db.channelsManager.fetchOneChannelByValue( "b_logs", true )
 			.then( value => {
@@ -31,15 +33,29 @@ class Logs
 	get active() { return this._active; }
 
 	/**
-	 * Envoi l'embed d'un log dans le salon des logs.
-	 * @param {MessageEmbed} embed L'embed du log.
+	 * Une fonction tournant avec setInterval et envoyant les logs les un après les autres par paquets de 3 avec un
+	 * délai pour éviter de trigger des ratesLImits.
 	 */
-	async sendEmbed( embed ) {
-		const logChannel = await this.client.channels.fetch( this._logChannelId );
-		try {
-			await logChannel.send({ embeds: [ embed ] } );
-		}
-		catch ( err ) { this.client.emit( "error", err ); }
+	async logsDispatcher() {
+		setInterval(async () => {
+			if ( !this._logChannelId ) return;
+			const logChannel = await this.client.channels.fetch( this._logChannelId );
+			if ( !logChannel ) return;
+
+			// Récupération des 3 premiers embed du stack.
+			let embeds = [];
+			for ( let i = 0; i < 3; i++ ) {
+				let tmp = this.stack.shift();
+				if ( !tmp ) break;
+				embeds.push( tmp );
+			}
+
+			try {
+				if ( embeds.length !== 0 )
+					await logChannel.send({ embeds: embeds } );
+			}
+			catch ( err ) { this.client.emit( "error", err ); }
+		}, Number( process.env.LOG_DISPATCHER_DELAY ) );
 	}
 
 	/**
@@ -61,7 +77,7 @@ class Logs
 				{ name: "Date :", value: `${new Date()}` }
 			])
 
-		await this.sendEmbed( embed );
+		this.stack.push( embed );
 	}
 
 	/**
@@ -87,13 +103,13 @@ class Logs
 		else {
 			const guild = await this.client.guilds.fetch( process.env.GUILD_ID );
 			const auteur = await guild.members.fetch( databaseMessage["s_author_id"] );
-			embed
-				.setAuthor({ name: auteur.nickname, iconURL: auteur.avatarURL() });
+			if ( typeof auteur.nickname === 'string' )
+				embed.setAuthor({ name: auteur.nickname, iconURL: auteur.avatarURL() });
 		}
 
 		embed.addFields([ { name: "Date :", value: `${new Date()}` } ]);
 
-		await this.sendEmbed( embed );
+		this.stack.push( embed );
 	}
 
 	/**
@@ -110,7 +126,7 @@ class Logs
 			.setColor( process.env.COUL_EMBED_REPOST )
 			.setDescription( "Cet embed est complété avec l'embed de suppression de message suivant." );
 
-		await this.sendEmbed( embed );
+		this.stack.push( embed );
 	}
 
 	/**
@@ -133,7 +149,7 @@ class Logs
 				{ name: "Date :", value: `${new Date()}` }
 			]);
 
-		await this.sendEmbed( embed );
+		this.stack.push( embed );
 	}
 
 	/**
@@ -153,7 +169,7 @@ class Logs
 		if ( typeof this.client.user.name === 'string' )
 			embed.setAuthor( { name: this.client.user.name, iconURL: this.client.user.avatarURL() } );
 
-		await this.sendEmbed( embed );
+		this.stack.push( embed );
 	}
 
 	/**
@@ -183,7 +199,7 @@ class Logs
 		if ( message.author )
 			embed.setFooter( { text: message.author.username, iconURL: message.author.avatarURL() } );
 
-		await this.sendEmbed( embed );
+		this.stack.push( embed );
 	}
 }
 

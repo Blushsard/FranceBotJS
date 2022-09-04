@@ -42,11 +42,6 @@ client.db = new Database( client );
 
 	await client.login( process.env.TOKEN );
 
-	// Ajout d'un event listener pour le process pour qu'il récupère des informations plus précises sur les erreurs d'API.
-	process.on( 'unhandledRejection', error => {
-		client.emit( 'error', error );
-	})
-
 	// Dé-commenter les lignes suivantes pour charger dans le serveur de dev de nouvelles commands ou les mise à jour
 	// sur les commands.
 	// const { loadCommandsToGuild } = require( "./utils/loadAssets" );

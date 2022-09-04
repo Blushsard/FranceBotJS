@@ -32,10 +32,7 @@ class Twitter
 	set active( active ) { this._active = active; }
 	get active() { return this._active; }
 
-	/**
-	 * @param {string} delay Le délai entre chaque itération de la boucle.
-	 */
-	async twitter( delay ) {
+	async twitter() {
 		setInterval( async () => {
 			if ( !this._active ) return;
 
@@ -65,7 +62,7 @@ class Twitter
 			}
 
 			await this.client.modules.get( "logs" ).iterationModule( "Twitter" );
-		}, Number( delay ) );
+		}, Number( process.env.DELAY_TWITTER ) );
 	}
 
 	/**
