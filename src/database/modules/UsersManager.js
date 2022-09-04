@@ -100,7 +100,7 @@ class UsersManager
 	/**
 	 * Ajoute de l'expérience à l'user dans la base de données.
 	 * @param {string} userId L'identifiant de l'user.
-	 * @param {int} exp L'expérience à ajouter.
+	 * @param {number} exp L'expérience à ajouter.
 	 * @return {Promise<object>} L'objet contenant les données de l'user après l'ajout.
 	 */
 	async ajouterExperienceUser( userId, exp ) {

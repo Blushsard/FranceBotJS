@@ -66,6 +66,7 @@ class Levels
 	get active() { return this._active; }
 	set active( active ) { this._active = active; }
 
+
 	/**
 	 * Permet de charger l'objet de la guild pour ne pas avoir à le fetch à chaque exp ajoutée.
 	 */
@@ -124,6 +125,7 @@ class Levels
 			else if ( (!newState.channel && (!newState.mute || !oldState.mute)) || (!oldState.mute && newState.mute) ) {
 				const timeDiff = date.getTime() - userData.startTimeVocal;
 				const xpRecu = parseInt( String((this.expVocal * timeDiff) / 60_000_000), 10 );
+				console.log( xpRecu );
 				userData.startTimeVocal = 0;
 				if ( xpRecu !== 0 )
 					await this.ajouterExperienceUtilisateur( oldState.member, oldState.member.createDM(), xpRecu );
