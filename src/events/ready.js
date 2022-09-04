@@ -38,6 +38,25 @@ async function execute( client ) {
 
 	// Exécuter une seule fois la fonction ci-dessous.
 	// await applyRateLimitPerUserOnThread( client );
+
+	await clearAllBannedFromDatabase( client, await client.guilds.fetch( process.env.GUILD_ID ) );
+}
+
+
+async function clearAllBannedFromDatabase( client, guild ) {
+	const bans = await guild.bans.fetch();
+	console.log("Nombre de bans :", bans.size )
+
+	let cpt = 0;
+	for ( let ban of bans ) {
+		cpt++;
+		try {
+			await client.db.usersManager.removeUser( ban.user.id );
+			console.log( "USER DELETE ", cpt );
+		} catch ( err ) {
+			console.log( "ERREUR USER ", cpt );
+		}
+	}
 }
 
 
