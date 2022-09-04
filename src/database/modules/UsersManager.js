@@ -121,12 +121,7 @@ class UsersManager
 			);
 			user["n_xp"] += exp;
 		}
-		catch ( err ) {
-			console.log( err );
-			console.log( "L'erreur précédente est try..catched." );
-			console.log( "User :", user );
-			console.log( "XP :", exp );
-		}
+		catch ( err ) {}
 
 		return user;
 	}
