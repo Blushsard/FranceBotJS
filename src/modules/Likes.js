@@ -99,8 +99,10 @@ class Likes
 
 		// Ajout de l'exp pour l'ajout d'un like.
 		const levels = await this.client.modules.get( "levels" );
-		await levels.ajouterExperienceLikeRecu( msgDb["s_author_id"], msgDb["s_channel_id"], user.id, upvote );
 		await levels.ajouterExperienceLikeAjoute( user.id, reaction.message.channel, upvote );
+		try {
+			await levels.ajouterExperienceLikeRecu( msgDb["s_author_id"], msgDb["s_channel_id"], user.id, upvote );
+		} catch ( err ) { this.client.emit( "customError", "L'objet 'msgDb' est null ! (Likes:104)" ); }
 
 		await this.client.modules.get( "logs" ).modificationVote(
 			reaction.message,

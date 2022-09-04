@@ -99,7 +99,10 @@ async function loadCommandsToGuild( client, guildId ) {
 		commandsArray.push( command.data.toJSON() );
 	});
 
-	await client.guilds.cache.get( guildId ).commands.set( commandsArray );
+	try {
+		await client.guilds.cache.get( guildId ).commands.set( commandsArray );
+	} catch( err ) {}
+
 	console.log( `Commandes chargées dans la guild ${guildId} !` );
 }
 

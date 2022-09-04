@@ -141,7 +141,7 @@ class Logs
 	 * Le feed n'est pas danc ce log car il tourne toutes les secondes.
 	 * @param {string} moduleName Le nom du module qui vient de faire une intération.
 	 */
-	async iteractionModule( moduleName ) {
+	async iterationModule( moduleName ) {
 		if ( !this._active ) return;
 		if ( !this._logChannelId ) return;
 
@@ -149,6 +149,9 @@ class Logs
 			.setTitle( `Itération de la boucle ${moduleName}.` )
 			.setColor( process.env.COUL_EMBED_ITERATION )
 			.setAuthor( { name: this.client.user.name, iconURL: this.client.user.avatarURL() } );
+
+		if ( typeof this.client.user.name === 'string' )
+			embed.setAuthor( { name: this.client.user.name, iconURL: this.client.user.avatarURL() } );
 
 		await this.sendEmbed( embed );
 	}

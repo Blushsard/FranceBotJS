@@ -64,7 +64,7 @@ class Twitter
 				await this.db.messagesManager.updateMessage( msg["pk_msg_id"], "b_stt", true );
 			}
 
-			await this.client.modules.get( "logs" ).iteractionModule( "Twitter" );
+			await this.client.modules.get( "logs" ).iterationModule( "Twitter" );
 		}, Number( delay ) );
 	}
 

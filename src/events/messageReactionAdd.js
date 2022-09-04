@@ -19,7 +19,12 @@ const { Client, MessageReaction, User } = require( "discord.js" );
 async function execute( reaction, user, client ) {
 	if ( !reaction || !user ) return;
 
-	if ( reaction.partial ) await reaction.fetch();
+	if ( reaction.partial ) {
+		// Le try...catch permet d'eviter une erreur si le bot n'arrive pas a fetch l'emoji.
+		try {
+			await reaction.fetch();
+		} catch ( err ) { return; }
+	}
 
 	const salon = await client.db.channelsManager.fetchChannel( reaction.message.channelId );
 	await client.modules.get( "likes" ).updateLikeCount( reaction, salon, user, true );

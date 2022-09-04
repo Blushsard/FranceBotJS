@@ -42,6 +42,6 @@ client.db = new Database( client );
 
 	// Dé-commenter les lignes suivantes pour charger dans le serveur de dev de nouvelles commands ou les mise à jour
 	// sur les commands.
-	const { loadCommandsToGuild } = require( "./utils/loadAssets" );
-	await loadCommandsToGuild( client, process.env.GUILD_ID );
+	// const { loadCommandsToGuild } = require( "./utils/loadAssets" );
+	// await loadCommandsToGuild( client, process.env.GUILD_ID );
 })();

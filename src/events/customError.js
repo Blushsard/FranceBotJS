@@ -1,7 +1,7 @@
 /**
  * @author Benjamin Guirlet
  * @description
- *      Permet d'afficher les erreurs de l'API discord.
+ *      Permet d'afficher des erreurs customisées.
  */
 
 const { Client } = require( "discord.js" );
@@ -13,7 +13,7 @@ const { ADMINISTRATORS } = require( `${process.cwd()}/data/config.json` );
 /* ----------------------------------------------- */
 /**
  * Event appelé lorsque le bot est connecté.
- * @param {Error} error L'erreur envoyée par l'API.
+ * @param {string} error L'erreur envoyée par l'API.
  * @param {Client} client Le client du bot.
  */
 async function execute( error, client ) {
@@ -26,7 +26,7 @@ async function execute( error, client ) {
 			"=".repeat( 100 ) + "\n" +
 			"**UNE ERREUR EST SURVENUE !**\n" +
 			"**DATE : **" + new Date() + "\n" +
-			"```" + error.stack + "```"
+			"```" + error + "```"
 		);
 	}
 }
@@ -36,6 +36,6 @@ async function execute( error, client ) {
 /* MODULE EXPORTS                                  */
 /* ----------------------------------------------- */
 module.exports = {
-	name: "customError",
+	name: "error",
 	execute
 }
