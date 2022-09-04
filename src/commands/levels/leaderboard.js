@@ -48,10 +48,12 @@ async function execute(interaction) {
 	
     const embed = new MessageEmbed()
 		.setColor('#0099ff')
-		.setAuthor({ name: interaction.client.user.username, iconURL: interaction.client.user.avatarURL()})
 		.addFields( [{name: `Classement sur ${usersLevel[0]['total_users']}`, value: leaderboard}] )
 		.setFooter({text:interaction.guild.name, iconURL:interaction.guild.iconURL()})
 		.setTimestamp();
+
+	if ( interaction?.client?.user?.username && typeof interaction.client.user.username === 'string' )
+		embed.setAuthor({ name: interaction.client.user.username, iconURL: interaction.client.user.avatarURL()})
 
 	try {
 		return interaction.reply({

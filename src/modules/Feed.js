@@ -76,12 +76,14 @@ class Feed
 		let embed;
 		for ( let meme of memes ) {
 			embed = new MessageEmbed()
-				.setAuthor({ name: `| ${author.username}`, iconURL: author.avatarURL() })
 				.addFields([
 					{name: "Lien du message", value: `[Accès au message](${msgData["s_jump_url"]})`},
 					{name: "Dans", value: `${memeChannel} de la catégorie: ${memeChannel.parent.name}`}
 				])
 				.setColor( "#2bcaff" );
+
+			if ( author?.username && typeof author.username === 'string' )
+				embed.setAuthor({ name: `| ${author.username}`, iconURL: author.avatarURL() })
 
 			if ( meme["s_type"] === "lien" )
 				embed.setURL( meme["s_url"] ).setTitle( "Lien du meme" );

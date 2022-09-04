@@ -35,12 +35,14 @@ async function execute(interaction) {
 
     const embed = new MessageEmbed()
 		.setColor('#0099ff')
-		.setAuthor({ name: user.username, iconURL: user.avatarURL()})
 		.addFields([
 			{name: 'Rank', value: `${userLevel['rang']}/${userLevel['total_users']}`, inline: true},
 			{name: 'Level', value: `${userLevel['n_level']} (${progress.toFixed( 2 )}%)`, inline: true},
 			{name: 'XP', value: `\`${userLevel['n_xp']}\` au total`, inline: true}
 		]);
+
+	if ( user?.username && typeof user.username === 'string' )
+		embed.setAuthor({ name: user.username, iconURL: user.avatarURL()})
 
 	try {
 		return interaction.reply({

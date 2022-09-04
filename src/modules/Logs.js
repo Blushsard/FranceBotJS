@@ -70,12 +70,14 @@ class Logs
 			.setTitle( "Meme ajouté dans la base de données." )
 			.setURL( message.url )
 			.setColor( process.env.COUL_EMBED_MEME )
-			.setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() })
 			.addFields([
 				{ name: "Salon :", value: `${message.channel}` },
 				{ name: "Lien du message :", value: `[Accès au message](${message.url})` },
 				{ name: "Date :", value: `${new Date()}` }
 			])
+
+		if ( message.author && typeof message.author.username === 'string' )
+			embed.setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() } );
 
 		this.stack.push( embed );
 	}
@@ -98,13 +100,12 @@ class Logs
 
 		// Dans le cas ou l'objet de l'auteur est présent dans l'objet du message.
 		if ( message.author && typeof message.author.username === 'string' )
-			embed
-				.setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() });
+			embed.setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() } );
 		else {
 			const guild = await this.client.guilds.fetch( process.env.GUILD_ID );
 			const auteur = await guild.members.fetch( databaseMessage["s_author_id"] );
-			if ( typeof auteur.nickname === 'string' )
-				embed.setAuthor({ name: auteur.nickname, iconURL: auteur.avatarURL() });
+			if ( auteur && typeof auteur.user.username === 'string' )
+				embed.setAuthor({ name: auteur.user.username, iconURL: auteur.avatarURL() });
 		}
 
 		embed.addFields([ { name: "Date :", value: `${new Date()}` } ]);
@@ -143,11 +144,13 @@ class Logs
 			.setTitle( "Meme envoyé dans le feed." )
 			.setURL( message.url )
 			.setColor( process.env.COUL_EMBED_FEED )
-			.setAuthor( { name: message.author.username, iconURL: message.author.avatarURL() } )
 			.addFields([
 				{ name: "Lien du feed :", value: `[Accès au message](${feedLink})` },
 				{ name: "Date :", value: `${new Date()}` }
 			]);
+
+		if ( message.author && typeof message.author.username === 'string' )
+			embed.setAuthor({ name: message.author.username, iconURL: message.author.avatarURL() } );
 
 		this.stack.push( embed );
 	}
@@ -164,10 +167,9 @@ class Logs
 		const embed = new MessageEmbed()
 			.setTitle( `Itération de la boucle ${moduleName}.` )
 			.setColor( process.env.COUL_EMBED_ITERATION )
-			.setAuthor( { name: this.client.user.name, iconURL: this.client.user.avatarURL() } );
 
-		if ( typeof this.client.user.name === 'string' )
-			embed.setAuthor( { name: this.client.user.name, iconURL: this.client.user.avatarURL() } );
+		if ( this.client?.user?.username && typeof this.client.user.name === 'string' )
+			embed.setAuthor( { name: this.client.user.username, iconURL: this.client.user.avatarURL() } );
 
 		this.stack.push( embed );
 	}
@@ -188,7 +190,6 @@ class Logs
 			.setTitle( `Modifications de vote : ${emoji}` )
 			.setURL( message.url )
 			.setColor( process.env.COUL_EMBED_VOTE )
-			.setAuthor( { name: voteur.username, iconURL: voteur.avatarURL() } )
 			.addFields([
 				{ name: "Lien du message :", value: `[Accès au message](${message.url})` },
 				{ name: "Type de vote :", value: upvote ? "Ajout d'une réaction" : "Retrait d'une réaction" },
@@ -196,8 +197,15 @@ class Logs
 				{ name: "Date :", value: `${new Date()}` }
 			]);
 
-		if ( message.author )
+		if ( voteur?.username && typeof voteur.username === 'string' )
+			embed.setAuthor({ name: voteur.username, iconURL: voteur.avatarURL() } );
+		else
+			console.log( "Nom user :", voteur?.username )
+
+		if ( message.author && typeof message.author.username === 'string' )
 			embed.setFooter( { text: message.author.username, iconURL: message.author.avatarURL() } );
+		else
+			console.log( "Nom user :", message?.author?.username );
 
 		this.stack.push( embed );
 	}

@@ -125,10 +125,9 @@ class Stats {
 		const auteurRecordLikesMemes = await guild.members.fetch( monthData['s_id_auteur_record_likes'] );
 		const auteurRecordLikesCumules = await guild.members.fetch( monthData['s_id_auteur_record_likes_cumules'] );
 
-		return new MessageEmbed()
+		const embed = new MessageEmbed()
 			.setTitle( `Statisques du mois de ${monthData['s_month']}` )
 			.setColor( "RED" )
-			.setAuthor( { name: this.client.user.username, iconURL: this.client.user.avatarURL() } )
 			.addFields([
 				{ name: "Nombre de memes envoyés :", value: `${monthData['n_memes_sent']}` },
 				{ name: "Record de likes sur un meme :", value: `**${monthData['n_record_likes']}** likes par ${auteurRecordLikesMemes} !` },
@@ -138,6 +137,11 @@ class Stats {
 				{ name: "Nombre de memes envoyés dans le feed :", value: `${monthData['n_memes_feed']}` },
 				{ name: "Emoji la plus utilisée :", value: `${monthData['n_best_emoji']} avec **${monthData['n_count_best_emoji']}** utilisations !` }
 			]);
+
+		if ( this.client?.user?.username && typeof this.client.user.username === 'string' )
+			embed.setAuthor( { name: this.client.user.username, iconURL: this.client.user.avatarURL() } );
+
+		return embed;
 	}
 
 	/**
