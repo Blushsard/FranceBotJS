@@ -30,7 +30,7 @@ async function execute( interaction ) {
 			`**Moyenne des reposts:** ${interaction.client.modules.get('moyenne').getMoyenneRepost()}`;
 		await interaction.reply({ content: content,  ephemeral: true });
 	}
-	catch ( err ) { interaction.client.emit( "error", err ); }
+	catch ( err ) {}
 }
 
 

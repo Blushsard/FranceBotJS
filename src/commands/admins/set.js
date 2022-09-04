@@ -126,7 +126,7 @@ async function execute( interaction ) {
 	try {
 		await interaction.reply( { embeds: [ embed ], ephemeral: true } );
 	}
-	catch ( err ) { interaction.client.emit( "error", err ); }
+	catch ( err ) {}
 }
 
 

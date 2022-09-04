@@ -90,7 +90,7 @@ async function execute( interaction ) {
 			return await interaction.reply({ content: "Le salon n'est pas dans la base de données.", ephemeral: true})
 		await interaction.reply({ embeds: embeds, ephemeral: true });
 	}
-	catch ( err ) { interaction.client.emit( "error", err ); }
+	catch ( err ) {}
 }
 
 

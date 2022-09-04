@@ -60,7 +60,7 @@ async function execute(interaction) {
 			embeds: [embed],
 		});
 	}
-	catch ( err ) { interaction.client.emit( "error", err ); }
+	catch ( err ) {}
 }
 
 // EXPORTS
