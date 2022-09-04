@@ -24,6 +24,7 @@ class Moyenne
 
 	get active() { return this._active; }
 	getMoyenne() { return this._moyenne; }
+	getMoyenneRepost() { return this._moyenne / 2;}
 
 
 	/**

@@ -26,10 +26,9 @@ const slashCommand = new SlashCommandBuilder()
  */
 async function execute( interaction ) {
 	try {
-		await interaction.reply({
-			content: `**Moyenne:** ${interaction.client.modules.get('moyenne').getMoyenne()}`,
-			ephemeral: true
-		});
+		const content = `**Moyenne :** ${interaction.client.modules.get('moyenne').getMoyenne()}\n` +
+			`**Moyenne des reposts:** ${interaction.client.modules.get('moyenne').getMoyenneRepost()}`;
+		await interaction.reply({ content: content,  ephemeral: true });
 	}
 	catch ( err ) { interaction.client.emit( "error", err ); }
 }

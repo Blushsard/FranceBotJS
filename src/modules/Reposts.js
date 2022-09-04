@@ -24,6 +24,22 @@ class Reposts
 	get active() { return this._active; }
 
 	/**
+	 * Ajout l'emoji de repost si le salon est un salon de reposts.
+	 * @param {object} salon L'objet de la db pour le salon.
+	 * @param {Message} message Le message qui va recevoir l'emoji.
+	 */
+	async ajouterEmojiRepost( salon, message ) {
+		if ( !this._active ) return;
+		if ( !salon ) return;
+		if ( salon && !salon["b_reposts"] ) return;
+
+		try {
+			await message.react( process.env.EMOJI_REPOST );
+		}
+		catch ( err ) { this.client.emit( "error", err ); }
+	}
+
+	/**
 	 * Vérifie si un message dans un salon de repost ne dépasse pas la moyenne en repost.
 	 * Si c'est le cas, alors le message est supprimé.
 	 * @param {MessageReaction} reaction La reaction qui a été ajoutée sur le message.
@@ -42,7 +58,7 @@ class Reposts
 		// Cette erreur est présente dans FranceBotV3, l'appel de l'api ne contient pas les données de l'objet.
 		if ( !reaction ) return;
 
-		const moyenne = this.client.modules.get( "moyenne" ).getMoyenne();
+		const moyenne = this.client.modules.get( "moyenne" ).getMoyenneRepost();
 
 		// Récupération du nombre de reposts sur le message.
 		let countReposts = 0;

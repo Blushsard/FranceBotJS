@@ -13,7 +13,7 @@ const { ADMINISTRATORS } = require( `${process.cwd()}/data/config.json` );
 /* ----------------------------------------------- */
 /**
  * Event appelé lorsque le bot est connecté.
- * @param {Error} error L'erreur envoyée par l'API.
+ * @param {Error|unknown} error L'erreur envoyée par l'API.
  * @param {Client} client Le client du bot.
  */
 async function execute( error, client ) {

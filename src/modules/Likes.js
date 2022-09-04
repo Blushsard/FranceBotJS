@@ -56,10 +56,8 @@ class Likes
 		await this.db.messagesManager.ajouterMessage( message, memes, likes );
 		await this.client.modules.get( "logs" ).messageMemeAjoute( message );
 
-
 		try {
 			await message.react( process.env.EMOJI_LIKE_ID );
-			await message.react( process.env.EMOJI_REPOST );
 		}
 		catch ( err ) { this.client.emit( "error", err ); }
 	}
