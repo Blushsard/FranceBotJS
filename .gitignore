@@ -114,3 +114,4 @@ dist
 /src/.env.local.prod
 /src/database/create_db_beta.sql
 /src/database/create_db_prod.sql
+src/modules/dev_feed.txt
