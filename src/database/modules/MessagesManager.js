@@ -53,7 +53,7 @@ class MessagesManager
 				)
 			}
 		}
-		catch( err ) { console.error( err ); }
+		catch( err ) {}
 	}
 
 	/**

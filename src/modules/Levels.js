@@ -124,7 +124,7 @@ class Levels
 			// User quitte le salon ou devient muet, on lui donne son exp.
 			else if ( (!newState.channel && (!newState.mute || !oldState.mute)) || (!oldState.mute && newState.mute) ) {
 				const timeDiff = date.getTime() - userData.startTimeVocal;
-				const xpRecu = parseInt( String((this.expVocal * timeDiff) / 60_000_000), 10 );
+				const xpRecu = parseInt( String((this.expVocal * timeDiff) / 60_000_000 ), 10 );
 				userData.startTimeVocal = 0;
 				if ( xpRecu !== 0 )
 					await this.ajouterExperienceUtilisateur( oldState.member, oldState.member.createDM(), xpRecu );
@@ -301,9 +301,7 @@ class Levels
 				await this.client.db.usersManager.updateUser( user["pk_user_id"], "n_level", user["n_level"] );
 				try {
 					await salon.send(`Bravo ${member.user}! Tu es passé au niveau **${user['n_level']}**!`);
-				} catch (err) {
-					console.log( err )
-				}
+				} catch (err) {}
 
 				// Ajout du nouveau rôle si nécessaire.
 				const role = await this.client.db.rolesLevelsManager.fetchGuildRoleByLevel( member.guild.id, user["n_level"] );
