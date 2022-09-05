@@ -123,6 +123,9 @@ class Levels
 
 			// User quitte le salon ou devient muet, on lui donne son exp.
 			else if ( (!newState.channel && (!newState.mute || !oldState.mute)) || (!oldState.mute && newState.mute) ) {
+				// Si il n'a pas de temps en voc, alors on quitte.
+				if ( !userData.startTimeVocal ) return;
+
 				const timeDiff = date.getTime() - userData.startTimeVocal;
 				const xpRecu = parseInt( String((this.expVocal * timeDiff) / 60_000_000 ), 10 );
 				userData.startTimeVocal = 0;
